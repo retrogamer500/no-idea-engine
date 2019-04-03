@@ -28,7 +28,6 @@ public class TransitionTest {
         };
         Game game = new Game(scene1);
         game.setTransition(new FadeTransition(200));
-        //game.getAlarms().add(10000, () -> game.endGame());
         game.run();
     }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 @Log4j2
 public class Game {
-    public static final String CONFIG_LOCATION = "game.json";
+
 
     public static final long NANOSECONDS_IN_SECOND = 1000000000;
     public static final long NANOSECONDS_IN_MILLISECOND = 1000000;
@@ -42,6 +42,7 @@ public class Game {
     @Getter private Renderer renderer;
     private FramerateMonitor framerateMonitor;
     private PerformanceTracker renderTimeTracker, updateTimeTracker, idleTimeTracker;
+    @Getter private ConfigurationLoader configurationLoader;
     @Getter private GameConfig config;
     @Getter private AlarmSystem alarms;
 
@@ -75,6 +76,7 @@ public class Game {
         window = new Window(this);
         renderer = new Renderer();
         alarms = new AlarmSystem();
+        configurationLoader = new ConfigurationLoader();
         framerateMonitor = new FramerateMonitor();
         renderTimeTracker = framerateMonitor.getPerformanceTracker("render time");
         updateTimeTracker = framerateMonitor.getPerformanceTracker("update time");
@@ -101,16 +103,7 @@ public class Game {
      * Loads configuration file, and initializes the OpenGL context
      */
     private void startGame() {
-        log.info("Loading configuration at: " + CONFIG_LOCATION);
-        File configFile = new File(CONFIG_LOCATION);
-        if(configFile.exists()) {
-            Gson gson = new Gson();
-            config = gson.fromJson(FileUtils.readFileAsString(configFile), GameConfig.class);
-        }
-        else {
-            throw new GameEngineException("Filename " + CONFIG_LOCATION + " does not exist! Could not load game configuration.");
-        }
-        JsonValidator.validateThenThrow(config);
+        config = configurationLoader.loadConfiguration();
 
         log.info("Initializing OpenGL context");
         getWindow().init();

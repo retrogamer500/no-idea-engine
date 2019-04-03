@@ -2,40 +2,52 @@
   "resources": {
     "images": [
       {
+        "flipVertically": false,
+        "filename": "data/images/sprite_sheet.png",
         "key": "sprite_sheet.png",
-        "filename": "data/sprite_sheet.png"
+        "group": 0
       },
       {
+        "flipVertically": false,
+        "filename": "data/images/blue_ball.png",
         "key": "blue_ball",
-        "filename": "data/blue_ball.png"
+        "group": 0
       },
       {
+        "flipVertically": false,
+        "filename": "data/images/red_ball.png",
         "key": "red_ball",
-        "filename": "data/red_ball.png"
+        "group": 0
       },
       {
+        "flipVertically": false,
+        "filename": "data/images/green_ball.png",
         "key": "green_ball",
-        "filename": "data/green_ball.png"
+        "group": 0
       },
       {
+        "flipVertically": false,
+        "filename": "data/images/tiles.png",
         "key": "tiles",
-        "filename": "data/tiles.png"
+        "group": 0
       }
     ],
     "sprites": [
       {
-        "key": "test_sprite",
         "texture": "sprite_sheet.png",
-        "frameWidth": 16,
-        "offsetX": 8,
-        "offsetY": 8
+        "frameWidth": 16.0,
+        "offsetX": 8.0,
+        "offsetY": 8.0,
+        "key": "test_sprite",
+        "group": 0
       }
     ],
     "fonts": [
       {
-        "key": "test_font",
         "fileName": "data/roboto.ttf",
-        "size": 32
+        "size": 32.0,
+        "key": "test_font",
+        "group": 0
       }
     ]
   }

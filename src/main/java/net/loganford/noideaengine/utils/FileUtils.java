@@ -17,7 +17,7 @@ public class FileUtils {
 
     public static String readFileAsString(File file) {
         try {
-            return new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+            return org.apache.commons.io.FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new GameEngineException("Unable to read file: " + file.getAbsolutePath());
         }
