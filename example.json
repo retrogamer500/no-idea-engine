@@ -1,0 +1,29 @@
+/*This file contains comments which aren't tecnically valid JSON, so this file shouldn't be loaded in any application.
+It's just here for demo purposes to show all the elements in one place*/
+{
+  "resources": {
+    "scanDirectory": "/data",
+    "textures": [
+      {
+        "key": "black",
+        "filename": "data/img/default/black.png",
+        "flipVertically": false /*Optional, default: false*/
+      }
+    ],
+    "shaders": [
+      {
+        "key": "default",
+        "vert": "data/glsl/default/default.vert",
+        "frag": "data/glsl/default/default.frag"
+      }
+    ],
+    "models": [
+      {
+        "key": "cube",
+        "filename": "data/model/default/cube.obj",
+        "scale": 1, /*Optional, default: 1*/
+        "swapZY": false /*Optional, default: false*/
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "resources": {
+    "images": [
+      {
+        "key": "sprite_sheet.png",
+        "filename": "data/sprite_sheet.png"
+      },
+      {
+        "key": "blue_ball",
+        "filename": "data/blue_ball.png"
+      },
+      {
+        "key": "red_ball",
+        "filename": "data/red_ball.png"
+      },
+      {
+        "key": "green_ball",
+        "filename": "data/green_ball.png"
+      },
+      {
+        "key": "tiles",
+        "filename": "data/tiles.png"
+      }
+    ],
+    "sprites": [
+      {
+        "key": "test_sprite",
+        "texture": "sprite_sheet.png",
+        "frameWidth": 16,
+        "offsetX": 8,
+        "offsetY": 8
+      }
+    ],
+    "fonts": [
+      {
+        "key": "test_font",
+        "fileName": "data/roboto.ttf",
+        "size": 32
+      }
+    ]
+  }
+}
