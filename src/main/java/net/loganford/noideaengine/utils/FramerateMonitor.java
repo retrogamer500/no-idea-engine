@@ -14,7 +14,7 @@ public class FramerateMonitor {
     private int framesPerSecond;
     private int frameCounter;
     private long timeCounter;
-    private List<PerformanceTracker> trackers = new ArrayList<PerformanceTracker>();
+    private List<PerformanceTracker> trackers = new ArrayList<>();
 
     public void start() {
         frameCounter = 0;

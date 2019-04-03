@@ -14,7 +14,7 @@ public class JsonValidator {
             StringBuilder builder = new StringBuilder();
             builder.append("The required fields are required but missing from the JSON body:");
             for(String field : result.getMissingRequiredFields()) {
-                builder.append("\n" + field);
+                builder.append("\n").append(field);
             }
             throw new GameEngineException(builder.toString());
         }

@@ -8,7 +8,6 @@ import org.lwjgl.BufferUtils;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -36,10 +35,7 @@ public class FileUtils {
             fis.close();
         } else {
             buffer = BufferUtils.createByteBuffer(bufferSize);
-            InputStream source = new FileInputStream(file);
-            if (source == null)
-                throw new FileNotFoundException(fileName);
-            try {
+            try (InputStream source = new FileInputStream(file)) {
                 byte[] buf = new byte[8192];
                 while (true) {
                     int bytes = source.read(buf, 0, buf.length);
@@ -50,8 +46,6 @@ public class FileUtils {
                     buffer.put(buf, 0, bytes);
                 }
                 buffer.flip();
-            } finally {
-                source.close();
             }
         }
         return buffer;

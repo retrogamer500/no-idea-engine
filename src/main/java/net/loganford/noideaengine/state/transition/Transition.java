@@ -3,7 +3,6 @@ package net.loganford.noideaengine.state.transition;
 import lombok.Getter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.state.GameState;
-import net.loganford.noideaengine.state.Scene;
 
 public abstract class Transition extends GameState {
 

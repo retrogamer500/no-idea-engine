@@ -203,7 +203,7 @@ public abstract class Entity2D<G extends Game, S extends Scene> extends Abstract
      * @return
      */
     public <C extends Entity2D> C nearest(Class<C> clazz) {
-        return (C) getScene().nearest(clazz, getX(), getY());
+        return getScene().nearest(clazz, getX(), getY());
     }
 
     /**
@@ -213,7 +213,7 @@ public abstract class Entity2D<G extends Game, S extends Scene> extends Abstract
      * @return
      */
     public <C extends Entity2D> C furthest(Class<C> clazz) {
-        return (C) getScene().furthest(clazz, getX(), getY());
+        return getScene().furthest(clazz, getX(), getY());
     }
 
     /**

@@ -1,11 +1,8 @@
 package net.loganford.noideaengine.graphics;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.resources.loading.ModelLoader;
@@ -17,9 +14,7 @@ import net.loganford.noideaengine.utils.MathUtils;
 import org.joml.*;
 import org.lwjgl.opengl.GL33;
 
-import java.io.File;
 import java.lang.Math;
-import java.net.URISyntaxException;
 
 @Log4j2
 public class Renderer {
@@ -199,6 +194,7 @@ public class Renderer {
         float len = MathUtils.distance(x1, y1, x2, y2);
 
         polygonCenteredSquare.setScaleX(len + width);
+        //noinspection SuspiciousNameCombination
         polygonCenteredSquare.setScaleY(width);
         polygonCenteredSquare.setAngle(angle);
         polygonCenteredSquare.getColor().set(color);
@@ -208,10 +204,10 @@ public class Renderer {
     /**
      * Draws a quad. The only uniforms that are populated will be the model, view and projection matrix, based off
      * of the shape of the quad and the current view. Useful for implementing your own shaders.
-     * @param x
-     * @param y
-     * @param width
-     * @param height
+     * @param x x position of quad (world space)
+     * @param y y position of quad (world space)
+     * @param width width of quad
+     * @param height height of quad
      */
     public void drawQuad(float x, float y, float width, float height) {
         getTextureBatch().flush(this);

@@ -1,7 +1,6 @@
 package net.loganford.noideaengine.state.transition;
 
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.state.GameState;
 
 /***
  * A transition that instantly ends

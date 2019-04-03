@@ -1,7 +1,6 @@
 package net.loganford.noideaengine.graphics;
 
 import lombok.Getter;
-import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
 import org.lwjgl.opengl.GL33;
 

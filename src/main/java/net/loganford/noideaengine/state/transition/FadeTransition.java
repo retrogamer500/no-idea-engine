@@ -3,7 +3,6 @@ package net.loganford.noideaengine.state.transition;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.state.GameState;
 
 public class FadeTransition extends Transition {
     private long duration;

@@ -228,7 +228,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
                 }
             }
         }
-        return new ArrayList<C>(resultSet);
+        return new ArrayList<>(resultSet);
     }
 
     private int hash2d(int x, int y) {

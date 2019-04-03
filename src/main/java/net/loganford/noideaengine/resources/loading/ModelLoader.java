@@ -125,7 +125,7 @@ public class ModelLoader implements ResourceLoader {
                     normals.add(new Vector3f(0, 0, 0));
                 }
 
-                Vector2f uvCoord = null;
+                Vector2f uvCoord;
                 if(aiMesh.mTextureCoords(0) != null) {
                     uvCoord = new Vector2f(aiMesh.mTextureCoords(0).get(j).x(), aiMesh.mTextureCoords(0).get(j).y());
                 }

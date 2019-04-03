@@ -1,7 +1,5 @@
 package net.loganford.noideaengine.graphics;
 
-import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
-
 import java.util.ArrayList;
 import java.util.List;
 

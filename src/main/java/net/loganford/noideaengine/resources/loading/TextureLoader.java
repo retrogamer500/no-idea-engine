@@ -2,20 +2,10 @@ package net.loganford.noideaengine.resources.loading;
 
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.GameEngineException;
-import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Texture;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL33;
-import org.lwjgl.stb.STBRPContext;
-import org.lwjgl.stb.STBRPNode;
-import org.lwjgl.stb.STBRPRect;
-import org.lwjgl.stb.STBRectPack;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 @Log4j2
 public class TextureLoader implements ResourceLoader {
