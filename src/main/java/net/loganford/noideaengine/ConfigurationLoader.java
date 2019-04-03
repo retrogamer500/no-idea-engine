@@ -33,6 +33,7 @@ public class ConfigurationLoader {
 
     public GameConfig loadConfiguration() {
         GameConfig config;
+        boolean configDirty = false;
 
         File configFile = new File(configLocation);
         if(configFile.exists()) {
@@ -51,10 +52,10 @@ public class ConfigurationLoader {
             log.info("No configuration file exists. Creating one...");
             config = new GameConfig();
             config.setResources(new Resources());
-            saveConfig(config);
+            configDirty = true;
         }
 
-        boolean configDirty = false;
+
 
         //Scan images
         if(imageScanDirectory != null) {
