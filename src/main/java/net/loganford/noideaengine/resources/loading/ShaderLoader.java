@@ -43,44 +43,50 @@ public class ShaderLoader implements ResourceLoader {
     }
 
     public ShaderProgram load(ShaderConfig shaderDescription) {
-        return load(shaderDescription.getKey(), shaderDescription.getVert(), shaderDescription.getFrag());
+        return load(shaderDescription.getKey(), new File(shaderDescription.getVert()), new File(shaderDescription.getFrag()));
     }
 
-    public ShaderProgram load(String key, String vertexFileLocation, String fragmentFileLocation) {
-        File vertexFile = new File(vertexFileLocation);
-        File fragmentFile = new File(fragmentFileLocation);
+    public ShaderProgram load(String key, File vertexFile, File fragmentFile) {
+        return load(key, FileUtils.readFileAsString(vertexFile), vertexFile.getAbsolutePath(),
+                FileUtils.readFileAsString(fragmentFile), fragmentFile.getAbsolutePath());
+    }
 
+    public ShaderProgram loadResource(String key, String vertexResource, String fragmentResource) {
+        return load(key, FileUtils.readResourceAsString(vertexResource), vertexResource,
+                FileUtils.readResourceAsString(fragmentResource), fragmentResource);
+    }
+
+    private ShaderProgram load(String key, String vertexShaderData, String vertexShaderLocation,
+                              String fragmentShaderData, String fragmentShaderLocation) {
         VertexShader vertexShader;
         FragmentShader fragmentShader;
 
         //Load vertex shader
-        log.info("Loading vertex shader at: " + vertexFileLocation);
-        if(vertexShaderCache.containsKey(vertexFileLocation)) {
-            vertexShader = vertexShaderCache.get(vertexFileLocation);
+        log.info("Loading vertex shader at: " + vertexShaderLocation);
+        if(vertexShaderCache.containsKey(vertexShaderLocation)) {
+            vertexShader = vertexShaderCache.get(vertexShaderLocation);
         }
         else {
-            String shaderData = FileUtils.readFileAsString(vertexFile);
             int vertexShaderId = GL33.glCreateShader(GL33.GL_VERTEX_SHADER);
-            GL33.glShaderSource(vertexShaderId, shaderData);
+            GL33.glShaderSource(vertexShaderId, vertexShaderData);
             GL33.glCompileShader(vertexShaderId);
             validateShader(vertexShaderId);
             vertexShader = new VertexShader("filename", vertexShaderId);
-            vertexShaderCache.put(vertexFileLocation, vertexShader);
+            vertexShaderCache.put(vertexShaderLocation, vertexShader);
         }
 
         //Load fragment shader
-        log.info("Loading fragment shader at: " + fragmentFileLocation);
-        if(fragmentShaderCache.containsKey(fragmentFileLocation)) {
-            fragmentShader = fragmentShaderCache.get(fragmentFileLocation);
+        log.info("Loading fragment shader at: " + fragmentShaderLocation);
+        if(fragmentShaderCache.containsKey(fragmentShaderLocation)) {
+            fragmentShader = fragmentShaderCache.get(fragmentShaderLocation);
         }
         else {
-            String shaderData = FileUtils.readFileAsString(fragmentFile);
             int fragmentShaderId = GL33.glCreateShader(GL33.GL_FRAGMENT_SHADER);
-            GL33.glShaderSource(fragmentShaderId, shaderData);
+            GL33.glShaderSource(fragmentShaderId, fragmentShaderData);
             GL33.glCompileShader(fragmentShaderId);
             validateShader(fragmentShaderId);
             fragmentShader = new FragmentShader("filename", fragmentShaderId);
-            fragmentShaderCache.put(fragmentFileLocation, fragmentShader);
+            fragmentShaderCache.put(fragmentShaderLocation, fragmentShader);
         }
 
         //Link program

@@ -2,11 +2,14 @@ package net.loganford.noideaengine.utils;
 
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.GameEngineException;
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -60,5 +63,15 @@ public class FileUtils {
         buffer.flip();
         newBuffer.put(buffer);
         return newBuffer;
+    }
+
+    public static String readResourceAsString(String resource) {
+        try {
+            InputStream stream = FileUtils.class.getResourceAsStream(resource);
+            return IOUtils.toString(stream, StandardCharsets.UTF_8);
+        }
+        catch(IOException e) {
+            throw new GameEngineException(e);
+        }
     }
 }

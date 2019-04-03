@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.resources.loading.ModelLoader;
@@ -16,7 +17,9 @@ import net.loganford.noideaengine.utils.MathUtils;
 import org.joml.*;
 import org.lwjgl.opengl.GL33;
 
+import java.io.File;
 import java.lang.Math;
+import java.net.URISyntaxException;
 
 @Log4j2
 public class Renderer {
@@ -108,9 +111,9 @@ public class Renderer {
 
     private void loadBuildInShaders() {
         ShaderLoader shaderLoader = new ShaderLoader();
-        shaderDefault = shaderLoader.load("SHADER_DEFAULT", "engine/default.vert", "engine/default.frag");
-        shaderSolid = shaderLoader.load("SHADER_SOLID", "engine/solid.vert", "engine/solid.frag");
-        shaderTile = shaderLoader.load("SHADER_TILE", "engine/tile.vert", "engine/tile.frag");
+        shaderDefault = shaderLoader.loadResource("SHADER_DEFAULT", "/default.vert", "/default.frag");
+        shaderSolid = shaderLoader.loadResource("SHADER_SOLID", "/solid.vert", "/solid.frag");
+        shaderTile = shaderLoader.loadResource("SHADER_TILE", "/tile.vert", "/tile.frag");
     }
 
     private void loadBuildInPolygons() {
