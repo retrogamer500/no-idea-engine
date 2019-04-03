@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,14 +101,7 @@ public class ConfigurationLoader {
     }
 
     private void removeDeletedFiles(List<SingleFileConfig> fileConfigs) {
-        Iterator<SingleFileConfig> iterator = fileConfigs.iterator();
-        while(iterator.hasNext()) {
-            SingleFileConfig fileConfig = iterator.next();
-            File file = new File(fileConfig.getFilename());
-            if(!file.exists()) {
-                iterator.remove();
-            }
-        }
+        fileConfigs.removeIf(c -> !(new File(c.getFilename()).exists()));
     }
 
     private List<Path> scanResources(List<SingleFileConfig> existingResources, String directory, String[] fileExtentions) {
