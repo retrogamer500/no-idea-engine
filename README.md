@@ -31,7 +31,7 @@ The engine should be compatible with Java all the way down to Java 8. This engin
 <repositories>
     <repository>
         <id>noideaengine-mvn-repo</id>
-        <url>https://raw.github.com/retrogamer500/noideaengine/mvn-repo/</url>
+        <url>https://github.com/retrogamer500/no-idea-engine/raw/mvn-repo</url>
         <snapshots>
             <enabled>true</enabled>
             <updatePolicy>always</updatePolicy>
