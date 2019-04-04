@@ -55,7 +55,7 @@ public class FontLoader implements ResourceLoader {
         STBTTPackedchar.Buffer charData = STBTTPackedchar.malloc(128);
 
         try (STBTTPackContext packContext = STBTTPackContext.malloc()) { /*Is this a memory leak or does the try-with close it?*/
-            ByteBuffer ttf = FileUtils.loadByteBuffer(description.getFileName(), 512 * 1024);
+            ByteBuffer ttf = FileUtils.loadByteBuffer(description.getFilename(), 512 * 1024);
 
             //Get the scale and font info
             STBTTFontinfo fontInfo = STBTTFontinfo.create();

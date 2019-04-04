@@ -58,11 +58,11 @@ public class NaiveBroadphase implements CollisionSystem2D {
     }
 
     @Override
-    public Entity2D getCollision(Shape2D shape, Class<? extends Entity2D> clazz) {
+    public <C extends Entity2D> C getCollision(Shape2D shape, Class<C> clazz) {
         for(Entity2D entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass())) {
                 if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
-                    return entity;
+                    return (C)entity;
                 }
             }
         }

@@ -34,7 +34,7 @@
     ],
     "sprites": [
       {
-        "texture": "sprite_sheet.png",
+        "imageKey": "sprite_sheet.png",
         "frameWidth": 16.0,
         "offsetX": 8.0,
         "offsetY": 8.0,
@@ -44,7 +44,7 @@
     ],
     "fonts": [
       {
-        "fileName": "data/roboto.ttf",
+        "filename": "data/roboto.ttf",
         "size": 32.0,
         "key": "test_font",
         "group": 0

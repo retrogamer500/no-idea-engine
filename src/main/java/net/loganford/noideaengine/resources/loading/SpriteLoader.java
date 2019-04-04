@@ -37,7 +37,7 @@ public class SpriteLoader implements ResourceLoader {
     }
 
     public Sprite load(Game game, SpriteConfig description) {
-        Image image = game.getImageManager().get(description.getTexture());
+        Image image = game.getImageManager().get(description.getImageKey());
 
         //Setup default values
         if(description.getFrameWidth() == null) {

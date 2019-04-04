@@ -9,7 +9,7 @@ import net.loganford.noideaengine.config.Required;
 @EqualsAndHashCode(callSuper=true)
 public class SpriteConfig extends LoadableConfig {
 
-    @Required private String texture;
+    @Required private String imageKey;
     private Float frameWidth;
     private Float frameHeight;
     private Integer padding;

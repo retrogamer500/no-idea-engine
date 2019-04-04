@@ -148,7 +148,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
     }
 
     @Override
-    public Entity2D getCollision(Shape2D shape, Class<? extends Entity2D> clazz) {
+    public <C extends Entity2D> C getCollision(Shape2D shape, Class<C> clazz) {
         if(shape instanceof Line) {
             Entity2D[] result = {null};
             doActionWithLine((Line) shape, (bucket -> {
@@ -163,7 +163,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
                 }
                 return false;
             }));
-            return result[0];
+            return (C)result[0];
         }
         else {
             shape.getBoundingBox(rect);
@@ -181,7 +181,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
                         if (entity.getShape() != shape &&
                                 clazz.isAssignableFrom(entity.getClass()) &&
                                 entity.getShape().collidesWith(shape)) {
-                            return entity;
+                            return (C)entity;
                         }
                     }
                 }
