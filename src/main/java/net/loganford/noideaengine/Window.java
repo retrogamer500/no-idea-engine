@@ -99,9 +99,9 @@ public class Window {
             }
         });
 
-        //Setup a key callback. It will be called every time a key is pressed,
-        //repeated or released.
-        GLFW.glfwSetKeyCallback(window, game.getInput());
+        //Setup a keyboard and mouse callbacks
+        GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mod) -> game.getInput().handleKeyboard(window, key, scancode, action, mod));
+        GLFW.glfwSetMouseButtonCallback(window, (window, button, action, mod) -> game.getInput().handleMouseButtons(window, button, action, mod));
 
         //Get the resolution of the primary monitor
         GLFWVidMode vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());

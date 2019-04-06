@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
 @Log4j2
-public class Input extends GLFWKeyCallback {
+public class Input {
     public static final int KEY_UNKNOWN = -1;
     public static final int KEY_SPACE = 32;
     public static final int KEY_APOSTROPHE = 39;
@@ -128,7 +128,17 @@ public class Input extends GLFWKeyCallback {
     public static final int KEY_RIGHT_SUPER = 347;
     public static final int KEY_MENU = 348;
 
+    public static final int MOUSE_1 = 0;
+    public static final int MOUSE_2 = 1;
+    public static final int MOUSE_3 = 2;
+    public static final int MOUSE_4 = 3;
+    public static final int MOUSE_5 = 4;
+    public static final int MOUSE_6 = 5;
+    public static final int MOUSE_7 = 6;
+    public static final int MOUSE_8 = 7;
+
     public static final int MAX_KEYCODE = 1027;
+    public static final int MAX_MOUSECODE = 8;
 
     protected double mouseX, mouseY;
     protected double mouseXLast, mouseYLast;
@@ -139,12 +149,23 @@ public class Input extends GLFWKeyCallback {
     private boolean[] keysDown = new boolean[MAX_KEYCODE];
     private boolean[] keysReleased = new boolean[MAX_KEYCODE];
 
-    @Override
-    public void invoke(long window, int key, int scancode, int action, int mods) {
-        if(key < MAX_KEYCODE && key > 0) {
+    private boolean[] mouseButtonsPressed = new boolean[MAX_MOUSECODE];
+    private boolean[] mouseButtonsDown = new boolean[MAX_MOUSECODE];
+    private boolean[] mouseButtonsReleased = new boolean[MAX_MOUSECODE];
+
+    public void handleKeyboard(long window, int key, int scancode, int action, int mods) {
+        if(key < MAX_KEYCODE && key >= 0) {
             keysPressed[key] = action == GLFW.GLFW_PRESS;
             keysReleased[key] = action == GLFW.GLFW_RELEASE;
             keysDown[key] = action != GLFW.GLFW_RELEASE;
+        }
+    }
+
+    public void handleMouseButtons(long window, int button, int action, int mod) {
+        if(button < MAX_MOUSECODE && button >= 0) {
+            mouseButtonsPressed[button] = action == GLFW.GLFW_PRESS;
+            mouseButtonsReleased[button] = action == GLFW.GLFW_RELEASE;
+            mouseButtonsDown[button] = action != GLFW.GLFW_RELEASE;
         }
     }
 
@@ -153,6 +174,23 @@ public class Input extends GLFWKeyCallback {
             keysPressed[i] = false;
             keysReleased[i] = false;
         }
+
+        for(int i = 0; i < MAX_MOUSECODE; i++) {
+            mouseButtonsPressed[i] = false;
+            mouseButtonsReleased[i] = false;
+        }
+    }
+
+    public boolean mousePressed(int key) {
+        return mouseButtonsPressed[key];
+    }
+
+    public boolean mouseReleased(int key) {
+        return mouseButtonsReleased[key];
+    }
+
+    public boolean mouseDown(int key) {
+        return mouseButtonsDown[key];
     }
 
     public boolean keyPressed(int key) {

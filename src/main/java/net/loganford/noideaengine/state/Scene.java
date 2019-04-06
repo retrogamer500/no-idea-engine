@@ -169,8 +169,8 @@ public class Scene extends GameState {
         //Delete destroyed entities
         for(int i = entities.size() - 1; i >= 0; i--) {
             if(entities.get(i).isDestroyed()) {
-                entities.remove(i);
                 log.debug("Removing entity: " + entities.get(i).getClass().getName() + " Entity count: " + entities.size());
+                entities.remove(i);
             }
         }
     }
