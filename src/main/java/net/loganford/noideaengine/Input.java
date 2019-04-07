@@ -1,5 +1,6 @@
 package net.loganford.noideaengine;
 
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -140,10 +141,17 @@ public class Input {
     public static final int MAX_KEYCODE = 1027;
     public static final int MAX_MOUSECODE = 8;
 
-    protected double mouseX, mouseY;
-    protected double mouseXLast, mouseYLast;
-    protected double mouseDeltaX, mouseDeltaY;
-    protected boolean deltaInitialized = false;
+    /**
+     * The x position of the mouse in the window. Use scene.getView().getMouseX() for the position in the scene.
+     */
+    @Getter private float mouseX;
+    @Getter private float mouseY;
+    @Getter private float mouseXLast;
+    @Getter private float mouseYLast;
+    @Getter private float mouseDeltaX;
+    @Getter private float mouseDeltaY;
+    private float glfwMouseX;
+    private float glfwMouseY;
 
     private boolean[] keysPressed = new boolean[MAX_KEYCODE];
     private boolean[] keysDown = new boolean[MAX_KEYCODE];
@@ -153,7 +161,7 @@ public class Input {
     private boolean[] mouseButtonsDown = new boolean[MAX_MOUSECODE];
     private boolean[] mouseButtonsReleased = new boolean[MAX_MOUSECODE];
 
-    public void handleKeyboard(long window, int key, int scancode, int action, int mods) {
+    protected void handleKeyboard(long window, int key, int scancode, int action, int mods) {
         if(key < MAX_KEYCODE && key >= 0) {
             keysPressed[key] = action == GLFW.GLFW_PRESS;
             keysReleased[key] = action == GLFW.GLFW_RELEASE;
@@ -161,11 +169,32 @@ public class Input {
         }
     }
 
-    public void handleMouseButtons(long window, int button, int action, int mod) {
+    protected void handleMouseButtons(long window, int button, int action, int mod) {
         if(button < MAX_MOUSECODE && button >= 0) {
             mouseButtonsPressed[button] = action == GLFW.GLFW_PRESS;
             mouseButtonsReleased[button] = action == GLFW.GLFW_RELEASE;
             mouseButtonsDown[button] = action != GLFW.GLFW_RELEASE;
+        }
+    }
+
+    protected void handleMouseMovement(long window, double x, double y) {
+        glfwMouseX = (float)x;
+        glfwMouseY = (float)y;
+    }
+
+    protected void stepInput(Window window) {
+        mouseXLast = mouseX;
+        mouseYLast = mouseY;
+        mouseX = glfwMouseX;
+        mouseY = glfwMouseY;
+
+        if(window.isMouseCaptured() && window.isFocused()) {
+            mouseDeltaX = mouseX - mouseXLast;
+            mouseDeltaY = mouseY - mouseYLast;
+        }
+        else {
+            mouseDeltaX = 0;
+            mouseDeltaY = 0;
         }
     }
 
@@ -203,29 +232,5 @@ public class Input {
 
     public boolean keyDown(int key) {
         return keysDown[key];
-    }
-
-    public double getMouseX() {
-        return mouseX;
-    }
-
-    public double getMouseY() {
-        return mouseY;
-    }
-
-    public double getMouseXLast() {
-        return mouseXLast;
-    }
-
-    public double getMouseYLast() {
-        return mouseYLast;
-    }
-
-    public double getMouseDeltaX() {
-        return mouseDeltaX;
-    }
-
-    public double getMouseDeltaY() {
-        return mouseDeltaY;
     }
 }

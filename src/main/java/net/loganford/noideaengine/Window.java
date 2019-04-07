@@ -88,16 +88,7 @@ public class Window {
         });
 
         //Cursor position callback
-        GLFW.glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
-            game.getInput().mouseX = xpos;
-            game.getInput().mouseY = ypos;
-
-            if(!game.getInput().deltaInitialized) {
-                game.getInput().mouseXLast = xpos;
-                game.getInput().mouseYLast = ypos;
-                game.getInput().deltaInitialized = true;
-            }
-        });
+        GLFW.glfwSetCursorPosCallback(window, (window, x, y) -> game.getInput().handleMouseMovement(window, x, y));
 
         //Setup a keyboard and mouse callbacks
         GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mod) -> game.getInput().handleKeyboard(window, key, scancode, action, mod));

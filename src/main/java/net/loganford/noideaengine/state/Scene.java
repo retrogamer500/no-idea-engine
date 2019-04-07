@@ -127,6 +127,8 @@ public class Scene extends GameState {
     @SuppressWarnings("unchecked")
     @Override
     public void step(Game game, long delta) {
+        super.step(game, delta);
+
         //Resort entities which have had their depth changed
         for(int i = entities.size() - 1; i >= 0; i--) {
             AbstractEntity entity = entities.get(i);

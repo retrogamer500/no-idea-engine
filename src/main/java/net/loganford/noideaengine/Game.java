@@ -147,19 +147,8 @@ public class Game {
                     deltaTimeNs = minFrameTimeNs;
                 }
 
-
-                if(window.isMouseCaptured() && window.isFocused()) {
-                    if(input.deltaInitialized) {
-                        input.mouseDeltaX = input.mouseX - input.mouseXLast;
-                        input.mouseDeltaY = input.mouseY - input.mouseYLast;
-                        input.mouseYLast = input.mouseY;
-                        input.mouseXLast = input.mouseX;
-                    }
-                }
-                else {
-                    input.mouseDeltaX = 0;
-                    input.mouseDeltaY = 0;
-                }
+                //Update input
+                input.stepInput(window);
 
                 lastFrameTime = currentTime;
 

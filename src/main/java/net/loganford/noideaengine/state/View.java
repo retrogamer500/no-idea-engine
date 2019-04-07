@@ -13,11 +13,22 @@ public class View extends ScreenTransformation {
     @Getter @Setter private int width;
     @Getter @Setter private int height;
 
+    @Getter private float mouseX;
+    @Getter private float mouseY;
+
     public View(Game game, GameState gameState, int width, int height) {
         super(game, gameState);
 
         this.width = width;
         this.height = height;
+    }
+
+    @Override
+    protected void step() {
+        V4.set((float)getGame().getInput().getMouseX(), (float)getGame().getInput().getMouseY(), 0f, 1f);
+        V4.mul(getViewMatrix().invert());
+        mouseX = V4.x;
+        mouseY = V4.y;
     }
 
     @Override
@@ -47,18 +58,5 @@ public class View extends ScreenTransformation {
     public void setPos(float x, float y) {
         this.x = x;
         this.y = y;
-    }
-
-    public double getMouseX() {
-        //Todo: We should probably cache these values
-        V4.set((float)getGame().getInput().getMouseX(), (float)getGame().getInput().getMouseY(), 0f, 1f);
-        V4.mul(getViewMatrix().invert());
-        return V4.x;
-    }
-
-    public double getMouseY() {
-        V4.set((float)getGame().getInput().getMouseX(), (float)getGame().getInput().getMouseY(), 0f, 0f);
-        V4.mul(getViewMatrix().invert());
-        return V4.y;
     }
 }

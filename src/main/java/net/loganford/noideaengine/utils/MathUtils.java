@@ -21,7 +21,8 @@ public class MathUtils {
     }
 
     public static float direction(float x, float y) {
-        return (float)Math.atan2(y, x);
+        float result = (float)Math.atan2(-y, x);
+        return result >= 0 ? result : result + 2 * PI;
     }
 
     public static float direction(float x1, float y1, float x2, float y2) {
@@ -34,6 +35,10 @@ public class MathUtils {
     }
 
     public static int clamp(int low, int high, int value) {
+        return Math.min(Math.max(value, low), high);
+    }
+
+    public static float clamp(float low, float high, float value) {
         return Math.min(Math.max(value, low), high);
     }
 }
