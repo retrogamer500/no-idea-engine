@@ -18,9 +18,9 @@ public abstract class ScreenTransformation {
         this.gameState = gameState;
     }
 
-    protected abstract void step();
+    protected void step() {}
 
-    protected abstract void calculateViewProjection();
+    protected void beforeRender() {}
 
     public void onResize(int width, int height) {
         log.info("View/Camera being resized: " + width + " " + height);

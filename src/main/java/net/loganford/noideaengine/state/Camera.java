@@ -34,7 +34,8 @@ public class Camera extends ScreenTransformation {
 
     }
 
-    protected void calculateViewProjection() {
+    @Override
+    protected void beforeRender() {
         float aspect = ((float) game.getWindow().getWidth()) / game.getWindow().getHeight();
         projectionMatrix.identity().perspective(fov, aspect, .05f, 5000f).lookAtPerspective(0, 0, 0, focus.x - position.x, focus.y - position.y, focus.z - position.z, up.x, up.y, up.z, projectionMatrix);
         viewMatrix.identity().translate(-position.x, -position.y, -position.z);

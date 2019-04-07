@@ -150,8 +150,8 @@ public class Input {
     @Getter private float mouseYLast;
     @Getter private float mouseDeltaX;
     @Getter private float mouseDeltaY;
-    private float glfwMouseX;
-    private float glfwMouseY;
+    @Getter private float glfwMouseX;
+    @Getter private float glfwMouseY;
 
     private boolean[] keysPressed = new boolean[MAX_KEYCODE];
     private boolean[] keysDown = new boolean[MAX_KEYCODE];

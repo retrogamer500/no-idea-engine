@@ -52,6 +52,8 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param delta
      */
     public void step(G game, long delta) {
+        view.step();
+        camera.step();
         alarms.step(delta);
     }
 
@@ -62,8 +64,8 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      */
     public final void renderState(G game, Renderer renderer) {
         //Calculate viewMatrix
-        view.calculateViewProjection();
-        camera.calculateViewProjection();
+        view.beforeRender();
+        camera.beforeRender();
 
         if(stretch) {
             GL33.glViewport(0, 0, 640, 480);

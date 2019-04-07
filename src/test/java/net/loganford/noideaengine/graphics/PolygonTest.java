@@ -12,7 +12,7 @@ public class PolygonTest {
             public void beginState(Game game) {
                 super.beginState(game);
 
-                getView().setPos(-20, -20);
+                getView().setPos(-32, -64);
             }
 
             @Override
@@ -29,6 +29,13 @@ public class PolygonTest {
                 renderer.drawLine(16, 16, 32f, 256f, 2f);
                 renderer.drawLine(258f, 258f, 300f, 16f, 32f);
                 renderer.drawLine(258f + 20f, 258f, 300f + 20f, 16f, 1f);
+            }
+
+            @Override
+            public void step(Game game, long delta) {
+                super.step(game, delta);
+
+                System.out.println(getView().getMouseX() + " " + getView().getMouseY());
             }
         });
         game.run();
