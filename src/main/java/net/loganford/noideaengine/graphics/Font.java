@@ -1,6 +1,7 @@
 package net.loganford.noideaengine.graphics;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.loganford.noideaengine.resources.PrototypeResource;
 import net.loganford.noideaengine.resources.loading.FontLoader;
 import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
@@ -24,6 +25,7 @@ public class Font extends PrototypeResource implements UnsafeMemory {
     @Getter private float accent;
     @Getter private float decent;
     @Getter private float lineGap;
+    @Getter @Setter private float scale = 1f;
     @Getter private Vector4f color = new Vector4f(0f, 0f, 0f, 1f);
     private STBTTPackedchar.Buffer charData;
 
@@ -51,8 +53,19 @@ public class Font extends PrototypeResource implements UnsafeMemory {
 
             float width = q.x1() - q.x0();
             float height = q.y1() - q.y0();
-            texture.getImage().render(renderer, x + q.x0(), y + q.y0() + accent, width, height, q.s0(), q.t0(), q.s1(), q.t1());
+            texture.getImage().render(renderer, x + q.x0() * scale, y + (q.y0() + accent) * scale, width * scale, height * scale, q.s0(), q.t0(), q.s1(), q.t1());
         }
+    }
+
+    public float getWidth(String text) {
+        float width = 0;
+        for(int i = 0; i < text.length(); i++) {
+            STBTruetype.stbtt_GetPackedQuad(charData, FontLoader.BITMAP_W, FontLoader.BITMAP_H, text.charAt(i), xb, yb, q, false);
+
+            float quadWidth = q.x1() - q.x0();
+            width+= quadWidth;
+        }
+        return width * scale;
     }
 
     protected void setColor(Vector4f color) {

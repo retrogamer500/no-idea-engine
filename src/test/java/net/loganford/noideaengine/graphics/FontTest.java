@@ -17,6 +17,7 @@ public class FontTest {
                 setBackgroundColor(.9f, .9f, .9f, .1f);
                 font = game.getFontManager().get("test_font");
                 font2 = game.getFontManager().get("test_font");
+                font2.setScale(2f);
 
                 font2.getColor().set(1f, 0f, 0f, 1f);
             }
