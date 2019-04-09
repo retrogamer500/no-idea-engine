@@ -10,6 +10,7 @@ import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.config.json.ImageConfig;
 import net.loganford.noideaengine.config.json.Resources;
 import net.loganford.noideaengine.utils.JsonValidator;
+import net.loganford.noideaengine.utils.file.FileResourceLocationFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -28,10 +29,11 @@ import java.util.stream.Collectors;
 public class ConfigurationLoader {
     public static final String DEFAULT_CONFIG_LOCATION = "game.json";
 
-    @Getter @Setter private String imageScanDirectory = null;
+    @Getter @Setter private boolean resourceScanningEnabled = true;
+    @Getter @Setter private String imageScanDirectory = "data/images/";
     @Getter @Setter private String configLocation = DEFAULT_CONFIG_LOCATION;
 
-    public GameConfig loadConfiguration() {
+    public GameConfig loadConfiguration(Game game) {
         GameConfig config;
         boolean configDirty = false;
 
@@ -58,12 +60,14 @@ public class ConfigurationLoader {
 
 
         //Scan images
-        if(imageScanDirectory != null) {
-            if(config.getResources().getImages() == null) {
-                config.getResources().setImages(new ArrayList<>());
+        if(game.getResourceLocationFactory() instanceof FileResourceLocationFactory) {
+            if (imageScanDirectory != null) {
+                if (config.getResources().getImages() == null) {
+                    config.getResources().setImages(new ArrayList<>());
+                }
+                scanImages(config);
+                configDirty = true;
             }
-            scanImages(config);
-            configDirty = true;
         }
 
         if(configDirty) {
@@ -106,15 +110,20 @@ public class ConfigurationLoader {
     }
 
     private List<Path> scanResources(List<SingleFileConfig> existingResources, String directory, String[] fileExtentions) {
-        try {
-            return Files.walk(Paths.get(new File(directory).toURI()))
-            .filter(Files::isRegularFile)
-            .filter(p -> Arrays.asList(fileExtentions).contains(FilenameUtils.getExtension(p.toString().toLowerCase())))
-            .filter(p -> notInConfig(existingResources, p))
-            .collect(Collectors.toList());
+        File directoryFile = new File(directory);
+        if(directoryFile.exists()) {
+            try {
+                return Files.walk(Paths.get(directoryFile.toURI()))
+                        .filter(Files::isRegularFile)
+                        .filter(p -> Arrays.asList(fileExtentions).contains(FilenameUtils.getExtension(p.toString().toLowerCase())))
+                        .filter(p -> notInConfig(existingResources, p))
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new GameEngineException(e);
+            }
         }
-        catch(IOException e) {
-            throw new GameEngineException(e);
+        else {
+            return new ArrayList<>();
         }
     }
 

@@ -106,7 +106,7 @@ public class Game {
      * Loads configuration file, and initializes the OpenGL context
      */
     private void startGame() {
-        config = configurationLoader.loadConfiguration();
+        config = configurationLoader.loadConfiguration(this);
 
         log.info("Initializing OpenGL context");
         getWindow().init();
