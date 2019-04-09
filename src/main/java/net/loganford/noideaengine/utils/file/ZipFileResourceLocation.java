@@ -29,4 +29,9 @@ public class ZipFileResourceLocation extends ResourceLocation {
     public String toString() {
         return "zip://" + zipEntry.getName();
     }
+
+    @Override
+    public boolean exists() {
+        return zipEntry != null;
+    }
 }

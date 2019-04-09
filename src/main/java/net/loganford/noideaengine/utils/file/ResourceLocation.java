@@ -63,4 +63,6 @@ public abstract class ResourceLocation {
     public void save(String data) {
         throw new SaveNotSupportedException();
     }
+
+    public abstract boolean exists();
 }

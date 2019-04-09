@@ -10,7 +10,9 @@ import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.config.json.ImageConfig;
 import net.loganford.noideaengine.config.json.Resources;
 import net.loganford.noideaengine.utils.JsonValidator;
+import net.loganford.noideaengine.utils.file.FileResourceLocation;
 import net.loganford.noideaengine.utils.file.FileResourceLocationFactory;
+import net.loganford.noideaengine.utils.file.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -27,30 +29,21 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class ConfigurationLoader {
-    public static final String DEFAULT_CONFIG_LOCATION = "game.json";
-
     @Getter @Setter private boolean resourceScanningEnabled = true;
     @Getter @Setter private String imageScanDirectory = "data/images/";
-    @Getter @Setter private String configLocation = DEFAULT_CONFIG_LOCATION;
+    @Getter @Setter private ResourceLocation configLocation = new FileResourceLocation(new File("game.json"));
 
     public GameConfig loadConfiguration(Game game) {
         GameConfig config;
         boolean configDirty = false;
 
-        File configFile = new File(configLocation);
-        if(configFile.exists()) {
+        if (configLocation.exists()) {
             log.info("Loading configuration file: " + configLocation);
             Gson gson = new Gson();
 
-            try {
-                String json = FileUtils.readFileToString(configFile, StandardCharsets.UTF_8);
-                config = gson.fromJson(json, GameConfig.class);
-            }
-            catch(IOException e) {
-                throw new GameEngineException(e);
-            }
-        }
-        else {
+            String json = configLocation.load();
+            config = gson.fromJson(json, GameConfig.class);
+        } else {
             log.info("No configuration file exists. Creating one...");
             config = new GameConfig();
             config.setResources(new Resources());
@@ -58,20 +51,21 @@ public class ConfigurationLoader {
         }
 
 
-
         //Scan images
-        if(game.getResourceLocationFactory() instanceof FileResourceLocationFactory) {
-            if (imageScanDirectory != null) {
-                if (config.getResources().getImages() == null) {
-                    config.getResources().setImages(new ArrayList<>());
+        if (configLocation.isSaveSupported()) {
+            if (game.getResourceLocationFactory() instanceof FileResourceLocationFactory) {
+                if (imageScanDirectory != null) {
+                    if (config.getResources().getImages() == null) {
+                        config.getResources().setImages(new ArrayList<>());
+                    }
+                    scanImages(config);
+                    configDirty = true;
                 }
-                scanImages(config);
-                configDirty = true;
             }
-        }
 
-        if(configDirty) {
-            saveConfig(config);
+            if (configDirty) {
+                saveConfig(config);
+            }
         }
 
         JsonValidator.validateThenThrow(config);
@@ -83,12 +77,7 @@ public class ConfigurationLoader {
         JsonValidator.validateThenThrow(config);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(config);
-        try {
-            FileUtils.writeStringToFile(new File(configLocation), json, StandardCharsets.UTF_8);
-        }
-        catch(IOException e) {
-            throw new GameEngineException(e);
-        }
+        configLocation.save(json);
     }
 
     @SuppressWarnings("unchecked")

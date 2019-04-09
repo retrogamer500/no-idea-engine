@@ -2,11 +2,10 @@ package net.loganford.noideaengine.utils.file;
 
 import lombok.Getter;
 import net.loganford.noideaengine.GameEngineException;
+import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class FileResourceLocation extends ResourceLocation {
 
@@ -37,5 +36,25 @@ public class FileResourceLocation extends ResourceLocation {
     @Override
     public String toString() {
         return "file://" + file.toString();
+    }
+
+    @Override
+    public boolean isSaveSupported() {
+        return true;
+    }
+
+    @Override
+    public void save(String data) {
+        try {
+            FileUtils.writeStringToFile(file, data, StandardCharsets.UTF_8);
+        }
+        catch(IOException e) {
+            throw new GameEngineException(e);
+        }
+    }
+
+    @Override
+    public boolean exists() {
+        return file.exists();
     }
 }
