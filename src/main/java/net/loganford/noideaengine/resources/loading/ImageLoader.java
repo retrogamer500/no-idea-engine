@@ -14,9 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public class ImageLoader implements ResourceLoader {
+public class ImageLoader extends ResourceLoader {
 
     private List<ImageConfig> imagesToLoad;
+
+    public ImageLoader(Game game) {
+        super(game);
+    }
 
     @Override
     public void init(Game game, LoadingContext ctx) {

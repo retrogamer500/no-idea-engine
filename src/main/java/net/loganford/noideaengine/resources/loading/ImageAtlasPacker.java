@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Log4j2
-public class ImageAtlasPacker implements ResourceLoader {
+public class ImageAtlasPacker extends ResourceLoader {
 
     public static final int MIN_REQUIRED_TEXTURE_SIZE = 2048;
     public static final int MAX_TEXTURE_SIZE = 8192;
@@ -27,6 +27,10 @@ public class ImageAtlasPacker implements ResourceLoader {
     private static int atlasNumber = 0;
     private int imagesLeftToInsert = 0;
     private List<Image> imagesToInsertInAtlases;
+
+    public ImageAtlasPacker(Game game) {
+        super(game);
+    }
 
     @Override
     public void init(Game game, LoadingContext ctx) {

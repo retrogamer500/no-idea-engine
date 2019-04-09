@@ -8,6 +8,7 @@ import net.loganford.noideaengine.graphics.shader.FragmentShader;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.VertexShader;
 import net.loganford.noideaengine.utils.FileUtils;
+import net.loganford.noideaengine.utils.file.ResourceLocation;
 import org.lwjgl.opengl.GL33;
 
 import java.io.File;
@@ -16,11 +17,15 @@ import java.util.HashMap;
 import java.util.List;
 
 @Log4j2
-public class ShaderLoader implements ResourceLoader {
+public class ShaderLoader extends ResourceLoader {
     private static HashMap<String, VertexShader> vertexShaderCache = new HashMap<>();
     private static HashMap<String, FragmentShader> fragmentShaderCache = new HashMap<>();
 
     private List<ShaderConfig> shadersToLoad;
+
+    public ShaderLoader(Game game) {
+        super(game);
+    }
 
     @Override
     public void init(Game game, LoadingContext ctx) {
@@ -43,12 +48,12 @@ public class ShaderLoader implements ResourceLoader {
     }
 
     public ShaderProgram load(ShaderConfig shaderDescription) {
-        return load(shaderDescription.getKey(), new File(shaderDescription.getVert()), new File(shaderDescription.getFrag()));
+        return load(shaderDescription.getKey(), getGame().getResourceLocationFactory().get(shaderDescription.getVert()),
+                getGame().getResourceLocationFactory().get(shaderDescription.getFrag()));
     }
 
-    public ShaderProgram load(String key, File vertexFile, File fragmentFile) {
-        return load(key, FileUtils.readFileAsString(vertexFile), vertexFile.getAbsolutePath(),
-                FileUtils.readFileAsString(fragmentFile), fragmentFile.getAbsolutePath());
+    public ShaderProgram load(String key, ResourceLocation vertexFile, ResourceLocation fragmentFile) {
+        return load(key, vertexFile.load(), vertexFile.toString(), fragmentFile.load(), fragmentFile.toString());
     }
 
     public ShaderProgram loadResource(String key, String vertexResource, String fragmentResource) {

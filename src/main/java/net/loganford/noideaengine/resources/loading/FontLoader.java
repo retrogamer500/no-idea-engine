@@ -22,11 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public class FontLoader implements ResourceLoader {
+public class FontLoader extends ResourceLoader {
     public static final int BITMAP_W = 512;
     public static final int BITMAP_H = 512;
 
     private List<FontConfig> fontsToLoad;
+
+    public FontLoader(Game game) {
+        super(game);
+    }
 
     @Override
     public void init(Game game, LoadingContext ctx) {

@@ -3,6 +3,7 @@ package net.loganford.noideaengine.graphics;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.resources.loading.ModelLoader;
@@ -11,6 +12,7 @@ import net.loganford.noideaengine.resources.loading.TextureLoader;
 import net.loganford.noideaengine.state.Camera;
 import net.loganford.noideaengine.state.View;
 import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.file.JarResourceLocationFactory;
 import org.joml.*;
 import org.lwjgl.opengl.GL33;
 
@@ -18,6 +20,7 @@ import java.lang.Math;
 
 @Log4j2
 public class Renderer {
+    private Game game;
     private Matrix4f matrix4f = new Matrix4f();
     @Getter private TextureBatch textureBatch;
 
@@ -52,6 +55,10 @@ public class Renderer {
     @Getter private Vector3f lightColor = new Vector3f();
     @Getter private Vector3f ambientLightColor = new Vector3f();
 
+    public Renderer(Game game) {
+        this.game = game;
+    }
+
     public void init() {
         //Initialize the bare-minimum resources necessary in order to bootstrap the game
         loadBuiltInTextures();
@@ -65,7 +72,7 @@ public class Renderer {
     }
 
     private void loadBuiltInTextures() {
-        TextureLoader textureLoader = new TextureLoader();
+        TextureLoader textureLoader = new TextureLoader(game);
         textureWhite = textureLoader.load(64, 64, (x, y) -> 0xFFFFFFFF);
         textureBlue = textureLoader.load(64, 64, (x, y) -> 0x0000FFFF);
         textureBlack = textureLoader.load(64, 64, (x, y) -> 0x000000FF);
@@ -73,7 +80,7 @@ public class Renderer {
     }
 
     private void loadBuildInModels() {
-        ModelLoader modelLoader = new ModelLoader(this, false);
+        ModelLoader modelLoader = new ModelLoader(game, false);
         modelQuad = modelLoader.load(new float[]{ 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0 },
                 new float[] { 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1 },
                 new float[] { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 });
@@ -105,10 +112,11 @@ public class Renderer {
     }
 
     private void loadBuildInShaders() {
-        ShaderLoader shaderLoader = new ShaderLoader();
-        shaderDefault = shaderLoader.loadResource("SHADER_DEFAULT", "/default.vert", "/default.frag");
-        shaderSolid = shaderLoader.loadResource("SHADER_SOLID", "/solid.vert", "/solid.frag");
-        shaderTile = shaderLoader.loadResource("SHADER_TILE", "/tile.vert", "/tile.frag");
+        ShaderLoader shaderLoader = new ShaderLoader(game);
+        JarResourceLocationFactory resourceLocationFactory = new JarResourceLocationFactory(getClass().getClassLoader());
+        shaderDefault = shaderLoader.load("SHADER_DEFAULT", resourceLocationFactory.get("default.vert"), resourceLocationFactory.get("default.frag"));
+        shaderSolid = shaderLoader.load("SHADER_SOLID", resourceLocationFactory.get("solid.vert"), resourceLocationFactory.get("solid.frag"));
+        shaderTile = shaderLoader.load("SHADER_TILE", resourceLocationFactory.get("tile.vert"), resourceLocationFactory.get("tile.frag"));
     }
 
     private void loadBuildInPolygons() {

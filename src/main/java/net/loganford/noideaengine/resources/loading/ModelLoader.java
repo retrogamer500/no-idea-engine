@@ -17,18 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public class ModelLoader implements ResourceLoader {
+public class ModelLoader extends ResourceLoader {
 
     private List<ModelConfig> modelsToLoad;
-    private Renderer renderer;
     private boolean loadMaterial;
 
-    public ModelLoader(Renderer renderer) {
-        this(renderer, true);
+    public ModelLoader(Game game) {
+        this(game, true);
     }
 
-    public ModelLoader(Renderer renderer, boolean loadMaterial) {
-        this.renderer = renderer;
+    public ModelLoader(Game game, boolean loadMaterial) {
+        super(game);
         this.loadMaterial = loadMaterial;
     }
 
@@ -231,7 +230,7 @@ public class ModelLoader implements ResourceLoader {
 
     private Material getDefaultMaterial() {
         Material material = new Material();
-        material.setDiffuse(renderer.getTextureWhite());
+        material.setDiffuse(getGame().getRenderer().getTextureWhite());
         return material;
     }
 }

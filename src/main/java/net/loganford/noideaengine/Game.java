@@ -18,6 +18,8 @@ import net.loganford.noideaengine.state.loading.LoadingScreen;
 import net.loganford.noideaengine.state.transition.InstantTransition;
 import net.loganford.noideaengine.state.transition.Transition;
 import net.loganford.noideaengine.utils.*;
+import net.loganford.noideaengine.utils.file.FileResourceLocationFactory;
+import net.loganford.noideaengine.utils.file.ResourceLocationFactory;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
@@ -46,6 +48,7 @@ public class Game {
     @Getter private GameConfig config;
     @Getter private AlarmSystem alarms;
 
+    @Getter @Setter private ResourceLocationFactory resourceLocationFactory = new FileResourceLocationFactory(new File(""));
     //Keep track of loaded resource groups
     @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
     //Resource managers
@@ -74,7 +77,7 @@ public class Game {
     public Game(GameState gameState) {
         input = new Input();
         window = new Window(this);
-        renderer = new Renderer();
+        renderer = new Renderer(this);
         alarms = new AlarmSystem();
         configurationLoader = new ConfigurationLoader();
         framerateMonitor = new FramerateMonitor();
@@ -252,13 +255,13 @@ public class Game {
 
     public List<ResourceLoader> getResourceLoaders() {
         List<ResourceLoader> resourceLoaders = new ArrayList<>();
-        resourceLoaders.add(new ShaderLoader());
-        resourceLoaders.add(new ImageLoader());
-        resourceLoaders.add(new TextureLoader());
-        resourceLoaders.add(new ImageAtlasPacker());
-        resourceLoaders.add(new ModelLoader(getRenderer()));
-        resourceLoaders.add(new SpriteLoader());
-        resourceLoaders.add(new FontLoader());
+        resourceLoaders.add(new ShaderLoader(this));
+        resourceLoaders.add(new ImageLoader(this));
+        resourceLoaders.add(new TextureLoader(this));
+        resourceLoaders.add(new ImageAtlasPacker(this));
+        resourceLoaders.add(new ModelLoader(this));
+        resourceLoaders.add(new SpriteLoader(this));
+        resourceLoaders.add(new FontLoader(this));
         return resourceLoaders;
     }
 

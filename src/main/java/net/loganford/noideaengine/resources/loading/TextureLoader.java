@@ -8,7 +8,11 @@ import org.lwjgl.BufferUtils;
 import java.nio.ByteBuffer;
 
 @Log4j2
-public class TextureLoader implements ResourceLoader {
+public class TextureLoader extends ResourceLoader {
+
+    public TextureLoader(Game game) {
+        super(game);
+    }
 
     @Override
     public void init(Game game, LoadingContext ctx) {

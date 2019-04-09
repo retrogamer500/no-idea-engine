@@ -11,9 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public class SpriteLoader implements ResourceLoader {
+public class SpriteLoader extends ResourceLoader {
 
     private List<SpriteConfig> spritesToLoad;
+
+    public SpriteLoader(Game game) {
+        super(game);
+    }
 
     @Override
     public void init(Game game, LoadingContext ctx) {
