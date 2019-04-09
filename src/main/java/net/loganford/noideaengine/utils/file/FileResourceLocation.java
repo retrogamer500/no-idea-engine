@@ -17,7 +17,7 @@ public class FileResourceLocation extends ResourceLocation {
     }
 
     public FileResourceLocation(File folder, String location) {
-        if(!folder.isDirectory()) {
+        if(folder.isFile()) {
             throw new GameEngineException("Folder " + folder.getAbsolutePath() + " must be a valid directory.");
         }
 

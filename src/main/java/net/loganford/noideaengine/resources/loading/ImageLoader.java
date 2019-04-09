@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.config.json.ImageConfig;
 import net.loganford.noideaengine.graphics.Image;
+import net.loganford.noideaengine.utils.file.ResourceLocation;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
@@ -44,7 +45,7 @@ public class ImageLoader extends ResourceLoader {
     }
 
     public Image load(ImageConfig imageConfig) {
-        File file = new File(imageConfig.getFilename());
+        ResourceLocation location = getGame().getResourceLocationFactory().get((imageConfig.getFilename()));
 
         ByteBuffer imageBuffer;
         Image image;
@@ -56,7 +57,7 @@ public class ImageLoader extends ResourceLoader {
             boolean flipImage = imageConfig.isFlipVertically();
             STBImage.stbi_set_flip_vertically_on_load(flipImage);
 
-            imageBuffer = STBImage.stbi_load(file.getAbsolutePath(), widthBuffer, heightBuffer, components, 4);
+            imageBuffer = STBImage.stbi_load_from_memory(location.loadBytes(), widthBuffer, heightBuffer, components, 4);
             imageBuffer.flip();
 
             int width = widthBuffer.get();

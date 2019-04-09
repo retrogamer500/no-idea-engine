@@ -15,4 +15,9 @@ public class JarResourceLocation extends ResourceLocation {
     protected InputStream getInputStream() {
         return classLoader.getResourceAsStream(resource);
     }
+
+    @Override
+    public String toString() {
+        return "jar://" + resource;
+    }
 }

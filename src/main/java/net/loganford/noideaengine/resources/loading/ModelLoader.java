@@ -5,6 +5,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Window;
 import net.loganford.noideaengine.config.json.ModelConfig;
 import net.loganford.noideaengine.graphics.*;
+import net.loganford.noideaengine.utils.file.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -55,11 +56,17 @@ public class ModelLoader extends ResourceLoader {
     public Model load(Game game, ModelConfig description) {
         File file = new File(description.getFilename());
 
-        AIScene aiScene = Assimp.aiImportFile(file.getAbsolutePath(), Assimp.aiProcessPreset_TargetRealtime_MaxQuality |
+        ResourceLocation location = game.getResourceLocationFactory().get(description.getFilename());
+        String locationName = location.toString();
+        String[] split = locationName.split("\\.");
+        String phint = split[split.length-1]; //Todo: verify that this is working
+
+        AIScene aiScene = Assimp.aiImportFileFromMemory(location.loadBytes(), Assimp.aiProcessPreset_TargetRealtime_MaxQuality |
                 Assimp.aiProcess_Triangulate |
                 Assimp.aiProcess_JoinIdenticalVertices |
                 Assimp.aiProcess_GenNormals |
-                Assimp.aiProcess_GenUVCoords );
+                Assimp.aiProcess_GenUVCoords
+        , phint);
 
         boolean swapZY = description.isSwapZY();
         float scale = description.getScale();
