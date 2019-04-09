@@ -8,7 +8,6 @@ import net.loganford.noideaengine.utils.file.ResourceLocation;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;

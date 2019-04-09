@@ -3,7 +3,6 @@ package net.loganford.noideaengine;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWKeyCallback;
 
 @Log4j2
 public class Input {

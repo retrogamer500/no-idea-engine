@@ -1,6 +1,5 @@
 package net.loganford.noideaengine;
 
-import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;

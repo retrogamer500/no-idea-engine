@@ -104,9 +104,7 @@ public class FontLoader extends ResourceLoader {
 
         font = new Font(texture, charData, description.getSize(), accent, decent, lineGap);
 
-        if(packContext != null) {
-            packContext.free();
-        }
+        packContext.free();
 
         return font;
     }
