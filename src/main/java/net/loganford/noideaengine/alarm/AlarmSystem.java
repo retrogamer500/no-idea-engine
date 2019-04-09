@@ -24,7 +24,7 @@ public class AlarmSystem {
         add(frequency, false, action);
     }
 
-    public void step(long delta) {
+    public void step(float delta) {
         Iterator<Alarm> iter = alarms.iterator();
         while(iter.hasNext()) {
             Alarm alarm = iter.next();

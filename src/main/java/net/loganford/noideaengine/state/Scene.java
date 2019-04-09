@@ -126,7 +126,7 @@ public class Scene extends GameState {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void step(Game game, long delta) {
+    public void step(Game game, float delta) {
         super.step(game, delta);
 
         //Resort entities which have had their depth changed

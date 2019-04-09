@@ -46,7 +46,7 @@ public class SceneTest {
         }
 
         @Override
-        public void step(Game game, TestScene scene, long delta) {
+        public void step(Game game, TestScene scene, float delta) {
             super.step(game, scene, delta);
             getSprite().setCurrentFrame(1);
             if(collidesWith(TestEntity.class)) {
@@ -73,7 +73,7 @@ public class SceneTest {
         }
 
         @Override
-        public void step(Game game, TestScene scene, long delta) {
+        public void step(Game game, TestScene scene, float delta) {
             super.step(game, scene, delta);
             if(game.getInput().keyDown(Input.KEY_W)) {
                 setY(getY() - (120 * delta/1000f));

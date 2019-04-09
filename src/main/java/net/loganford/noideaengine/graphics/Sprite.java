@@ -37,7 +37,7 @@ public class Sprite extends PrototypeResource {
         this.frames = frames;
     }
 
-    public void step(long delta) {
+    public void step(float delta) {
         frameTime += (animationSpeed * delta);
 
         while(frameTime >= frames.get(currentFrame).getDuration()) {

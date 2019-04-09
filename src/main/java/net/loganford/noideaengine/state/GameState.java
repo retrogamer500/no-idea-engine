@@ -51,7 +51,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param game
      * @param delta
      */
-    public void step(G game, long delta) {
+    public void step(G game, float delta) {
         view.step();
         camera.step();
         alarms.step(delta);

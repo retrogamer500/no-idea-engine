@@ -11,7 +11,7 @@ public class InputTest {
         Game game = new Game(new Scene() {
 
             @Override
-            public void step(Game game, long delta) {
+            public void step(Game game, float delta) {
                 super.step(game, delta);
 
                 if(game.getInput().mousePressed(Input.MOUSE_1)) {

@@ -8,17 +8,17 @@ public class Alarm {
 
     @Getter private long counter = 0;
 
-    @Getter @Setter private long frequency;
+    @Getter @Setter private double frequency;
     @Getter @Setter private boolean active = true;
     @Getter @Setter private boolean repeatable;
 
-    public Alarm(long frequency, boolean repeatable, Action action) {
+    public Alarm(double frequency, boolean repeatable, Action action) {
         this.frequency = frequency;
         this.repeatable = repeatable;
         this.action = action;
     }
 
-    public void step(long delta) {
+    public void step(float delta) {
         counter+= delta;
         while(counter > frequency) {
             action.doAction();

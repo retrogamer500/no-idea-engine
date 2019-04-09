@@ -38,7 +38,7 @@ public class SpriteTest {
             }
 
             @Override
-            public void step(Game game, long delta) {
+            public void step(Game game, float delta) {
                 sprite.step(delta);
                 sprite.setAngle(sprite.getAngle() + MathUtils.PI * delta/1000f);
                 sprite2.step(delta);

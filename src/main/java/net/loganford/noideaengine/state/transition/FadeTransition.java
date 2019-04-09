@@ -21,7 +21,7 @@ public class FadeTransition extends Transition {
     }
 
     @Override
-    public void step(Game game, long delta) {
+    public void step(Game game, float delta) {
         super.step(game, delta);
         timer+= delta;
 

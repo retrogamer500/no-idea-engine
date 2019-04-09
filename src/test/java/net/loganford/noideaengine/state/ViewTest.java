@@ -23,7 +23,7 @@ public class ViewTest {
             }
 
             @Override
-            public void step(Game game, long delta) {
+            public void step(Game game, float delta) {
                 sprite.step(delta);
                 getView().setX(getView().getX() + (30 * (delta/1000f)));
             }

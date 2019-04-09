@@ -32,7 +32,7 @@ public class PolygonTest {
             }
 
             @Override
-            public void step(Game game, long delta) {
+            public void step(Game game, float delta) {
                 super.step(game, delta);
 
                 System.out.println(getView().getMouseX() + " " + getView().getMouseY());

@@ -160,7 +160,7 @@ public class Game {
                 getWindow().clearFramebuffer();
 
                 //Step
-                long deltaTime = deltaTimeNs / NANOSECONDS_IN_MILLISECOND;
+                float deltaTime = (float)deltaTimeNs / NANOSECONDS_IN_MILLISECOND;
                 idleTimeTracker.end();
                 updateTimeTracker.start();
                 alarms.step(deltaTime);

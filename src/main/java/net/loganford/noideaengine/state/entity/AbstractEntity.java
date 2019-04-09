@@ -57,7 +57,7 @@ public abstract class AbstractEntity<G extends Game, S extends Scene> {
      * @param scene
      * @param delta
      */
-    public void beforeStep(G game, S scene, long delta) {}
+    public void beforeStep(G game, S scene, float delta) {}
 
     /**
      * This method is called every step of the game loop. Delta time is passed through here. Do not call any draw
@@ -66,7 +66,7 @@ public abstract class AbstractEntity<G extends Game, S extends Scene> {
      * @param scene
      * @param delta
      */
-    public void step(G game, S scene, long delta) {
+    public void step(G game, S scene, float delta) {
         alarms.step(delta);
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractEntity<G extends Game, S extends Scene> {
      * @param scene
      * @param delta
      */
-    public void afterStep(G game, S scene, long delta) {}
+    public void afterStep(G game, S scene, float delta) {}
 
     /**
      * This method is called once per step. Render the entity here. Do not change the state of the entity-- do that in
