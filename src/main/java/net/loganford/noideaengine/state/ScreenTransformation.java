@@ -20,7 +20,7 @@ public abstract class ScreenTransformation {
 
     protected void step() {}
 
-    protected void beforeRender() {}
+    protected void beforeRender(GameState gameState) {}
 
     public void onResize(int width, int height) {
         log.info("View/Camera being resized: " + width + " " + height);

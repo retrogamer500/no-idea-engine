@@ -27,9 +27,7 @@ public abstract class ResourceLocation {
     }
 
     public ByteBuffer loadBytes() {
-        ByteBuffer buffer;
-
-        buffer = BufferUtils.createByteBuffer(DEFAULT_BUFFER_SIZE);
+        ByteBuffer buffer = BufferUtils.createByteBuffer(DEFAULT_BUFFER_SIZE);
         try (InputStream source = getInputStream()) {
             byte[] buf = new byte[8192];
             while (true) {

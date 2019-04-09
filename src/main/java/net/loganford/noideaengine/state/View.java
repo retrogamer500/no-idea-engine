@@ -23,10 +23,10 @@ public class View extends ScreenTransformation {
     }
 
     @Override
-    protected void beforeRender() {
+    protected void beforeRender(GameState gameState) {
         float difference = 0;
         if(!gameState.isStretch()) {
-            difference = game.getWindow().getHeight() - height;
+            difference = game.getWindow().getHeight() - height * gameState.getScale();
         }
 
         projectionMatrix.identity().ortho(0, width, height, 0, -100f, 100f);

@@ -3,11 +3,12 @@ package net.loganford.noideaengine.graphics;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.state.Scene;
 import org.junit.Test;
+import org.lwjgl.opengl.GL33;
 
 public class PolygonTest {
     @Test
     public void testPolygon() {
-        Game game = new Game(new Scene() {
+        Scene scene = new Scene() {
             @Override
             public void beginState(Game game) {
                 super.beginState(game);
@@ -18,6 +19,10 @@ public class PolygonTest {
             @Override
             public void render(Game game, Renderer renderer) {
                 super.render(game, renderer);
+
+                renderer.clear(.3f, .3f, .3f);
+                GL33.glClearColor(0f, 0f, 0f, 1f);
+
 
                 renderer.drawCircleOutline(64f, 64f, 32f);
                 renderer.drawRectangleOutline(128f, 64f, 64f, 64f);
@@ -34,10 +39,13 @@ public class PolygonTest {
             @Override
             public void step(Game game, float delta) {
                 super.step(game, delta);
-
-                System.out.println(getView().getMouseX() + " " + getView().getMouseY());
             }
-        });
+        };
+
+        scene.setScale(2f);
+        scene.setStretch(false);
+
+        Game game = new Game(scene);
         game.run();
     }
 }

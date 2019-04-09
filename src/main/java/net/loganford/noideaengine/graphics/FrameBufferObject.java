@@ -55,8 +55,8 @@ public class FrameBufferObject implements UnsafeMemory {
             GL33.glTexImage2D(GL33.GL_TEXTURE_2D, 0, GL33.GL_RGBA, width, height, 0, GL33.GL_RGBA, GL33.GL_UNSIGNED_BYTE, 0);
             GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_WRAP_S, GL33.GL_CLAMP_TO_EDGE);
             GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_WRAP_T, GL33.GL_CLAMP_TO_EDGE);
-            GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_MAG_FILTER, GL33.GL_LINEAR);
-            GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_MIN_FILTER, GL33.GL_LINEAR);
+            GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_MAG_FILTER, GL33.GL_NEAREST);
+            GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_MIN_FILTER, GL33.GL_NEAREST);
             GL33.glGenerateMipmap(GL33.GL_TEXTURE_2D);
 
             GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0);
@@ -147,17 +147,9 @@ public class FrameBufferObject implements UnsafeMemory {
 
         GL33.glDisable(GL33.GL_DEPTH_TEST);
 
-        if(!gameState.isStretch()) {
-            float difference = game.getWindow().getHeight() - height;
-            projectionMatrix.identity().ortho(0, width, height, 0, -100f, 100f);
-            viewMatrix.identity().translate(0, difference, 0);
-            modelMatrix.identity().scale(width, height, 1);
-        }
-        else {
-            projectionMatrix.identity().ortho(0, game.getWindow().getWidth(), game.getWindow().getHeight(), 0, -100f, 100f);
-            viewMatrix.identity().translate(0, 0, 0);
-            modelMatrix.identity().scale(game.getWindow().getWidth(), game.getWindow().getHeight(), 1);
-        }
+        projectionMatrix.identity().ortho(0, game.getWindow().getWidth(), game.getWindow().getHeight(), 0, -100f, 100f);
+        viewMatrix.identity();
+        modelMatrix.identity().scale(game.getWindow().getWidth(), game.getWindow().getHeight(), 1);
 
 
         //Populate uniforms

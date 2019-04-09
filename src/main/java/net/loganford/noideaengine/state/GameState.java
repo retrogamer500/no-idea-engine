@@ -35,9 +35,9 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      */
     public void beginState(G game) {
         this.game = game;
-        view = new View(game, this, game.getWindow().getWidth(), game.getWindow().getHeight());
+        view = new View(game, this, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale));
         camera = new Camera(game, this);
-        frameBufferObject = new FrameBufferObject(game, game.getWindow().getWidth(), game.getWindow().getHeight(), 1, true);
+        frameBufferObject = new FrameBufferObject(game, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale), 1, true);
         clearColor = new Vector4f(0f, 0f, 0f, 1f);
         alarms = new AlarmSystem();
     }
@@ -64,11 +64,14 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      */
     public final void renderState(G game, Renderer renderer) {
         //Calculate viewMatrix
-        view.beforeRender();
-        camera.beforeRender();
+        view.beforeRender(this);
+        camera.beforeRender(this);
 
         if(stretch) {
-            GL33.glViewport(0, 0, 640, 480);
+            GL33.glViewport(0, 0, (int)(640 / scale), (int)(480 / scale));
+        }
+        else {
+            GL33.glViewport(0, 0, view.getWidth(), view.getHeight());
         }
 
         //Use FBO
@@ -129,15 +132,15 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     public void onResize(int width, int height) {
         if(view != null) {
             if(!stretch) {
-                GL33.glViewport(0, 0, width, height);
-                view.onResize(width, height);
+                view.onResize((int)(width / scale), (int)(height / scale));
+                GL33.glViewport(0, 0, view.getWidth(), view.getHeight());
             }
         }
 
         if(frameBufferObject != null) {
             if(!stretch) {
                 frameBufferObject.freeMemory();
-                frameBufferObject = new FrameBufferObject(game, width, height, 1, true);
+                frameBufferObject = new FrameBufferObject(game, (int)(width / scale), (int)(height / scale), 1, true);
             }
         }
     }
@@ -154,7 +157,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         return requiredResources;
     }
 
-    public void restartState() {
+    public void restart() {
         game.setState(this);
     }
 }
