@@ -6,7 +6,7 @@
 
     <groupId>net.loganford.noideaengine</groupId>
     <artifactId>noideaengine</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0-SNAPSHOT</version>
 
     <properties>
         <lwjgl.version>3.2.2-SNAPSHOT</lwjgl.version>
