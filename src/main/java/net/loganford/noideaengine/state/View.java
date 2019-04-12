@@ -14,6 +14,8 @@ public class View extends ScreenTransformation {
     @Getter @Setter private float y;
     @Getter @Setter private int width;
     @Getter @Setter private int height;
+    @Getter @Setter private float zoom = 1f;
+    @Getter @Setter private float angle = 0f;
 
     public View(Game game, GameState gameState, int width, int height) {
         super(game, gameState);
@@ -30,7 +32,7 @@ public class View extends ScreenTransformation {
         }
 
         projectionMatrix.identity().ortho(0, width, height, 0, -100f, 100f);
-        viewMatrix.identity().translate(-x, -y - difference, 0);
+        viewMatrix.identity().translate(width/2f, height/2f, 0f).scale(zoom, zoom, 1f).rotateZ(-angle).translate(-width/2f, -height/2f, 0f).translate(-x, -y - difference, 0);
     }
 
     @Override
@@ -52,10 +54,22 @@ public class View extends ScreenTransformation {
     }
 
     public float getMouseX() {
-        return game.getInput().getMouseX() + x;
+        V4.set(getGame().getInput().getMouseX(), getGame().getInput().getMouseY(), 0f, 1f);
+        V4.add(-width/2f, -height/2f, 0f, 0f)
+                .rotateZ(angle).mul(1/zoom)
+                .add(width/2f, height/2f, 0f, 0f)
+                .mul(1f/getGameState().getScale())
+                .add(x, y, 0, 0);
+        return V4.x;
     }
 
     public float getMouseY() {
-        return game.getInput().getMouseY() + y;
+        V4.set(getGame().getInput().getMouseX(), getGame().getInput().getMouseY(), 0f, 1f);
+        V4.add(-width/2f, -height/2f, 0f, 0f)
+                .rotateZ(angle).mul(1/zoom)
+                .add(width/2f, height/2f, 0f, 0f)
+                .mul(1f/getGameState().getScale())
+                .add(x, y, 0, 0);
+        return V4.y;
     }
 }

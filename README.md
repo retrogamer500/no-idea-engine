@@ -43,7 +43,7 @@ The engine should be compatible with Java all the way down to Java 8. This engin
     <dependency>
         <groupId>net.loganford.noideaengine</groupId>
         <artifactId>noideaengine</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```

@@ -8,6 +8,7 @@ import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL33;
 
@@ -21,6 +22,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     @Getter @Setter private View view;
     @Getter private FrameBufferObject frameBufferObject;
     private Vector4f clearColor;
+    private Matrix4f M4 = new Matrix4f();
 
     @Getter @Setter private float scale = 1; /*Todo: implement*/
     @Getter @Setter private boolean stretch = false;
@@ -85,6 +87,13 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         render(game, renderer);
         renderer.getTextureBatch().flush(renderer);
 
+        //Render UI
+        Matrix4f oldView = getView().getViewMatrix();
+        renderer.getView().setViewMatrix(M4.identity());
+        renderUI(game, renderer);
+        renderer.getTextureBatch().flush(renderer);
+        renderer.getView().setViewMatrix(oldView);
+
         //Render FBO
         GL33.glViewport(0, 0, game.getWindow().getWidth(), game.getWindow().getHeight());
         FrameBufferObject.useDefault();
@@ -97,6 +106,10 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param renderer
      */
     public void render(G game, Renderer renderer) {
+
+    }
+
+    public void renderUI(G game, Renderer renderer) {
 
     }
 

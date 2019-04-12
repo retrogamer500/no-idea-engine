@@ -2,6 +2,7 @@ package net.loganford.noideaengine.graphics;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.utils.MathUtils;
 import org.junit.Test;
 import org.lwjgl.opengl.GL33;
 
@@ -41,9 +42,6 @@ public class PolygonTest {
                 super.step(game, delta);
             }
         };
-
-        scene.setScale(2f);
-        scene.setStretch(false);
 
         Game game = new Game(scene);
         game.run();
