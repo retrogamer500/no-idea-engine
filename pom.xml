@@ -284,6 +284,7 @@
                     <repositoryName>no-idea-engine</repositoryName>      <!-- github repo name -->
                     <repositoryOwner>retrogamer500</repositoryOwner>    <!-- github username  -->
                     <userName>retrogamer500</userName>
+                    <merge>true</merge>
                 </configuration>
                 <executions>
                     <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
