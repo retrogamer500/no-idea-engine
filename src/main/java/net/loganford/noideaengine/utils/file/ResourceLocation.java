@@ -15,11 +15,8 @@ public abstract class ResourceLocation {
     protected abstract InputStream getInputStream();
 
     public String load() {
-        try {
-            InputStream stream = getInputStream();
-            String results = IOUtils.toString(getInputStream(), StandardCharsets.UTF_8);
-            stream.close();
-            return results;
+        try(InputStream stream = getInputStream()) {
+            return IOUtils.toString(stream, StandardCharsets.UTF_8);
         }
         catch(IOException e) {
             throw new GameEngineException(e);
