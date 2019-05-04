@@ -164,7 +164,7 @@ public class Game {
                 idleTimeTracker.end();
                 updateTimeTracker.start();
                 alarms.step(deltaTime);
-                gameState.step(this, deltaTime);
+                gameState.stepState(this, deltaTime);
                 updateTimeTracker.end();
 
                 //Render

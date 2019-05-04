@@ -160,6 +160,8 @@ public class Input {
     private boolean[] mouseButtonsDown = new boolean[MAX_MOUSECODE];
     private boolean[] mouseButtonsReleased = new boolean[MAX_MOUSECODE];
 
+    private boolean enabled = true;
+
     protected void handleKeyboard(long window, int key, int scancode, int action, int mods) {
         if(key < MAX_KEYCODE && key >= 0) {
             keysPressed[key] = action == GLFW.GLFW_PRESS;
@@ -210,26 +212,34 @@ public class Input {
     }
 
     public boolean mousePressed(int key) {
-        return mouseButtonsPressed[key];
+        return enabled && mouseButtonsPressed[key];
     }
 
     public boolean mouseReleased(int key) {
-        return mouseButtonsReleased[key];
+        return enabled && mouseButtonsReleased[key];
     }
 
     public boolean mouseDown(int key) {
-        return mouseButtonsDown[key];
+        return enabled && mouseButtonsDown[key];
     }
 
     public boolean keyPressed(int key) {
-        return keysPressed[key];
+        return enabled && keysPressed[key];
     }
 
     public boolean keyReleased(int key) {
-        return keysReleased[key];
+        return enabled && keysReleased[key];
     }
 
     public boolean keyDown(int key) {
-        return keysDown[key];
+        return enabled && keysDown[key];
+    }
+
+    public void enable() {
+        enabled = true;
+    }
+
+    public void disable() {
+        enabled = false;
     }
 }

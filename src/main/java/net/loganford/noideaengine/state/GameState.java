@@ -20,6 +20,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
 
     @Getter @Setter private Camera camera;
     @Getter @Setter private View view;
+    private List<UILayer> uiLayers;
     @Getter private FrameBufferObject frameBufferObject;
     private Vector4f clearColor;
     private Matrix4f M4 = new Matrix4f();
@@ -42,9 +43,39 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         frameBufferObject = new FrameBufferObject(game, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale), 1, true);
         clearColor = new Vector4f(0f, 0f, 0f, 1f);
         alarms = new AlarmSystem();
+        uiLayers = new ArrayList<>();
     }
 
     public void postBeginState(G game) {}
+
+    public final void stepState(G game, float delta) {
+        int stepDepth = getStepDepth();
+        int inputDepth = getInputDepth();
+
+        if(inputDepth != -1) {
+            game.getInput().disable();
+        }
+
+        if(stepDepth == -1) {
+            step(game, delta);
+        }
+
+        for(int i = Math.max(0, stepDepth); i < uiLayers.size(); i++) {
+            if(i == inputDepth) {
+                game.getInput().enable();
+            }
+            uiLayers.get(i).step(game, this, delta);
+        }
+
+        //remove destroyed UILayers
+        for(int i = uiLayers.size() - 1; i >= 0; i--) {
+            if(uiLayers.get(i).isDestroyed()) {
+                uiLayers.remove(i);
+            }
+        }
+
+        game.getInput().enable();
+    }
 
     /**
      * Called once per game loop. Most of your game logic will take place within this method, including moving entities.
@@ -84,7 +115,10 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         //Render scene
         renderer.setView(getView());
         renderer.setCamera(getCamera());
-        render(game, renderer);
+        int renderDepth = getRenderDepth();
+        if(renderDepth == -1) {
+            render(game, renderer);
+        }
         renderer.getTextureBatch().flush(renderer);
 
         //Render UI
@@ -110,7 +144,10 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     }
 
     public void renderUI(G game, Renderer renderer) {
-
+        int renderDepth = getRenderDepth();
+        for(int i = Math.max(0, renderDepth); i < uiLayers.size(); i++) {
+            uiLayers.get(i).render(game, this, renderer);
+        }
     }
 
     /**
@@ -172,5 +209,53 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
 
     public void restart() {
         game.setState(this);
+    }
+
+    public void addUILayer(UILayer layer) {
+        uiLayers.add(layer);
+        //Todo: check if UI layer is valid for this state
+        layer.beginUILayer(game, this);
+    }
+
+    /**
+     * @return the first UI layer to render, or -1 if this state should be rendered
+     */
+    public final int getRenderDepth() {
+        for(int index = uiLayers.size() - 1; index >= 0; index--) {
+            UILayer layer = uiLayers.get(index);
+            if(!layer.renderBelow()) {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * @return the first UI layer to update, or -1 if this state should be rendered
+     */
+    public final int getStepDepth() {
+        for(int index = uiLayers.size() - 1; index >= 0; index--) {
+            UILayer layer = uiLayers.get(index);
+            if(!layer.stepBelow()) {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * @return the first UI layer to send input to, or -1 if this state should be rendered
+     */
+    public final int getInputDepth() {
+        for(int index = uiLayers.size() - 1; index >= 0; index--) {
+            UILayer layer = uiLayers.get(index);
+            if(!layer.inputBelow()) {
+                return index;
+            }
+        }
+
+        return -1;
     }
 }

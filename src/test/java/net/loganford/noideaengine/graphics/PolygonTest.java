@@ -2,7 +2,6 @@ package net.loganford.noideaengine.graphics;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.utils.MathUtils;
 import org.junit.Test;
 import org.lwjgl.opengl.GL33;
 
