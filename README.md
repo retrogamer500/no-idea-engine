@@ -13,7 +13,6 @@ No-idea-engine is an OpenGL 3.3 game engine heavily inspired by the architecture
 ### Pending items for 1.0 release:
 * Javadocs
 * Documentation
-* Audio
 * 2D Background rendering
 * Resource loading groups
 
@@ -43,7 +42,7 @@ The engine should be compatible with Java all the way down to Java 8. This engin
     <dependency>
         <groupId>net.loganford.noideaengine</groupId>
         <artifactId>noideaengine</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.2.0</version>
     </dependency>
 </dependencies>
 ```
