@@ -24,8 +24,11 @@ public class AudioSystemTest {
                 super.step(game, delta);
 
                 if(game.getInput().keyPressed(Input.KEY_SPACE)) {
-                    log.info("Playing sound!");
                     sound.play(.1f);
+                }
+
+                if(game.getInput().keyPressed(Input.KEY_ENTER)) {
+                    game.getAudioSystem().stopAll();
                 }
             }
         };

@@ -67,7 +67,7 @@ public class AudioLoader extends ResourceLoader {
         int bufferId = AL11.alGenBuffers();
         AL11.alBufferData(bufferId, format, audioBuffer, sampleRate);
 
-        Audio audio = new Audio(bufferId, sampleRate, audioBuffer.limit());
+        Audio audio = new Audio(getGame().getAudioSystem(), bufferId, sampleRate, audioBuffer.limit());
         MemoryUtil.memFree(audioBuffer);
         return audio;
     }

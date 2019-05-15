@@ -10,8 +10,10 @@ public class Audio implements UnsafeMemory {
     @Getter private int bufferId;
     @Getter private int sampleRate;
     @Getter private int sampleLength;
+    private AudioSystem audioSystem;
 
-    public Audio(int bufferId, int sampleRate, int sampleLength) {
+    public Audio(AudioSystem audioSystem, int bufferId, int sampleRate, int sampleLength) {
+        this.audioSystem = audioSystem;
         this.bufferId = bufferId;
         this.sampleRate = sampleRate;
         this.sampleLength = sampleLength;
@@ -22,7 +24,7 @@ public class Audio implements UnsafeMemory {
     }
 
     public Playback play(float gain) {
-        return play(false, gain);
+        return play(gain, false);
     }
 
     public Playback loop() {
@@ -30,19 +32,19 @@ public class Audio implements UnsafeMemory {
     }
 
     public Playback loop(float gain) {
-        return play(true, gain);
+        return play(gain, true);
     }
 
-    private Playback play(boolean loop, float gain) {
-        float duration = (float)sampleLength / sampleRate;
-        int sourceId = AL11.alGenSources();
-        AL11.alSourcei(sourceId, AL11.AL_BUFFER, bufferId);
-        AL11.alSourcef(sourceId, AL11.AL_GAIN, gain);
-        AL11.alSourcei(sourceId, AL11.AL_LOOPING, loop ? 1 : 0);
-        AL11.alSourcePlay(sourceId);
-        Playback playback = new Playback(sourceId, duration, loop);
-        log.info("Sound playing. Source: " + sourceId + ". Buffer: " + bufferId + ". Duration: " + duration + ".");
-        return playback;
+    public float durationSeconds() {
+        return (float)sampleLength / sampleRate;
+    }
+
+    public long durationMillis() {
+        return (int)(1000f * sampleLength / sampleRate);
+    }
+
+    private Playback play(float gain, boolean loop) {
+        return audioSystem.playAudio(this, gain, loop);
     }
 
     @Override
