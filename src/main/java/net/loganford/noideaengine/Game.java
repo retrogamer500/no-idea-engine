@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.jodah.typetools.TypeResolver;
 import net.loganford.noideaengine.alarm.AlarmSystem;
+import net.loganford.noideaengine.audio.Audio;
+import net.loganford.noideaengine.audio.AudioSystem;
 import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.graphics.*;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
@@ -46,6 +48,7 @@ public class Game {
     @Getter private ConfigurationLoader configurationLoader;
     @Getter private GameConfig config;
     @Getter private AlarmSystem alarms;
+    @Getter private AudioSystem audioSystem;
 
     @Getter @Setter private ResourceLocationFactory resourceLocationFactory = new FileResourceLocationFactory(new File(""));
     //Keep track of loaded resource groups
@@ -57,6 +60,7 @@ public class Game {
     @Getter private ResourceManager<Model> modelManager = new ResourceManager<>();
     @Getter private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
     @Getter private ResourceManager<Font> fontManager = new ResourceManager<>();
+    @Getter private ResourceManager<Audio> audioManager = new ResourceManager<Audio>();
 
     private boolean running = true;
     @Getter private GameState gameState;
@@ -78,6 +82,7 @@ public class Game {
         window = new Window(this);
         renderer = new Renderer(this);
         alarms = new AlarmSystem();
+        audioSystem = new AudioSystem();
         configurationLoader = new ConfigurationLoader();
         framerateMonitor = new FramerateMonitor();
         renderTimeTracker = framerateMonitor.getPerformanceTracker("render time");
@@ -201,13 +206,13 @@ public class Game {
 
         }
 
-        transition.endState(this);
-        gameState.endState(this);
-
-
+        terminate();
     }
 
     private void terminate() {
+        transition.endState(this);
+        gameState.endState(this);
+        audioSystem.freeMemory();
         GLFW.glfwTerminate();
     }
 
@@ -261,6 +266,7 @@ public class Game {
         resourceLoaders.add(new ModelLoader(this));
         resourceLoaders.add(new SpriteLoader(this));
         resourceLoaders.add(new FontLoader(this));
+        resourceLoaders.add(new AudioLoader(this));
         return resourceLoaders;
     }
 

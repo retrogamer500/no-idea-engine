@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.config.SingleFileConfig;
+import net.loganford.noideaengine.config.json.AudioConfig;
 import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.config.json.ImageConfig;
 import net.loganford.noideaengine.config.json.Resources;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class ConfigurationLoader {
     @Getter @Setter private boolean resourceScanningEnabled = true;
     @Getter @Setter private String imageScanDirectory = "data/images/";
+    @Getter @Setter private String audioScanDirectory = "data/audio/";
     @Getter @Setter private ResourceLocation configLocation = new FileResourceLocation(new File("game.json"));
 
     public GameConfig loadConfiguration(Game game) {
@@ -66,6 +68,23 @@ public class ConfigurationLoader {
             }
         }
 
+        //Scan audio
+        if (configLocation.isSaveSupported()) {
+            if (game.getResourceLocationFactory() instanceof FileResourceLocationFactory) {
+                if (audioScanDirectory != null) {
+                    if (config.getResources().getAudio() == null) {
+                        config.getResources().setAudio(new ArrayList<>());
+                    }
+                    scanAudio(config);
+                    configDirty = true;
+                }
+            }
+
+            if (configDirty) {
+                saveConfig(config);
+            }
+        }
+
         JsonValidator.validateThenThrow(config);
         return config;
     }
@@ -89,6 +108,20 @@ public class ConfigurationLoader {
             imageConfig.setFilename(getRelativePath(path, ""));
             imageConfig.setKey(getRelativePath(path, imageScanDirectory));
             config.getResources().getImages().add(imageConfig);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void scanAudio(GameConfig config) {
+        removeDeletedFiles((List<SingleFileConfig>)(List<?>)config.getResources().getAudio());
+        List<Path> audioToLoad = scanResources((List<SingleFileConfig>)(List<?>)config.getResources().getAudio(),
+                audioScanDirectory, new String[]{"ogg"});
+
+        for(Path path : audioToLoad) {
+            AudioConfig audioConfig = new AudioConfig();
+            audioConfig.setFilename(getRelativePath(path, ""));
+            audioConfig.setKey(getRelativePath(path, audioScanDirectory));
+            config.getResources().getAudio().add(audioConfig);
         }
     }
 

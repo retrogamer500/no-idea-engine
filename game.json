@@ -49,6 +49,13 @@
         "key": "test_font",
         "group": 0
       }
+    ],
+    "audio": [
+      {
+        "filename": "data/audio/test.ogg",
+        "key": "test.ogg",
+        "group": 0
+      }
     ]
   }
 }

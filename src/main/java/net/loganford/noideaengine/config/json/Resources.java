@@ -13,4 +13,5 @@ public class Resources {
     private List<ModelConfig> models;
     private List<SpriteConfig> sprites;
     private List<FontConfig> fonts;
+    private List<AudioConfig> audio;
 }
