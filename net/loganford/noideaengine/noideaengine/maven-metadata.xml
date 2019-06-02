@@ -3,10 +3,9 @@
   <groupId>net.loganford.noideaengine</groupId>
   <artifactId>noideaengine</artifactId>
   <versioning>
-    <release>0.2.0</release>
     <versions>
-      <version>0.2.0</version>
+      <version>0.3.0-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20190602231542</lastUpdated>
+    <lastUpdated>20190602231757</lastUpdated>
   </versioning>
 </metadata>
