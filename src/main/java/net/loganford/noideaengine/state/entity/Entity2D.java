@@ -76,6 +76,8 @@ public abstract class Entity2D<G extends Game, S extends Scene<G>> extends Abstr
 
     @Override
     public void step(G game, S scene, float delta) {
+        super.step(game, scene, delta);
+
         if(sprite != null) {
             sprite.step(delta);
         }
