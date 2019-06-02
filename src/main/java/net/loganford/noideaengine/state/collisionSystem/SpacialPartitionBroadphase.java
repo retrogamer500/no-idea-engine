@@ -4,7 +4,7 @@ import net.loganford.noideaengine.shape.Line;
 import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape2D;
 import net.loganford.noideaengine.state.entity.Entity2D;
-import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;

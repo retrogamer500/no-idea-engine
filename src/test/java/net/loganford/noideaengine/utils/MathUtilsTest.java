@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.utils;
 
+import net.loganford.noideaengine.utils.math.MathUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -5,7 +5,7 @@ import net.loganford.noideaengine.Input;
 import net.loganford.noideaengine.state.collisionSystem.SpacialPartitionBroadphase;
 import net.loganford.noideaengine.state.entity.Entity2D;
 import net.loganford.noideaengine.state.transition.FadeTransition;
-import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.math.MathUtils;
 import org.junit.Test;
 
 public class SceneTest {

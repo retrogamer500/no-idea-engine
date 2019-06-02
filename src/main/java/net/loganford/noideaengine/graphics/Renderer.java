@@ -11,7 +11,7 @@ import net.loganford.noideaengine.resources.loading.ShaderLoader;
 import net.loganford.noideaengine.resources.loading.TextureLoader;
 import net.loganford.noideaengine.state.Camera;
 import net.loganford.noideaengine.state.View;
-import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.file.JarResourceLocationFactory;
 import org.joml.*;
 import org.lwjgl.opengl.GL33;

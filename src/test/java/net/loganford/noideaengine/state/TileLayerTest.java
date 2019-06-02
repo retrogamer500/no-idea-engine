@@ -2,7 +2,7 @@ package net.loganford.noideaengine.state;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.math.MathUtils;
 import org.junit.Test;
 
 public class TileLayerTest {

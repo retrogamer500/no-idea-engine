@@ -15,13 +15,13 @@ import net.loganford.noideaengine.state.entity.AbstractEntity;
 import net.loganford.noideaengine.state.entity.Entity2D;
 import net.loganford.noideaengine.state.entity.EntityAction;
 import net.loganford.noideaengine.state.entity.EntityDistancePair;
-import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.util.*;
 
 @Log4j2
-public class Scene extends GameState {
-    private Game game;
+public class Scene<G extends Game> extends GameState<G> {
+    private G game;
 
     private boolean sceneBegun = false;
     private ArrayList<AbstractEntity> depthChangedEntities;
@@ -82,7 +82,7 @@ public class Scene extends GameState {
 
 
     @Override
-    public void beginState(Game game) {
+    public void beginState(G game) {
         super.beginState(game);
         this.game = game;
         depthChangedEntities = new ArrayList<>();
@@ -98,7 +98,7 @@ public class Scene extends GameState {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void postBeginState(Game game) {
+    public void postBeginState(G game) {
         super.postBeginState(game);
 
         Iterator<AbstractEntity> it = game.getPersistentEntities().iterator();
@@ -126,7 +126,7 @@ public class Scene extends GameState {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void step(Game game, float delta) {
+    public void step(G game, float delta) {
         super.step(game, delta);
 
         //Resort entities which have had their depth changed
@@ -204,7 +204,7 @@ public class Scene extends GameState {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void endState(Game game) {
+    public void endState(G game) {
         super.endState(game);
         sceneBegun = false;
 

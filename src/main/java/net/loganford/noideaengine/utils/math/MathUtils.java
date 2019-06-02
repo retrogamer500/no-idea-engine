@@ -1,4 +1,4 @@
-package net.loganford.noideaengine.utils;
+package net.loganford.noideaengine.utils.math;
 
 public class MathUtils {
     public static float EPSILON = .001f;

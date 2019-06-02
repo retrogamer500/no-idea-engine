@@ -2,7 +2,7 @@ package net.loganford.noideaengine.graphics;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector4f;
 import org.junit.Test;
 

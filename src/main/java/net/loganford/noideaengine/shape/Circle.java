@@ -2,7 +2,7 @@ package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.loganford.noideaengine.utils.MathUtils;
+import net.loganford.noideaengine.utils.math.MathUtils;
 
 public class Circle extends Shape2D {
     @Getter @Setter private float x;
