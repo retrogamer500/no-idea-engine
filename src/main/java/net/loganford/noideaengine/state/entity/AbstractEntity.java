@@ -7,7 +7,7 @@ import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 
-public abstract class AbstractEntity<G extends Game, S extends Scene> {
+public abstract class AbstractEntity<G extends Game, S extends Scene<G>> {
     @Getter private boolean destroyed = false;
     @Getter private float depth = 0;
     @Getter @Setter private S scene;

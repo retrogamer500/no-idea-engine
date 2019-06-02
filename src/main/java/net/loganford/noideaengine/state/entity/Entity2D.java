@@ -13,7 +13,7 @@ import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.util.List;
 
-public abstract class Entity2D<G extends Game, S extends Scene> extends AbstractEntity<G, S> {
+public abstract class Entity2D<G extends Game, S extends Scene<G>> extends AbstractEntity<G, S> {
     @Getter @Setter private Sprite sprite;
     @Getter private Shape2D shape;
 

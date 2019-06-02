@@ -20,7 +20,7 @@ public class SceneTest {
         game.run();
     }
 
-    public class TestScene extends Scene {
+    public class TestScene extends Scene<Game> {
         private PlayerEntity playerEntity;
 
         @Override
