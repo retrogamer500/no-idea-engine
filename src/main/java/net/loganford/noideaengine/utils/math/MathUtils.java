@@ -41,4 +41,9 @@ public class MathUtils {
     public static float clamp(float low, float high, float value) {
         return Math.min(Math.max(value, low), high);
     }
+
+    public static float lerp(float a, float b, float amount) {
+        float diff = b - a;
+        return a + diff * amount;
+    }
 }
