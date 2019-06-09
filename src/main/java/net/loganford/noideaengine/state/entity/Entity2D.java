@@ -160,8 +160,15 @@ public abstract class Entity2D<G extends Game, S extends Scene<G>> extends Abstr
      * @param clazz
      * @return
      */
-    public Entity2D getCollision(Class<? extends Entity2D> clazz) {
+    public <C extends Entity2D> C getCollision(Class<C> clazz) {
         return getScene().getCollisionSystem2D().getCollision(shape, clazz);
+    }
+
+    public <C extends Entity2D> C getCollisionAt(Class<C> clazz, float x, float y) {
+        shape.setPosition(x - shapeOffsetX, y - shapeOffsetY);
+        C entity = getScene().getCollisionSystem2D().getCollision(shape, clazz);
+        shape.setPosition(this.x - shapeOffsetX, this.y - shapeOffsetY);
+        return entity;
     }
 
     /**
@@ -172,6 +179,13 @@ public abstract class Entity2D<G extends Game, S extends Scene<G>> extends Abstr
      */
     public <C extends Entity2D> List<C> getCollisions(Class<C> clazz) {
         return getScene().getCollisionSystem2D().getCollisions(shape, clazz);
+    }
+
+    public <C extends Entity2D> List<C> getCollisionsAt(Class<C> clazz, float x, float y) {
+        shape.setPosition(x - shapeOffsetX, y - shapeOffsetY);
+        List<C> entities = getScene().getCollisionSystem2D().getCollisions(shape, clazz);
+        shape.setPosition(this.x - shapeOffsetX, this.y - shapeOffsetY);
+        return entities;
     }
 
     /**
