@@ -28,6 +28,9 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     @Getter @Setter private float scale = 1; /*Todo: implement*/
     @Getter @Setter private boolean stretch = false;
 
+    @Getter @Setter private float width;
+    @Getter @Setter private float height;
+
     @Getter private AlarmSystem alarms;
     private G game;
 
@@ -39,6 +42,8 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     public void beginState(G game) {
         this.game = game;
         view = new View(game, this, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale));
+        width = view.getWidth();
+        height = view.getHeight();
         camera = new Camera(game, this);
         frameBufferObject = new FrameBufferObject(game, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale), 1, true);
         clearColor = new Vector4f(0f, 0f, 0f, 1f);

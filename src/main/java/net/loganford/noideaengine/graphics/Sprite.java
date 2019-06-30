@@ -71,4 +71,12 @@ public class Sprite extends PrototypeResource {
         frame.getImage().setColor(color);
         frame.getImage().render(renderer, x, y);
     }
+
+    public float getWidth() {
+        return frames.get(0).getImage().getWidth();
+    }
+
+    public float getHeight() {
+        return frames.get(0).getImage().getHeight();
+    }
 }
