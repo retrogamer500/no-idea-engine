@@ -8,10 +8,12 @@ import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.resources.RequireGroup;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL33;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,6 +211,16 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     public List<Integer> getRequiredResourceGroups() {
         List<Integer> requiredResources = new ArrayList<>();
         requiredResources.add(0);
+
+        for (Annotation annotation : getClass().getDeclaredAnnotations()) {
+            if(annotation instanceof RequireGroup.List) {
+                RequireGroup.List requireGroupList = (RequireGroup.List) annotation;
+                for(RequireGroup requireGroup: requireGroupList.value()) {
+                    requiredResources.add(requireGroup.value());
+                }
+            }
+        }
+
         return requiredResources;
     }
 

@@ -9,12 +9,12 @@ No-idea-engine is an OpenGL 3.3 game engine heavily inspired by the architecture
 * User-defined GLSL shaders
 * Customizable loading screens and state transitions
 * Automatic loading of resources defined in configuration JSON file
+* Ability to control which resources are automatically loaded or unloaded per each state
 
 ### Pending items for 1.0 release:
 * Javadocs
 * Documentation
 * 2D Background rendering
-* Resource loading groups
 
 ### Pending items after 1.0:
 * Better 3D support
