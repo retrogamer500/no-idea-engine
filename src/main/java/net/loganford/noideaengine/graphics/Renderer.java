@@ -14,6 +14,7 @@ import net.loganford.noideaengine.state.View;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.file.JarResourceLocationFactory;
 import org.joml.*;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL33;
 
 import java.lang.Math;
@@ -54,6 +55,7 @@ public class Renderer {
     @Getter private Vector3f lightDirection = new Vector3f();
     @Getter private Vector3f lightColor = new Vector3f();
     @Getter private Vector3f ambientLightColor = new Vector3f();
+    @Getter private boolean cullingBackface = true;
 
     public Renderer(Game game) {
         this.game = game;
@@ -67,6 +69,7 @@ public class Renderer {
         loadBuildInPolygons();
 
         resetShader();
+        setCullingBackface(true);
 
         textureBatch = new TextureBatch();
     }
@@ -146,6 +149,17 @@ public class Renderer {
         getTextureBatch().flush(this);
         GL33.glClearColor(r, g, b, 1f);
         GL33.glClear(GL33.GL_COLOR_BUFFER_BIT | GL33.GL_DEPTH_BUFFER_BIT);
+    }
+
+    public void setCullingBackface(boolean cullingBackface) {
+        if(this.cullingBackface != cullingBackface) {
+            if (cullingBackface) {
+                GL33.glEnable(GL33.GL_CULL_FACE);
+            } else {
+                GL33.glDisable(GL33.GL_CULL_FACE);
+            }
+        }
+        this.cullingBackface = cullingBackface;
     }
 
     public static void errorCheck() {

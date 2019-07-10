@@ -110,6 +110,8 @@ public class TextureBatch implements UnsafeMemory {
 
     public void flush(Renderer renderer) {
         if(quads != 0) {
+            boolean cullingBackface = renderer.isCullingBackface();
+            renderer.setCullingBackface(false);
             vao.flipAndUpdate(0);
 
             //Populate uniforms
@@ -138,6 +140,7 @@ public class TextureBatch implements UnsafeMemory {
             quads = 0;
             vao.clear();
             currentTexture = null;
+            renderer.setCullingBackface(cullingBackface);
         }
     }
 
