@@ -3,7 +3,9 @@ package net.loganford.noideaengine.state;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.jodah.typetools.TypeResolver;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
@@ -27,7 +29,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     private Vector4f clearColor;
     private Matrix4f M4 = new Matrix4f();
 
-    @Getter @Setter private float scale = 1; /*Todo: implement*/
+    @Getter @Setter private float scale = 1;
     @Getter @Setter private boolean stretch = false;
 
     @Getter @Setter private float width;
@@ -228,10 +230,16 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         game.setState(this);
     }
 
+    @SuppressWarnings("unchecked")
     public void addUILayer(UILayer layer) {
-        uiLayers.add(layer);
-        //Todo: check if UI layer is valid for this state
-        layer.beginUILayer(game, this);
+        Class<?>[] generics = TypeResolver.resolveRawArguments(UILayer.class, uiLayers.getClass());
+        if(generics[0].isAssignableFrom(game.getClass()) && generics[1].isAssignableFrom(getClass())) {
+            uiLayers.add(layer);
+            layer.beginUILayer(game, this);
+        }
+        else {
+            throw new GameEngineException("Tried to add UILayer to state with improper generics: " + layer.getClass().getName());
+        }
     }
 
     /**
