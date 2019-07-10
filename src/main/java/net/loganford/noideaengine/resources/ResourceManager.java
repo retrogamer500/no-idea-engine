@@ -1,13 +1,11 @@
 package net.loganford.noideaengine.resources;
 
 import net.loganford.noideaengine.GameEngineException;
+import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.resources.loading.LoadingContext;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class ResourceManager<T> {
+public class ResourceManager<T extends Resource> {
     private Map<String, T> resources;
 
     public ResourceManager() {
@@ -55,5 +53,20 @@ public class ResourceManager<T> {
 
     public List<String> getKeys() {
         return new ArrayList<>(resources.keySet());
+    }
+
+    public void unloadGroups(LoadingContext ctx) {
+        for(Integer groupToUnload: ctx.getUnloadingGroups()) {
+            Iterator<Map.Entry<String, T>> iterator = resources.entrySet().iterator();
+            while(iterator.hasNext()) {
+                Map.Entry<String, T> entry = iterator.next();
+                if(entry.getValue().getLoadingGroup() == groupToUnload) {
+                    if(entry.getValue() instanceof UnsafeMemory) {
+                        ((UnsafeMemory)entry.getValue()).freeMemory();
+                    }
+                    iterator.remove();
+                }
+            }
+        }
     }
 }

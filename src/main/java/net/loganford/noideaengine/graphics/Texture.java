@@ -1,12 +1,13 @@
 package net.loganford.noideaengine.graphics;
 
 import lombok.Getter;
+import net.loganford.noideaengine.resources.Resource;
 import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
 import org.lwjgl.opengl.GL33;
 
 import java.nio.ByteBuffer;
 
-public class Texture implements UnsafeMemory {
+public class Texture extends Resource implements UnsafeMemory {
 
     @Getter private int textureId = -1;
     @Getter private int width;

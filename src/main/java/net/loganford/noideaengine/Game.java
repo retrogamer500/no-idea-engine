@@ -100,6 +100,7 @@ public class Game {
         if(ctx.isLoadingRequired()) {
             this.gameState = loadingScreen;
             loadingScreen.beginLoadingScreen(ctx, gameState);
+            loadedResourceGroups.addAll(ctx.getLoadingGroups());
         }
         else {
             this.gameState = gameState;
@@ -219,6 +220,17 @@ public class Game {
     protected void handleTransitions() {
         if(nextGameState != null) {
             if (!(gameState instanceof Transition)) {
+
+                if(!(gameState instanceof LoadingScreen)) {
+                    LoadingContext ctx = new LoadingContext(this, nextGameState);
+                    if (ctx.isLoadingRequired()) {
+                        loadingScreen.beginLoadingScreen(ctx, nextGameState);
+                        nextGameState = loadingScreen;
+                        loadedResourceGroups.removeAll(ctx.getUnloadingGroups());
+                        loadedResourceGroups.addAll(ctx.getLoadingGroups());
+                    }
+                }
+
                 transition.beginTransition(this, gameState, nextGameState);
                 transition.beginState(this);
                 transition.postBeginState(this);
@@ -272,7 +284,7 @@ public class Game {
 
     public void setState(GameState state) {
         if(state != null) {
-            if (state instanceof Transition || state instanceof LoadingScreen) {
+            if (state instanceof Transition) {
                 throw new GameEngineException("Cannot directly set state to transitions or loading screens.");
             }
 

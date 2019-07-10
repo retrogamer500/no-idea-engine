@@ -11,6 +11,7 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.stb.STBVorbis;
@@ -28,9 +29,11 @@ public class AudioLoader extends ResourceLoader {
 
     @Override
     public void init(Game game, LoadingContext ctx) {
+        game.getAudioManager().unloadGroups(ctx);
         audioToLoad = new ArrayList<>();
         if(game.getConfig().getResources().getImages() != null) {
-            audioToLoad.addAll(game.getConfig().getResources().getAudio());
+            audioToLoad.addAll(game.getConfig().getResources().getAudio()
+                    .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()));
         }
     }
 
@@ -38,6 +41,8 @@ public class AudioLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         AudioConfig config = audioToLoad.remove(0);
         Audio audio = load(config);
+        audio.setKey(config.getKey());
+        audio.setLoadingGroup(config.getGroup());
         game.getAudioManager().put(config.getKey(), audio);
         log.info("Audio loaded: " + config.getFilename());
     }

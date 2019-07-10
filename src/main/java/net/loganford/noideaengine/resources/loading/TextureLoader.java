@@ -16,12 +16,13 @@ public class TextureLoader extends ResourceLoader {
 
     @Override
     public void init(Game game, LoadingContext ctx) {
-
+        game.getTextureManager().unloadGroups(ctx);
+        //Todo: implement
     }
 
     @Override
     public void loadOne(Game game, LoadingContext ctx) {
-
+        //Todo: implement
     }
 
     @Override

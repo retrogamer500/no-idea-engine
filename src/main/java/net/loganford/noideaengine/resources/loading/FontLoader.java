@@ -18,6 +18,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class FontLoader extends ResourceLoader {
@@ -32,18 +33,22 @@ public class FontLoader extends ResourceLoader {
 
     @Override
     public void init(Game game, LoadingContext ctx) {
+        game.getFontManager().unloadGroups(ctx);
         fontsToLoad = new ArrayList<>();
         if(game.getConfig().getResources().getFonts() != null) {
-            fontsToLoad.addAll(game.getConfig().getResources().getFonts());
+            fontsToLoad.addAll(game.getConfig().getResources().getFonts()
+                    .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()));
         }
     }
 
     @Override
     public void loadOne(Game game, LoadingContext ctx) {
-        FontConfig description = fontsToLoad.remove(0);
-        Font font = load(description);
-        log.info("Loaded font: " + description.getKey());
-        game.getFontManager().put(description.getKey(), font);
+        FontConfig config = fontsToLoad.remove(0);
+        Font font = load(config);
+        font.setKey(config.getKey());
+        font.setLoadingGroup(config.getGroup());
+        log.info("Loaded font: " + config.getKey());
+        game.getFontManager().put(config.getKey(), font);
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Texture;
+import net.loganford.noideaengine.resources.Resource;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.stb.STBRPContext;
@@ -13,9 +14,8 @@ import org.lwjgl.stb.STBRPRect;
 import org.lwjgl.stb.STBRectPack;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ImageAtlasPacker extends ResourceLoader {
@@ -36,19 +36,29 @@ public class ImageAtlasPacker extends ResourceLoader {
     public void init(Game game, LoadingContext ctx) {
         if(game.getConfig().getResources().getImages() != null) {
             //Todo: when implementing loading groups, check all in group where texture id is null
-            imagesLeftToInsert = game.getConfig().getResources().getImages().size();
+            imagesLeftToInsert = game.getConfig().getResources().getImages()
+                    .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()).size();
         }
     }
 
     @Override
     public void loadOne(Game game, LoadingContext ctx) {
         if(imagesToInsertInAtlases == null) {
-            imagesToInsertInAtlases = new ArrayList<>(game.getImageManager().getValues());
+            imagesToInsertInAtlases = game.getImageManager().getValues().stream().filter((i) -> i.getTexture() == null).collect(Collectors.toList());
+            imagesToInsertInAtlases.sort(Comparator.comparingInt(Resource::getLoadingGroup));
         }
 
-        Texture atlasTexture = loadIntoAtlas(imagesToInsertInAtlases);
-
+        int groupToInsert = imagesToInsertInAtlases.get(0).getLoadingGroup();
+        List<Image> singleGroupList = imagesToInsertInAtlases.stream().filter(i -> i.getLoadingGroup() == groupToInsert).collect(Collectors.toList());
+        Texture atlasTexture = loadIntoAtlas(singleGroupList);
         String key = "_atlas_" + ImageAtlasPacker.atlasNumber;
+        atlasTexture.setKey(key);
+        atlasTexture.setLoadingGroup(groupToInsert);
+        //Remove elements from imagesToInsertInAtlases which were removed from singleGroupList
+        imagesToInsertInAtlases.removeIf((i) -> i.getLoadingGroup() == groupToInsert);
+        imagesToInsertInAtlases.addAll(0, singleGroupList);
+
+
         ImageAtlasPacker.atlasNumber++;
         log.info("Image atlas loaded. Name: " + key + " Width: " + atlasTexture.getWidth() + ". Height: " + atlasTexture.getHeight() + ".");
         game.getTextureManager().put(key, atlasTexture);
@@ -138,13 +148,7 @@ public class ImageAtlasPacker extends ResourceLoader {
         }
 
         //Remove updated images from array
-        Iterator<Image> iter = images.iterator();
-        while(iter.hasNext()) {
-            Image image = iter.next();
-            if(image.getTexture() != null) {
-                iter.remove();
-            }
-        }
+        images.removeIf(image -> image.getTexture() != null);
 
         //Free memory
         context.free();

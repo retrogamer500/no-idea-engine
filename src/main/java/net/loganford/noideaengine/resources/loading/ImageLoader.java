@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ImageLoader extends ResourceLoader {
@@ -24,9 +25,11 @@ public class ImageLoader extends ResourceLoader {
 
     @Override
     public void init(Game game, LoadingContext ctx) {
+        game.getImageManager().unloadGroups(ctx);
         imagesToLoad = new ArrayList<>();
         if(game.getConfig().getResources().getImages() != null) {
-            imagesToLoad.addAll(game.getConfig().getResources().getImages());
+            imagesToLoad.addAll(game.getConfig().getResources().getImages()
+                    .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()));
         }
     }
 
@@ -34,6 +37,8 @@ public class ImageLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         ImageConfig config = imagesToLoad.remove(0);
         Image image = load(config);
+        image.setKey(config.getKey());
+        image.setLoadingGroup(config.getGroup());
         log.info("Image loaded. Name: " + config.getKey() + " Width: " + image.getWidth() + ". Height: " + image.getHeight() + ".");
         game.getImageManager().put(config.getKey(), image);
     }

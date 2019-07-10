@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Texture;
+import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.resources.Resource;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -14,7 +16,7 @@ import org.lwjgl.opengl.GL33;
 import java.nio.FloatBuffer;
 
 @Log4j2
-public class ShaderProgram {
+public class ShaderProgram extends Resource implements UnsafeMemory {
 
 	public static final FloatBuffer FB16 = BufferUtils.createFloatBuffer(16);
 	public static final Vector4f DEFAULT_COLOR = new Vector4f(1f, 1f, 1f, 1f);
@@ -111,4 +113,9 @@ public class ShaderProgram {
 		}
 		return super.equals(obj);
 	}
+
+    @Override
+    public void freeMemory() {
+	    GL33.glDeleteProgram(programId);
+    }
 }

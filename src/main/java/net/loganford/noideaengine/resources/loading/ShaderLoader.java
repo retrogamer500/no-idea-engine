@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL33;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ShaderLoader extends ResourceLoader {
@@ -27,17 +28,21 @@ public class ShaderLoader extends ResourceLoader {
 
     @Override
     public void init(Game game, LoadingContext ctx) {
+        game.getTextureManager().unloadGroups(ctx);
         shadersToLoad = new ArrayList<>();
         if(game.getConfig().getResources().getShaders() != null) {
-            shadersToLoad.addAll(game.getConfig().getResources().getShaders());
+            shadersToLoad.addAll(game.getConfig().getResources().getShaders()
+                    .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()));
         }
     }
 
     @Override
     public void loadOne(Game game, LoadingContext ctx) {
-        ShaderConfig description = shadersToLoad.remove(0);
-        ShaderProgram program = load(description);
-        game.getShaderManager().put(description.getKey(), program);
+        ShaderConfig config = shadersToLoad.remove(0);
+        ShaderProgram program = load(config);
+        program.setKey(config.getKey());
+        program.setLoadingGroup(config.getGroup());
+        game.getShaderManager().put(config.getKey(), program);
     }
 
     @Override
@@ -95,6 +100,9 @@ public class ShaderLoader extends ResourceLoader {
         GL33.glLinkProgram(programId);
         GL33.glValidateProgram(programId);
         validateProgram(programId);
+        //Mark shaders for deletion-- the driver won't actually remove the shaders from memory until the program is deleted
+        GL33.glDeleteShader(vertexShader.getShaderId());
+        GL33.glDeleteShader(fragmentShader.getShaderId());
 
         return new ShaderProgram(programId, key, vertexShader, fragmentShader);
     }

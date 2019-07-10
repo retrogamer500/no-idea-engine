@@ -16,6 +16,7 @@ import java.io.File;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ModelLoader extends ResourceLoader {
@@ -34,18 +35,22 @@ public class ModelLoader extends ResourceLoader {
 
     @Override
     public void init(Game game, LoadingContext ctx) {
+        game.getModelManager().unloadGroups(ctx);
         modelsToLoad = new ArrayList<>();
         if(game.getConfig().getResources().getModels() != null) {
-            modelsToLoad.addAll(game.getConfig().getResources().getModels());
+            modelsToLoad.addAll(game.getConfig().getResources().getModels()
+                    .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()));
         }
     }
 
     @Override
     public void loadOne(Game game, LoadingContext ctx) {
-        ModelConfig description = modelsToLoad.remove(0);
-        Model model = load(game, description);
-        log.info("Model loaded. Name: " + description.getKey() + ".");
-        game.getModelManager().put(description.getKey(), model);
+        ModelConfig config = modelsToLoad.remove(0);
+        Model model = load(game, config);
+        model.setKey(config.getKey());
+        model.setLoadingGroup(config.getGroup());
+        log.info("Model loaded. Name: " + config.getKey() + ".");
+        game.getModelManager().put(config.getKey(), model);
     }
 
     @Override

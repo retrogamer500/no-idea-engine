@@ -9,6 +9,12 @@
       },
       {
         "flipVertically": false,
+        "filename": "data/images/sprite_sheet.png",
+        "key": "sprite_sheet.png_2",
+        "group": 1
+      },
+      {
+        "flipVertically": false,
         "filename": "data/images/blue_ball.png",
         "key": "blue_ball",
         "group": 0
@@ -55,6 +61,11 @@
         "filename": "data/audio/test.ogg",
         "key": "test.ogg",
         "group": 0
+      },
+      {
+        "filename": "data/audio/test.ogg",
+        "key": "test.ogg_2",
+        "group": 1
       }
     ]
   }

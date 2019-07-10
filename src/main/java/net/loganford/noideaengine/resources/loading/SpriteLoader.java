@@ -9,6 +9,7 @@ import net.loganford.noideaengine.graphics.Sprite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class SpriteLoader extends ResourceLoader {
@@ -21,18 +22,22 @@ public class SpriteLoader extends ResourceLoader {
 
     @Override
     public void init(Game game, LoadingContext ctx) {
+        game.getSpriteManager().unloadGroups(ctx);
         spritesToLoad = new ArrayList<>();
         if(game.getConfig().getResources().getSprites() != null) {
-            spritesToLoad.addAll(game.getConfig().getResources().getSprites());
+            spritesToLoad.addAll(game.getConfig().getResources().getSprites()
+                    .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()));
         }
     }
 
     @Override
     public void loadOne(Game game, LoadingContext ctx) {
-        SpriteConfig description = spritesToLoad.remove(0);
-        Sprite sprite = load(game, description);
-        game.getSpriteManager().put(description.getKey(), sprite);
-        log.info("Loaded sprite: " + description.getKey());
+        SpriteConfig config = spritesToLoad.remove(0);
+        Sprite sprite = load(game, config);
+        sprite.setKey(config.getKey());
+        sprite.setLoadingGroup(config.getGroup());
+        game.getSpriteManager().put(config.getKey(), sprite);
+        log.info("Loaded sprite: " + config.getKey());
     }
 
     @Override

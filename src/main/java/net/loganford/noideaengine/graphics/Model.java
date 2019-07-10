@@ -1,9 +1,11 @@
 package net.loganford.noideaengine.graphics;
 
+import net.loganford.noideaengine.resources.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Model implements UnsafeMemory {
+public class Model extends Resource implements UnsafeMemory {
 
     private List<Mesh> meshes = new ArrayList<>();
 

@@ -3,10 +3,11 @@ package net.loganford.noideaengine.audio;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.resources.Resource;
 import org.lwjgl.openal.AL11;
 
 @Log4j2
-public class Audio implements UnsafeMemory {
+public class Audio extends Resource implements UnsafeMemory {
     @Getter private int bufferId;
     @Getter private int sampleRate;
     @Getter private int sampleLength;
