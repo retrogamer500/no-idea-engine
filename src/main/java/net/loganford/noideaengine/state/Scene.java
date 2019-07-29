@@ -11,10 +11,7 @@ import net.loganford.noideaengine.graphics.UnsafeMemory;
 import net.loganford.noideaengine.state.collisionSystem.CollisionSystem2D;
 import net.loganford.noideaengine.state.collisionSystem.NaiveBroadphase;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.state.entity.AbstractEntity;
-import net.loganford.noideaengine.state.entity.Entity2D;
-import net.loganford.noideaengine.state.entity.EntityAction;
-import net.loganford.noideaengine.state.entity.EntityDistancePair;
+import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.util.*;
@@ -23,11 +20,9 @@ import java.util.*;
 public class Scene<G extends Game> extends GameState<G> {
     private G game;
 
-    private boolean sceneBegun = false;
-    private ArrayList<AbstractEntity> depthChangedEntities;
-    @Getter private HashMap<Class<? extends AbstractEntity>, List<AbstractEntity>> entitiesByClass;
-    /** List of entities in the scene. May contain destroyed entities if they are destroyed earlier in the frame. */
-    @Getter private ArrayList<AbstractEntity> entities;
+    @Getter private boolean sceneBegun = false;
+    //List of entities in the scene
+    @Getter private EntityStore entities;
     private int currentEntity = 0;
 
     @Getter @Setter private CollisionSystem2D collisionSystem2D = new NaiveBroadphase();
@@ -50,17 +45,7 @@ public class Scene<G extends Game> extends GameState<G> {
             entity.setGame(game);
             entity.setDepthChanged(false);
 
-            if (!entitiesByClass.containsKey(entity.getClass())) {
-                entitiesByClass.put(entity.getClass(), new ArrayList<>());
-            }
-            entitiesByClass.get(entity.getClass()).add(entity);
-
-            int index = Collections.binarySearch(entities, entity, (o1, o2) -> Float.compare(o2.getDepth(), o1.getDepth()));
-            if(index < 0) {
-                index = -(index + 1);
-            }
-            entities.add(index, entity);
-
+            int index = entities.add(entity);
             if(index <= currentEntity) {
                 currentEntity++;
             }
@@ -85,9 +70,7 @@ public class Scene<G extends Game> extends GameState<G> {
     public void beginState(G game) {
         super.beginState(game);
         this.game = game;
-        depthChangedEntities = new ArrayList<>();
-        entitiesByClass = new HashMap<>();
-        entities = new ArrayList<>();
+        entities = new EntityStore();
         collisionSystem2D.init();
     }
 
@@ -130,23 +113,7 @@ public class Scene<G extends Game> extends GameState<G> {
         super.step(game, delta);
 
         //Resort entities which have had their depth changed
-        for(int i = entities.size() - 1; i >= 0; i--) {
-            AbstractEntity entity = entities.get(i);
-            if(entity.isDepthChanged()) {
-                entities.remove(i);
-                entity.setDepthChanged(false);
-                depthChangedEntities.add(entity);
-            }
-        }
-
-        for(AbstractEntity entity : depthChangedEntities) {
-            int index = Collections.binarySearch(entities, entity, (o1, o2) -> Float.compare(o2.getDepth(), o1.getDepth()));
-            if(index < 0) {
-                index = -(index + 1);
-            }
-            entities.add(index, entity);
-        }
-        depthChangedEntities.clear();
+        entities.resortEntities();
 
         //Step entities
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
@@ -169,12 +136,7 @@ public class Scene<G extends Game> extends GameState<G> {
         }
 
         //Delete destroyed entities
-        for(int i = entities.size() - 1; i >= 0; i--) {
-            if(entities.get(i).isDestroyed()) {
-                log.debug("Removing entity: " + entities.get(i).getClass().getName() + " Entity count: " + entities.size());
-                entities.remove(i);
-            }
-        }
+        entities.removeDestroyed();
     }
 
     @SuppressWarnings("unchecked")
@@ -222,19 +184,13 @@ public class Scene<G extends Game> extends GameState<G> {
         }
 
         collisionSystem2D.destroy();
-        depthChangedEntities = null;
-        entitiesByClass = null;
         entities = null;
     }
 
     public <C extends AbstractEntity> void with(Class<C> clazz, EntityAction<C> action) {
-        for (Map.Entry<Class<? extends AbstractEntity>, List<AbstractEntity>> map : entitiesByClass.entrySet()) {
-            if (clazz.isAssignableFrom(map.getKey())) {
-                for (AbstractEntity entity : map.getValue()) {
-                    C castedEntity = clazz.cast(entity);
-                    action.doAction(castedEntity);
-                }
-            }
+        for(AbstractEntity entity : entities.getByClass(clazz)) {
+            C castedEntity = clazz.cast(entity);
+            action.doAction(castedEntity);
         }
     }
 
@@ -242,17 +198,12 @@ public class Scene<G extends Game> extends GameState<G> {
         C returnValue = null;
         float minDisSqr = Float.MAX_VALUE;
 
-        for (Map.Entry<Class<? extends AbstractEntity>, List<AbstractEntity>> map : entitiesByClass.entrySet()) {
-            if (clazz.isAssignableFrom(map.getKey())) {
-                for (AbstractEntity entity : map.getValue()) {
-                    //AssignableFrom method above avoids any exceptions
-                    @SuppressWarnings("unchecked") C casted = (C) entity;
-                    float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
-                    if(disSqr < minDisSqr) {
-                        minDisSqr = disSqr;
-                        returnValue = casted;
-                    }
-                }
+        for(AbstractEntity entity : entities.getByClass(clazz)) {
+            //AssignableFrom method above avoids any exceptions
+            @SuppressWarnings("unchecked") C casted = (C) entity;
+            float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
+            if(disSqr < minDisSqr) {
+                minDisSqr = disSqr;
             }
         }
 
@@ -263,17 +214,12 @@ public class Scene<G extends Game> extends GameState<G> {
         C returnValue = null;
         float maxDisSqr = Float.MAX_VALUE;
 
-        for (Map.Entry<Class<? extends AbstractEntity>, List<AbstractEntity>> map : entitiesByClass.entrySet()) {
-            if (clazz.isAssignableFrom(map.getKey())) {
-                for (AbstractEntity entity : map.getValue()) {
-                    //AssignableFrom method above avoids any exceptions
-                    @SuppressWarnings("unchecked") C casted = (C) entity;
-                    float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
-                    if(disSqr > maxDisSqr) {
-                        maxDisSqr = disSqr;
-                        returnValue = casted;
-                    }
-                }
+        for(AbstractEntity entity : entities.getByClass(clazz)) {
+            @SuppressWarnings("unchecked") C casted = (C) entity;
+            float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
+            if(disSqr > maxDisSqr) {
+                maxDisSqr = disSqr;
+                returnValue = casted;
             }
         }
 
@@ -283,43 +229,33 @@ public class Scene<G extends Game> extends GameState<G> {
     public <C extends Entity2D> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
         List<EntityDistancePair<C>> pairs = new ArrayList<>(count);
 
-        for (Map.Entry<Class<? extends AbstractEntity>, List<AbstractEntity>> map : entitiesByClass.entrySet()) {
-            if (clazz.isAssignableFrom(map.getKey())) {
-                for (AbstractEntity entity : map.getValue()) {
-                    //AssignableFrom method above avoids any exceptions
-                    @SuppressWarnings("unchecked") C casted = (C) entity;
-                    float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
-                    EntityDistancePair<C> pair = new EntityDistancePair<>(casted, disSqr);
+        for(AbstractEntity entity : entities.getByClass(clazz)) {
+            //AssignableFrom method above avoids any exceptions
+            @SuppressWarnings("unchecked") C casted = (C) entity;
+            float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
+            EntityDistancePair<C> pair = new EntityDistancePair<>(casted, disSqr);
 
-                    if(pairs.size() == 0) {
-                        pairs.add(pair);
-                    }
-                    else {
-                        for(int i = 0; i < pairs.size(); i++) {
-                            EntityDistancePair<C> potentialPair = pairs.get(i);
-                            if(potentialPair.getDistanceSqr() > pair.getDistanceSqr()) {
-                                pairs.add(i, pair);
-                                break;
-                            }
-                        }
-                    }
-
-                    if(pairs.size() > count) {
-                        pairs.remove(count);
+            if(pairs.size() == 0) {
+                pairs.add(pair);
+            }
+            else {
+                for(int i = 0; i < pairs.size(); i++) {
+                    EntityDistancePair<C> potentialPair = pairs.get(i);
+                    if(potentialPair.getDistanceSqr() > pair.getDistanceSqr()) {
+                        pairs.add(i, pair);
+                        break;
                     }
                 }
+            }
+
+            if(pairs.size() > count) {
+                pairs.remove(count);
             }
         }
         return pairs;
     }
 
     public <C extends AbstractEntity> int count(Class<C> clazz) {
-        int count = 0;
-        for (Map.Entry<Class<? extends AbstractEntity>, List<AbstractEntity>> map : entitiesByClass.entrySet()) {
-            if (clazz.isAssignableFrom(map.getKey())) {
-                count += map.getValue().size();
-            }
-        }
-        return count;
+        return entities.getByClass(clazz).size();
     }
 }

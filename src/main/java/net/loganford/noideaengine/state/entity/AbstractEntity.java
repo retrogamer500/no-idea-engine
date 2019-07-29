@@ -22,8 +22,6 @@ public abstract class AbstractEntity<G extends Game, S extends Scene<G>> {
      */
     public final void destroy() {
         destroyed = true;
-        //Todo: remove these in batch
-        scene.getEntitiesByClass().get(this.getClass()).remove(this);
         onDestroy(game, scene);
         postDestroy(scene);
     }
