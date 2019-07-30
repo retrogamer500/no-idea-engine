@@ -8,7 +8,7 @@ import net.loganford.noideaengine.graphics.Texture;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
-import net.loganford.noideaengine.state.entity.AbstractEntity;
+import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL33;
@@ -16,7 +16,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 
-public class TileLayer extends AbstractEntity implements UnsafeMemory {
+public class TileLayer extends Entity implements UnsafeMemory {
     private static Vector2f V2F = new Vector2f();
 
     /**A texture with all the tiles in it*/

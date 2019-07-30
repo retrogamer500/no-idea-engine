@@ -3,7 +3,7 @@ package net.loganford.noideaengine.state.collisionSystem;
 import net.loganford.noideaengine.shape.Line;
 import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape2D;
-import net.loganford.noideaengine.state.entity.Entity2D;
+import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
 
     private int cellSize;
     private int bucketCount;
-    private List<List<Entity2D>> buckets;
+    private List<List<Entity>> buckets;
     private Rect rect = new Rect(0, 0, 0, 0);
 
     public SpacialPartitionBroadphase(int cellSize, int bucketCount) {
@@ -37,12 +37,12 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
     }
 
     @Override
-    public void collisionSystemAddEntity(Entity2D entity) {
+    public void collisionSystemAddEntity(Entity entity) {
         collisionSystemAfterMove(entity);
     }
 
     @Override
-    public void collisionSystemBeforeMove(Entity2D entity) {
+    public void collisionSystemBeforeMove(Entity entity) {
         if(entity.getShape() != null) {
             if(entity.getShape() instanceof Line) {
                 doActionWithLine((Line) entity.getShape(), (bucket -> {
@@ -64,7 +64,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
                 for (int tx = x1; tx <= x2; tx++) {
                     for (int ty = y1; ty <= y2; ty++) {
                         int bucketNum = hash2d(tx, ty);
-                        List<Entity2D> bucket = buckets.get(bucketNum);
+                        List<Entity> bucket = buckets.get(bucketNum);
                         for (int i = bucket.size() - 1; i >= 0; i--) {
                             if (bucket.get(i).equals(entity)) {
                                 bucket.remove(i);
@@ -77,7 +77,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
     }
 
     @Override
-    public void collisionSystemAfterMove(Entity2D entity) {
+    public void collisionSystemAfterMove(Entity entity) {
         if(entity.getShape() != null) {
             if(entity.getShape() instanceof  Line) {
                 doActionWithLine((Line) entity.getShape(), (bucket -> {
@@ -103,16 +103,16 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
     }
 
     @Override
-    public void collisionSystemRemoveEntity(Entity2D entity) {
+    public void collisionSystemRemoveEntity(Entity entity) {
         collisionSystemBeforeMove(entity);
     }
 
     @Override
-    public boolean collidesWith(Shape2D shape, Class<? extends Entity2D> clazz) {
+    public boolean collidesWith(Shape2D shape, Class<? extends Entity> clazz) {
         if(shape instanceof Line) {
             return doActionWithLine((Line) shape, (bucket -> {
                 for (int i = 0; i < bucket.size(); i++) {
-                    Entity2D entity = bucket.get(i);
+                    Entity entity = bucket.get(i);
                     if (entity.getShape() != shape &&
                             clazz.isAssignableFrom(entity.getClass()) &&
                             entity.getShape().collidesWith(shape)) {
@@ -132,9 +132,9 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
             for (int tx = x1; tx <= x2; tx++) {
                 for (int ty = y1; ty <= y2; ty++) {
                     int bucketNum = hash2d(tx, ty);
-                    List<Entity2D> bucket = buckets.get(bucketNum);
+                    List<Entity> bucket = buckets.get(bucketNum);
                     for (int i = 0; i < bucket.size(); i++) {
-                        Entity2D entity = bucket.get(i);
+                        Entity entity = bucket.get(i);
                         if (entity.getShape() != shape &&
                                 clazz.isAssignableFrom(entity.getClass()) &&
                                 entity.getShape().collidesWith(shape)) {
@@ -147,13 +147,14 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity2D> C getCollision(Shape2D shape, Class<C> clazz) {
+    public <C extends Entity> C getCollision(Shape2D shape, Class<C> clazz) {
         if(shape instanceof Line) {
-            Entity2D[] result = {null};
+            Entity[] result = {null};
             doActionWithLine((Line) shape, (bucket -> {
                 for (int i = 0; i < bucket.size(); i++) {
-                    Entity2D entity = bucket.get(i);
+                    Entity entity = bucket.get(i);
                     if (entity.getShape() != shape &&
                             clazz.isAssignableFrom(entity.getClass()) &&
                             entity.getShape().collidesWith(shape)) {
@@ -175,9 +176,9 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
             for (int tx = x1; tx <= x2; tx++) {
                 for (int ty = y1; ty <= y2; ty++) {
                     int bucketNum = hash2d(tx, ty);
-                    List<Entity2D> bucket = buckets.get(bucketNum);
+                    List<Entity> bucket = buckets.get(bucketNum);
                     for (int i = 0; i < bucket.size(); i++) {
-                        Entity2D entity = bucket.get(i);
+                        Entity entity = bucket.get(i);
                         if (entity.getShape() != shape &&
                                 clazz.isAssignableFrom(entity.getClass()) &&
                                 entity.getShape().collidesWith(shape)) {
@@ -190,13 +191,14 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity2D> List<C> getCollisions(Shape2D shape, Class<C> clazz) {
+    public <C extends Entity> List<C> getCollisions(Shape2D shape, Class<C> clazz) {
         Set<C> resultSet = new HashSet<>();
         if(shape instanceof Line) {
             doActionWithLine((Line) shape, (bucket -> {
                 for (int i = 0; i < bucket.size(); i++) {
-                    Entity2D entity = bucket.get(i);
+                    Entity entity = bucket.get(i);
                     if (entity.getShape() != shape &&
                             clazz.isAssignableFrom(entity.getClass()) &&
                             entity.getShape().collidesWith(shape)) {
@@ -216,9 +218,9 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
             for (int tx = x1; tx <= x2; tx++) {
                 for (int ty = y1; ty <= y2; ty++) {
                     int bucketNum = hash2d(tx, ty);
-                    List<Entity2D> bucket = buckets.get(bucketNum);
+                    List<Entity> bucket = buckets.get(bucketNum);
                     for (int i = 0; i < bucket.size(); i++) {
-                        Entity2D entity = bucket.get(i);
+                        Entity entity = bucket.get(i);
                         if (entity.getShape() != shape &&
                                 clazz.isAssignableFrom(entity.getClass()) &&
                                 entity.getShape().collidesWith(shape)) {
@@ -241,7 +243,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
          * @param bucket
          * @return - true to exit voxel traversal, false to continue
          */
-        boolean performActionWithBucket(List<Entity2D> bucket);
+        boolean performActionWithBucket(List<Entity> bucket);
     }
 
     /**
@@ -273,7 +275,7 @@ public class SpacialPartitionBroadphase implements CollisionSystem2D {
 
         while(true) {
             int bucketNum = hash2d(i, j);
-            List<Entity2D> bucket = buckets.get(bucketNum);
+            List<Entity> bucket = buckets.get(bucketNum);
             boolean exit = action.performActionWithBucket(bucket);
             if(exit) {
                 return true;

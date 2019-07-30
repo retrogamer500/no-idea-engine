@@ -38,7 +38,7 @@ public class Scene<G extends Game> extends GameState<G> {
     but the developer would probably prefer to know if they make this mistake.
      */
     @SuppressWarnings("unchecked")
-    public void add(AbstractEntity entity) {
+    public void add(Entity entity) {
         log.debug("Adding entity: " + entity.getClass().getName() + " Entity count: " + entities.size());
         if(testEntityGenerics(entity)) {
             entity.setScene(this);
@@ -60,8 +60,8 @@ public class Scene<G extends Game> extends GameState<G> {
         }
     }
 
-    private boolean testEntityGenerics(AbstractEntity e) {
-        Class<?>[] generics = TypeResolver.resolveRawArguments(Entity2D.class, e.getClass());
+    private boolean testEntityGenerics(Entity e) {
+        Class<?>[] generics = TypeResolver.resolveRawArguments(Entity.class, e.getClass());
         return generics[0].isAssignableFrom(game.getClass()) && generics[1].isAssignableFrom(getClass());
     }
 
@@ -84,9 +84,9 @@ public class Scene<G extends Game> extends GameState<G> {
     public void postBeginState(G game) {
         super.postBeginState(game);
 
-        Iterator<AbstractEntity> it = game.getPersistentEntities().iterator();
+        Iterator<Entity> it = game.getPersistentEntities().iterator();
         while(it.hasNext()) {
-            AbstractEntity entity = it.next();
+            Entity entity = it.next();
             if(testEntityGenerics(entity)) {
                 if(testEntityGenerics(entity)) {
                     add(entity);
@@ -101,7 +101,7 @@ public class Scene<G extends Game> extends GameState<G> {
         sceneBegun = true;
 
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            AbstractEntity entity = entities.get(currentEntity);
+            Entity entity = entities.get(currentEntity);
             entity.onCreate(game, this);
             entity.postCreate(this);
         }
@@ -113,23 +113,23 @@ public class Scene<G extends Game> extends GameState<G> {
         super.step(game, delta);
 
         //Resort entities which have had their depth changed
-        entities.resortEntities();
+        entities.resort();
 
         //Step entities
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            AbstractEntity entity = entities.get(currentEntity);
+            Entity entity = entities.get(currentEntity);
             if(!entity.isDestroyed()) {
                 entity.beforeStep(game, this, delta);
             }
         }
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            AbstractEntity entity = entities.get(currentEntity);
+            Entity entity = entities.get(currentEntity);
             if(!entity.isDestroyed()) {
                 entity.step(game, this, delta);
             }
         }
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            AbstractEntity entity = entities.get(currentEntity);
+            Entity entity = entities.get(currentEntity);
             if(!entity.isDestroyed()) {
                 entity.afterStep(game, this, delta);
             }
@@ -142,7 +142,7 @@ public class Scene<G extends Game> extends GameState<G> {
     @SuppressWarnings("unchecked")
     @Override
     public void render(Game game, Renderer renderer) {
-        for(AbstractEntity entity : entities) {
+        for(Entity entity : entities) {
             entity.render(game, this, renderer);
         }
     }
@@ -170,7 +170,7 @@ public class Scene<G extends Game> extends GameState<G> {
         super.endState(game);
         sceneBegun = false;
 
-        for(AbstractEntity entity : entities) {
+        for(Entity entity : entities) {
             entity.endScene(game, this);
 
             if(entity.isPersistent()) {
@@ -187,18 +187,18 @@ public class Scene<G extends Game> extends GameState<G> {
         entities = null;
     }
 
-    public <C extends AbstractEntity> void with(Class<C> clazz, EntityAction<C> action) {
-        for(AbstractEntity entity : entities.getByClass(clazz)) {
+    public <C extends Entity> void with(Class<C> clazz, EntityAction<C> action) {
+        for(Entity entity : entities.byClass(clazz)) {
             C castedEntity = clazz.cast(entity);
             action.doAction(castedEntity);
         }
     }
 
-    public <C extends Entity2D> C nearest(Class<C> clazz, float x, float y) {
+    public <C extends Entity> C nearest(Class<C> clazz, float x, float y) {
         C returnValue = null;
         float minDisSqr = Float.MAX_VALUE;
 
-        for(AbstractEntity entity : entities.getByClass(clazz)) {
+        for(Entity entity : entities.byClass(clazz)) {
             //AssignableFrom method above avoids any exceptions
             @SuppressWarnings("unchecked") C casted = (C) entity;
             float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
@@ -210,11 +210,11 @@ public class Scene<G extends Game> extends GameState<G> {
         return returnValue;
     }
 
-    public <C extends Entity2D> C furthest(Class<C> clazz, float x, float y) {
+    public <C extends Entity> C furthest(Class<C> clazz, float x, float y) {
         C returnValue = null;
         float maxDisSqr = Float.MAX_VALUE;
 
-        for(AbstractEntity entity : entities.getByClass(clazz)) {
+        for(Entity entity : entities.byClass(clazz)) {
             @SuppressWarnings("unchecked") C casted = (C) entity;
             float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
             if(disSqr > maxDisSqr) {
@@ -226,10 +226,10 @@ public class Scene<G extends Game> extends GameState<G> {
         return returnValue;
     }
 
-    public <C extends Entity2D> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
+    public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
         List<EntityDistancePair<C>> pairs = new ArrayList<>(count);
 
-        for(AbstractEntity entity : entities.getByClass(clazz)) {
+        for(Entity entity : entities.byClass(clazz)) {
             //AssignableFrom method above avoids any exceptions
             @SuppressWarnings("unchecked") C casted = (C) entity;
             float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
@@ -255,7 +255,7 @@ public class Scene<G extends Game> extends GameState<G> {
         return pairs;
     }
 
-    public <C extends AbstractEntity> int count(Class<C> clazz) {
-        return entities.getByClass(clazz).size();
+    public <C extends Entity> int count(Class<C> clazz) {
+        return entities.byClass(clazz).size();
     }
 }

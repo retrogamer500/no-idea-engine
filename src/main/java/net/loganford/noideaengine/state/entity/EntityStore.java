@@ -3,10 +3,10 @@ package net.loganford.noideaengine.state.entity;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class EntityStore implements Iterable<AbstractEntity> {
-    private ArrayList<AbstractEntity> entities;
+public class EntityStore implements Iterable<Entity> {
+    private ArrayList<Entity> entities;
     private EntityTypeCache typeCache;
-    private ArrayList<AbstractEntity> entitiesToResort;
+    private ArrayList<Entity> entitiesToResort;
 
     public EntityStore() {
         entities = new ArrayList<>();
@@ -14,7 +14,7 @@ public class EntityStore implements Iterable<AbstractEntity> {
         entitiesToResort = new ArrayList<>();
     }
 
-    public int add(AbstractEntity entity) {
+    public int add(Entity entity) {
         int index = Collections.binarySearch(entities, entity, (o1, o2) -> Float.compare(o2.getDepth(), o1.getDepth()));
         if(index < 0) {
             index = -(index + 1);
@@ -24,9 +24,9 @@ public class EntityStore implements Iterable<AbstractEntity> {
         return index;
     }
 
-    public void resortEntities() {
+    public void resort() {
         for(int i = entities.size() - 1; i >= 0; i--) {
-            AbstractEntity entity = entities.get(i);
+            Entity entity = entities.get(i);
             if(entity.isDepthChanged()) {
                 entities.remove(i);
                 entity.setDepthChanged(false);
@@ -34,7 +34,7 @@ public class EntityStore implements Iterable<AbstractEntity> {
             }
         }
 
-        for(AbstractEntity entity : entitiesToResort) {
+        for(Entity entity : entitiesToResort) {
             int index = Collections.binarySearch(entities, entity, (o1, o2) -> Float.compare(o2.getDepth(), o1.getDepth()));
             if(index < 0) {
                 index = -(index + 1);
@@ -46,7 +46,7 @@ public class EntityStore implements Iterable<AbstractEntity> {
 
     public void removeDestroyed() {
         for(int i = entities.size() - 1; i >= 0; i--) {
-            AbstractEntity entity = entities.get(i);
+            Entity entity = entities.get(i);
             if(entity.isDestroyed()) {
                 entities.remove(i);
                 typeCache.remove(entity);
@@ -54,7 +54,7 @@ public class EntityStore implements Iterable<AbstractEntity> {
         }
     }
 
-    public <C extends AbstractEntity> List<C> getByClass(Class<C> clazz) {
+    public <C extends Entity> List<C> byClass(Class<C> clazz) {
         return typeCache.get(clazz);
     }
 
@@ -62,7 +62,7 @@ public class EntityStore implements Iterable<AbstractEntity> {
         return entities.size();
     }
 
-    public AbstractEntity get(int index) {
+    public Entity get(int index) {
         return entities.get(index);
     }
 
@@ -78,7 +78,7 @@ public class EntityStore implements Iterable<AbstractEntity> {
     }
 
     @Override
-    public Spliterator<AbstractEntity> spliterator() {
+    public Spliterator<Entity> spliterator() {
         return entities.spliterator();
     }
 
@@ -87,25 +87,25 @@ public class EntityStore implements Iterable<AbstractEntity> {
      * Internal class which provides a quick map between Class and entities
      */
     private class EntityTypeCache {
-        private Map<Class<? extends AbstractEntity>, Set<AbstractEntity>> map;
+        private Map<Class<? extends Entity>, Set<Entity>> map;
 
         private EntityTypeCache() {
             map = new HashMap<>();
         }
 
-        public void add(AbstractEntity entity) {
+        public void add(Entity entity) {
             map.computeIfAbsent(entity.getClass(), key -> new HashSet<>()).add(entity);
         }
 
-        public void remove(AbstractEntity entity) {
+        public void remove(Entity entity) {
             map.computeIfPresent(entity.getClass(), (k, v) -> {v.remove(entity); return v;});
         }
 
         @SuppressWarnings("unchecked")
-        public <C extends AbstractEntity> List<C> get(Class<C> clazz) {
+        public <C extends Entity> List<C> get(Class<C> clazz) {
             ArrayList<C> entityList = new ArrayList();
 
-            for (Map.Entry<Class<? extends AbstractEntity>, Set<AbstractEntity>> entry : map.entrySet()) {
+            for (Map.Entry<Class<? extends Entity>, Set<Entity>> entry : map.entrySet()) {
                 if (clazz.isAssignableFrom(entry.getKey())) {
                     entityList.addAll((Collection<? extends C>) entry.getValue());
                 }

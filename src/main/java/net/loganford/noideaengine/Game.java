@@ -13,7 +13,7 @@ import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.resources.ResourceManager;
 import net.loganford.noideaengine.resources.loading.*;
 import net.loganford.noideaengine.state.GameState;
-import net.loganford.noideaengine.state.entity.AbstractEntity;
+import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.loading.BasicLoadingScreen;
 import net.loganford.noideaengine.state.loading.LoadingScreen;
 import net.loganford.noideaengine.state.transition.InstantTransition;
@@ -75,7 +75,7 @@ public class Game {
     private long minFrameTimeNs = NANOSECONDS_IN_SECOND / 60L;
 
     //Used to store persistent entities between states
-    @Getter @Setter private List<AbstractEntity> persistentEntities = new ArrayList<>();
+    @Getter @Setter private List<Entity> persistentEntities = new ArrayList<>();
 
     public Game(GameState gameState) {
         input = new Input();

@@ -3,7 +3,7 @@ package net.loganford.noideaengine.state;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
 import net.loganford.noideaengine.state.collisionSystem.SpacialPartitionBroadphase;
-import net.loganford.noideaengine.state.entity.Entity2D;
+import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.transition.FadeTransition;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class SceneTest {
         @Override
         public void beginState(Game game) {
             super.beginState(game);
-            for(int i = 0; i < 25; i++) {
+            for(int i = 0; i < 10000; i++) {
                 TestEntity e = new TestEntity();
                 e.setPos(MathUtils.randRangeF(16, 640 - 16), MathUtils.randRangeF(16, 480 - 16));
                 add(e);
@@ -36,7 +36,7 @@ public class SceneTest {
         }
     }
 
-    public class TestEntity extends Entity2D<Game, TestScene> {
+    public class TestEntity extends Entity<Game, TestScene> {
         @Override
         public void onCreate(Game game, TestScene scene) {
             super.onCreate(game, scene);
@@ -62,7 +62,7 @@ public class SceneTest {
         }
     }
 
-    public class PlayerEntity extends Entity2D<Game, TestScene> {
+    public class PlayerEntity extends Entity<Game, TestScene> {
         @Override
         public void onCreate(Game game, TestScene scene) {
             super.onCreate(game, scene);
