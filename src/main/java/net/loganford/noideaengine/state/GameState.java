@@ -214,7 +214,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         List<Integer> requiredResources = new ArrayList<>();
         requiredResources.add(0);
 
-        for (Annotation annotation : getClass().getDeclaredAnnotations()) {
+        for (Annotation annotation : getClass().getAnnotations()) {
             if(annotation instanceof RequireGroup.List) {
                 RequireGroup.List requireGroupList = (RequireGroup.List) annotation;
                 for(RequireGroup requireGroup: requireGroupList.value()) {

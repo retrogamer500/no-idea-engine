@@ -13,8 +13,12 @@ import net.loganford.noideaengine.state.collisionSystem.NaiveBroadphase;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.EntitySystemEngine;
+import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
+import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 @Log4j2
@@ -72,9 +76,29 @@ public class Scene<G extends Game> extends GameState<G> {
     public void beginState(G game) {
         super.beginState(game);
         this.game = game;
-        entitySystemEngine = new EntitySystemEngine(game, this);
         entities = new EntityStore();
         collisionSystem2D.init();
+        entitySystemEngine = new EntitySystemEngine(game, this);
+        loadSystems();
+    }
+
+    private void loadSystems() {
+        for (Annotation annotation : getClass().getAnnotations()) {
+            if(annotation instanceof RegisterSystem.List) {
+                RegisterSystem.List requireSystemList = (RegisterSystem.List) annotation;
+                for(RegisterSystem registerSystem: requireSystemList.value()) {
+                    try {
+                        Class<AbstractEntitySystem> clazz = registerSystem.clazz();
+                        Constructor<AbstractEntitySystem> constructor = clazz.getConstructor();
+                        AbstractEntitySystem system = constructor.newInstance();
+                        entitySystemEngine.addSystem(system);
+                    }
+                    catch(Exception e) {
+                        throw new GameEngineException("Unable to setup entity components", e);
+                    }
+                }
+            }
+        }
     }
 
     /**

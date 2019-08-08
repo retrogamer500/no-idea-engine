@@ -3,6 +3,7 @@ package net.loganford.noideaengine.state.entity;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.Frame;
 import net.loganford.noideaengine.graphics.Renderer;
@@ -10,6 +11,7 @@ import net.loganford.noideaengine.graphics.Sprite;
 import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape2D;
 import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.state.entity.components.RegisterComponent;
 import net.loganford.noideaengine.state.entity.signals.DepthChangedSignal;
 import net.loganford.noideaengine.state.entity.signals.DestructionSignal;
 import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
@@ -17,6 +19,8 @@ import net.loganford.noideaengine.state.entity.components.Component;
 import net.loganford.noideaengine.state.entity.signals.ComponentRemovedSignal;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 public abstract class Entity<G extends Game, S extends Scene<G>> {
@@ -51,7 +55,29 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
         alarms = new AlarmSystem();
         components = new HashMap<>();
         systems = new HashSet<>();
-        //Todo: load components from annotations
+        loadComponents();
+    }
+
+    /**
+     * Load components for entity based on annotations
+     */
+    private void loadComponents() {
+        for (Annotation annotation : getClass().getAnnotations()) {
+            if(annotation instanceof RegisterComponent.List) {
+                RegisterComponent.List requireComponentList = (RegisterComponent.List) annotation;
+                for(RegisterComponent registerComponent: requireComponentList.value()) {
+                    try {
+                        Class<Component> clazz = registerComponent.clazz();
+                        Constructor<Component> constructor = clazz.getConstructor();
+                        Component component = constructor.newInstance();
+                        addComponent(component);
+                    }
+                    catch(Exception e) {
+                        throw new GameEngineException("Unable to setup entity components", e);
+                    }
+                }
+            }
+        }
     }
 
     /**

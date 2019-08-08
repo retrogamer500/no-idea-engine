@@ -6,7 +6,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Repeatable(RequireGroup.List.class)
 public @interface RequireGroup {
-
     int value() default 0;
 
     @Retention(RetentionPolicy.RUNTIME)
