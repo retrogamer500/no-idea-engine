@@ -10,9 +10,14 @@ import net.loganford.noideaengine.graphics.Sprite;
 import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape2D;
 import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.state.entity.signals.DepthChangedSignal;
+import net.loganford.noideaengine.state.entity.signals.DestructionSignal;
+import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
+import net.loganford.noideaengine.state.entity.components.Component;
+import net.loganford.noideaengine.state.entity.signals.ComponentRemovedSignal;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
-import java.util.List;
+import java.util.*;
 
 public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter private boolean destroyed = false;
@@ -23,14 +28,19 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter @Setter private boolean persistent;
 
     @Getter private AlarmSystem alarms;
+    @Getter private Map<Class, Component> components;
+    @Getter private Set<AbstractEntitySystem> systems;
 
     @Getter @Setter private Sprite sprite;
     @Getter private Shape2D shape;
-
     @Getter private float x;
     @Getter private float y;
     @Getter private float shapeOffsetX = 0;
     @Getter private float shapeOffsetY = 0;
+
+    @Getter private ComponentRemovedSignal componentRemovedSignal = new ComponentRemovedSignal();
+    @Getter private DepthChangedSignal depthChangedSignal = new DepthChangedSignal();
+    @Getter private DestructionSignal destructionSignal = new DestructionSignal();
 
     /**
      * This method is called at the beginning of the step, after the entity has been placed in the scene.
@@ -39,6 +49,9 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      */
     public void onCreate(G game, S scene) {
         alarms = new AlarmSystem();
+        components = new HashMap<>();
+        systems = new HashSet<>();
+        //Todo: load components from annotations
     }
 
     /**
@@ -47,6 +60,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     public final void destroy() {
         destroyed = true;
         onDestroy(game, scene);
+        destructionSignal.dispatch(this);
         postDestroy(scene);
     }
 
@@ -58,6 +72,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     public void setDepth(float depth) {
         if(depth != this.depth) {
             depthChanged = true;
+            depthChangedSignal.dispatch(this);
         }
         this.depth = depth;
     }
@@ -112,6 +127,30 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @param scene
      */
     public void onDestroy(G game, S scene) {}
+
+    public void addComponent(Component component) {
+        Class clazz = components.getClass();
+        do {
+            components.put(clazz, component);
+            clazz = clazz.getSuperclass();
+        }
+        while(clazz.getSuperclass() != null);
+        scene.getEntitySystemEngine().addEntityToEngine(this);
+    }
+
+    public void removeComponent(Component component) {
+        Class clazz = component.getClass();
+        do {
+            components.remove(clazz, component);
+            clazz = clazz.getSuperclass();
+        }
+        while(clazz.getSuperclass() != null);
+        componentRemovedSignal.dispatch(this);
+    }
+
+    public Component getComponent(Class<Component> clazz) {
+        return components.get(clazz);
+    }
 
     /**
      * Sets the x position of the entity.

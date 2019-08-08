@@ -2,6 +2,7 @@ package net.loganford.noideaengine.state.entity;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class EntityStore implements Iterable<Entity> {
     private ArrayList<Entity> entities;
@@ -22,6 +23,15 @@ public class EntityStore implements Iterable<Entity> {
         entities.add(index, entity);
         typeCache.add(entity);
         return index;
+    }
+
+    public void remove(Entity entity) {
+        for(int i = entities.size() - 1; i >= 0; i--) {
+            if(entities.get(i).equals(entity)) {
+                entities.remove(i);
+                typeCache.remove(entity);
+            }
+        }
     }
 
     public void resort() {
@@ -67,13 +77,13 @@ public class EntityStore implements Iterable<Entity> {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<Entity> iterator() {
         return entities.iterator();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void forEach(Consumer action) {
+    public void forEach(Consumer<? super Entity> action) {
         entities.forEach(action);
     }
 

@@ -12,6 +12,7 @@ import net.loganford.noideaengine.state.collisionSystem.CollisionSystem2D;
 import net.loganford.noideaengine.state.collisionSystem.NaiveBroadphase;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.entity.*;
+import net.loganford.noideaengine.state.entity.EntitySystemEngine;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.util.*;
@@ -24,6 +25,7 @@ public class Scene<G extends Game> extends GameState<G> {
     //List of entities in the scene
     @Getter private EntityStore entities;
     private int currentEntity = 0;
+    @Getter private EntitySystemEngine entitySystemEngine;
 
     @Getter @Setter private CollisionSystem2D collisionSystem2D = new NaiveBroadphase();
 
@@ -70,6 +72,7 @@ public class Scene<G extends Game> extends GameState<G> {
     public void beginState(G game) {
         super.beginState(game);
         this.game = game;
+        entitySystemEngine = new EntitySystemEngine(game, this);
         entities = new EntityStore();
         collisionSystem2D.init();
     }
@@ -122,6 +125,9 @@ public class Scene<G extends Game> extends GameState<G> {
                 entity.beforeStep(game, this, delta);
             }
         }
+
+        entitySystemEngine.step(delta);
+
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
             Entity entity = entities.get(currentEntity);
             if(!entity.isDestroyed()) {
@@ -142,6 +148,7 @@ public class Scene<G extends Game> extends GameState<G> {
     @SuppressWarnings("unchecked")
     @Override
     public void render(Game game, Renderer renderer) {
+        entitySystemEngine.render(renderer);
         for(Entity entity : entities) {
             entity.render(game, this, renderer);
         }

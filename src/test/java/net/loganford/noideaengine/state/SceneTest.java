@@ -26,7 +26,7 @@ public class SceneTest {
         @Override
         public void beginState(Game game) {
             super.beginState(game);
-            for(int i = 0; i < 10000; i++) {
+            for(int i = 0; i < 1000; i++) {
                 TestEntity e = new TestEntity();
                 e.setPos(MathUtils.randRangeF(16, 640 - 16), MathUtils.randRangeF(16, 480 - 16));
                 add(e);
