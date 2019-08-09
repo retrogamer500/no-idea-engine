@@ -36,10 +36,6 @@ public abstract class AbstractEntitySystem {
     public abstract void render(Game game, Scene scene, Renderer renderer);
 
     public boolean entityBelongs(Entity entity) {
-        if(getComponentList().size() == 0) {
-            return false;
-        }
-
         for(Class<Component> clazz : getComponentList()) {
             if(entity.getComponents().get(clazz) == null) {
                 return false;

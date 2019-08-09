@@ -161,6 +161,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
             clazz = clazz.getSuperclass();
         }
         while(clazz.getSuperclass() != null);
+        components.put(clazz, component);
         scene.getEntitySystemEngine().addEntityToEngine(this);
     }
 
@@ -171,6 +172,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
             clazz = clazz.getSuperclass();
         }
         while(clazz.getSuperclass() != null);
+        components.remove(clazz, component);
         componentRemovedSignal.dispatch(this);
     }
 

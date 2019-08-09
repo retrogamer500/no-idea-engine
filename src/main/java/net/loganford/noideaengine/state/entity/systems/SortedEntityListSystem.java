@@ -25,7 +25,9 @@ public abstract class SortedEntityListSystem extends AbstractEntitySystem implem
 
     @Override
     public void addEntity(Entity entity) {
+        entity.getDestructionSignal().subscribe(this);
         entity.getDepthChangedSignal().subscribe(this);
+        entity.getComponentRemovedSignal().subscribe(this);
     }
 
     @Override
