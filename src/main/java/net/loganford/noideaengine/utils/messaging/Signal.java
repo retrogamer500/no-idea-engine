@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class Signal<T> {
+    public static final int CLEANUP_PERIOD = 64;
+
     private List<WeakReference<Listener<T>>> listeners;
+    private int modCounter = 0;
 
     public Signal() {
         listeners = new ArrayList<>();
@@ -14,10 +17,11 @@ public class Signal<T> {
 
     public void subscribe(Listener<T> listener) {
         listeners.add(new WeakReference<>(listener));
+        modCounter++;
 
-        //Flush weak references every 16 items
-        if((listeners.size() & 15) == 0) {
+        if(modCounter > CLEANUP_PERIOD) {
             cleanReferences();
+            modCounter = 0;
         }
     }
 
@@ -32,19 +36,19 @@ public class Signal<T> {
 
     @SuppressWarnings({"ConstantConditions", "ForLoopReplaceableByForEach"})
     public void dispatch(T object) {
-        boolean dirty = false;
         for(int i = 0; i < listeners.size(); i++) {
             WeakReference<Listener<T>> reference = listeners.get(i);
             if(reference.get() != null) {
                 reference.get().receive(this, object);
             }
             else {
-                dirty = true;
+                modCounter++;
             }
         }
 
-        if(dirty) {
+        if(modCounter > CLEANUP_PERIOD) {
             cleanReferences();
+            modCounter = 0;
         }
     }
 

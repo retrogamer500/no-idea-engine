@@ -9,7 +9,7 @@ import net.loganford.noideaengine.state.GameState;
 
 import java.util.List;
 
-public abstract class LoadingScreen extends GameState {
+public abstract class LoadingScreen<G extends Game> extends GameState<G> {
     @Getter private GameState nextState;
     @Getter @Setter private LoadingContext loadingContext;
     @Getter private List<ResourceLoader> resourceLoaders;
@@ -27,7 +27,7 @@ public abstract class LoadingScreen extends GameState {
     }
 
     @Override
-    public void beginState(Game game) {
+    public void beginState(G game) {
         super.beginState(game);
         resourceLoaders = game.getResourceLoaders();
 
@@ -45,7 +45,7 @@ public abstract class LoadingScreen extends GameState {
     }
 
     @Override
-    public void step(Game game, float delta) {
+    public void step(G game, float delta) {
         super.step(game, delta);
 
         {

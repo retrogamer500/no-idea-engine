@@ -5,20 +5,20 @@ import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 
-public class BasicLoadingScreen extends LoadingScreen {
+public class BasicLoadingScreen<G extends Game> extends LoadingScreen<G> {
 
     @Getter @Setter private int loadBarHeight = 16;
     @Getter @Setter private int loadBarPadding = 16;
     @Getter @Setter private boolean centerVertically = false;
 
     @Override
-    public void beginState(Game game) {
+    public void beginState(G game) {
         super.beginState(game);
         setBackgroundColor(0f, 0f, 0f, 1f);
     }
 
     @Override
-    public void render(Game game, Renderer renderer) {
+    public void render(G game, Renderer renderer) {
         super.render(game, renderer);
 
         float verticalOffset = getView().getHeight() - loadBarHeight - 2 * loadBarPadding;

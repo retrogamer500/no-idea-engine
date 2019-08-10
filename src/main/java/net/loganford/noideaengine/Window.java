@@ -96,6 +96,10 @@ public class Window {
 
         //Get the resolution of the primary monitor
         GLFWVidMode vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+        if(vidmode == null) {
+            throw new GameEngineException("Could not get video mode!");
+        }
+
         //Center our window
         GLFW.glfwSetWindowPos(window, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
 

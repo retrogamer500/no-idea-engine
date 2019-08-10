@@ -1,22 +1,19 @@
 package net.loganford.noideaengine.state.entity.systems;
 
-import lombok.Getter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.EntityStore;
-import net.loganford.noideaengine.state.entity.signals.ComponentRemovedSignal;
 import net.loganford.noideaengine.state.entity.signals.DepthChangedSignal;
 import net.loganford.noideaengine.state.entity.signals.DestructionSignal;
-import net.loganford.noideaengine.utils.messaging.Listener;
 import net.loganford.noideaengine.utils.messaging.Signal;
 
-public abstract class SortedEntityListSystem extends AbstractEntitySystem implements Listener<Entity> {
+public abstract class SortedEntityListSystem extends AbstractEntitySystem {
 
     private boolean resort = false;
 
-    @Getter private EntityStore entities;
+    private EntityStore entities;
 
     public SortedEntityListSystem() {
         super();
@@ -25,13 +22,17 @@ public abstract class SortedEntityListSystem extends AbstractEntitySystem implem
 
     @Override
     public void addEntity(Entity entity) {
+        super.addEntity(entity);
+
         entity.getDestructionSignal().subscribe(this);
         entity.getDepthChangedSignal().subscribe(this);
-        entity.getComponentRemovedSignal().subscribe(this);
     }
 
     @Override
     public void removeEntity(Entity entity) {
+        super.removeEntity(entity);
+
+        entity.getDestructionSignal().unsubscribe(this);
         entity.getDepthChangedSignal().unsubscribe(this);
         entities.remove(entity);
     }
@@ -50,21 +51,20 @@ public abstract class SortedEntityListSystem extends AbstractEntitySystem implem
 
     @Override
     public void render(Game game, Scene scene, Renderer renderer) {
-
+        renderEntities(entities, game, scene, renderer);
     }
+
+    abstract void renderEntities(EntityStore entities, Game game, Scene scene, Renderer renderer);
 
     @Override
     public void receive(Signal<Entity> signal, Entity entity) {
+        super.receive(signal, entity);
+
         if(signal instanceof DestructionSignal) {
             removeEntity(entity);
         }
         else if(signal instanceof DepthChangedSignal) {
             resort = true;
-        }
-        else if(signal instanceof ComponentRemovedSignal) {
-            if(!entityBelongs(entity)) {
-                removeEntity(entity);
-            }
         }
     }
 }

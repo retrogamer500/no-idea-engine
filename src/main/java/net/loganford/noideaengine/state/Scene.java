@@ -12,7 +12,6 @@ import net.loganford.noideaengine.state.collisionSystem.CollisionSystem2D;
 import net.loganford.noideaengine.state.collisionSystem.NaiveBroadphase;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.entity.*;
-import net.loganford.noideaengine.state.entity.EntitySystemEngine;
 import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
@@ -235,6 +234,7 @@ public class Scene<G extends Game> extends GameState<G> {
             float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
             if(disSqr < minDisSqr) {
                 minDisSqr = disSqr;
+                returnValue = casted;
             }
         }
 

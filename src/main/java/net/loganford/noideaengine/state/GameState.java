@@ -73,6 +73,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
             if(i == inputDepth) {
                 game.getInput().enable();
             }
+            //noinspection unchecked
             uiLayers.get(i).step(game, this, delta);
         }
 
@@ -155,6 +156,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     public void renderUI(G game, Renderer renderer) {
         int renderDepth = getRenderDepth();
         for(int i = Math.max(0, renderDepth); i < uiLayers.size(); i++) {
+            //noinspection unchecked
             uiLayers.get(i).render(game, this, renderer);
         }
     }

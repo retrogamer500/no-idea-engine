@@ -60,7 +60,7 @@ public class Game {
     @Getter private ResourceManager<Model> modelManager = new ResourceManager<>();
     @Getter private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
     @Getter private ResourceManager<Font> fontManager = new ResourceManager<>();
-    @Getter private ResourceManager<Audio> audioManager = new ResourceManager<Audio>();
+    @Getter private ResourceManager<Audio> audioManager = new ResourceManager<>();
 
     private boolean running = true;
     @Getter private GameState gameState;

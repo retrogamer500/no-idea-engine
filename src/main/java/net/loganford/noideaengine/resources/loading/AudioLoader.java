@@ -2,6 +2,7 @@ package net.loganford.noideaengine.resources.loading;
 
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.audio.Audio;
 import net.loganford.noideaengine.config.json.AudioConfig;
 import net.loganford.noideaengine.utils.file.ResourceLocation;
@@ -16,7 +17,6 @@ import java.util.stream.Collectors;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.system.libc.LibCStdlib;
 
 @Log4j2
 public class AudioLoader extends ResourceLoader {
@@ -58,6 +58,10 @@ public class AudioLoader extends ResourceLoader {
 
         ResourceLocation location = getGame().getResourceLocationFactory().get((config.getFilename()));
         ShortBuffer audioBuffer = STBVorbis.stb_vorbis_decode_memory(location.loadBytes(), channelsBuffer, sampleRateBuffer);
+
+        if(audioBuffer == null) {
+            throw new GameEngineException("Could not process audio file");
+        }
 
         int channels = channelsBuffer.get();
         int sampleRate = sampleRateBuffer.get();

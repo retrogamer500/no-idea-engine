@@ -4,10 +4,10 @@ import lombok.Getter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.state.GameState;
 
-public abstract class Transition extends GameState {
+public abstract class Transition<G extends Game> extends GameState<G> {
 
-    @Getter private GameState previousState;
-    @Getter private GameState nextState;
+    @Getter private GameState<G> previousState;
+    @Getter private GameState<G> nextState;
 
     /**
      * Called prior to beginState() to set the previous and next state, and begin the next state.
@@ -15,7 +15,7 @@ public abstract class Transition extends GameState {
      * @param previousState
      * @param nextState
      */
-    public final void beginTransition(Game game, GameState previousState, GameState nextState) {
+    public final void beginTransition(G game, GameState<G> previousState, GameState<G> nextState) {
         game.setState(null);
         this.previousState = previousState;
         this.nextState = nextState;

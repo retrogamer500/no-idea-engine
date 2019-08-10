@@ -16,7 +16,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 
-public class TileLayer extends Entity implements UnsafeMemory {
+public class TileLayer extends Entity<Game, Scene<Game>> implements UnsafeMemory {
     private static Vector2f V2F = new Vector2f();
 
     /**A texture with all the tiles in it*/
@@ -101,7 +101,7 @@ public class TileLayer extends Entity implements UnsafeMemory {
     }
 
     @Override
-    public void onDestroy(Game game, Scene scene) {
+    public void onDestroy(Game game, Scene<Game> scene) {
         freeMemory();
         super.onDestroy(game, scene);
     }

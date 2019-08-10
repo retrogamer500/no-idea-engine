@@ -96,6 +96,7 @@ public class Image extends PrototypeResource {
      * @param height
      * @return an initialized image
      */
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public Image getSubImage(float x, float y, float width, float height) {
         if(x < 0 || y < 0 || width > this.width || height > this.height) {
             throw new GameEngineException("Tried to get subimage out of bounds of existing image");

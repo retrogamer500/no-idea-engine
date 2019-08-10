@@ -2,7 +2,6 @@ package net.loganford.noideaengine.state.entity;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class EntityStore implements Iterable<Entity> {
     private ArrayList<Entity> entities;

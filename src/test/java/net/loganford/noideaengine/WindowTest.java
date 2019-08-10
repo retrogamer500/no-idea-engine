@@ -4,6 +4,7 @@ import net.loganford.noideaengine.state.Scene;
 import org.junit.Test;
 
 public class WindowTest {
+    @SuppressWarnings("Convert2MethodRef")
     @Test
     public void testWindow() {
         Game game = new Game(new Scene());

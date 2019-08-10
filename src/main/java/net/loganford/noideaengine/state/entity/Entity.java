@@ -337,7 +337,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @param y
      * @return
      */
-    public boolean placeMeeting(Class clazz, float x, float y) {
+    public boolean placeMeeting(Class<? extends Entity> clazz, float x, float y) {
         shape.setPosition(x - shapeOffsetX, y - shapeOffsetY);
         boolean returnValue = collidesWith(clazz);
         shape.setPosition(this.x - shapeOffsetX, this.y - shapeOffsetY);
@@ -351,7 +351,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @param y
      * @return
      */
-    public boolean placeFree(Class clazz, float x, float y) {
+    public boolean placeFree(Class<? extends Entity> clazz, float x, float y) {
         return !placeMeeting(clazz, x, y);
     }
 

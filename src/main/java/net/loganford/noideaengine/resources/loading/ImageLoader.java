@@ -2,6 +2,7 @@ package net.loganford.noideaengine.resources.loading;
 
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.config.json.ImageConfig;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.utils.file.ResourceLocation;
@@ -62,6 +63,9 @@ public class ImageLoader extends ResourceLoader {
             STBImage.stbi_set_flip_vertically_on_load(flipImage);
 
             imageBuffer = STBImage.stbi_load_from_memory(location.loadBytes(), widthBuffer, heightBuffer, components, 4);
+            if(imageBuffer == null) {
+                throw new GameEngineException("Could not load image!");
+            }
             imageBuffer.flip();
 
             int width = widthBuffer.get();

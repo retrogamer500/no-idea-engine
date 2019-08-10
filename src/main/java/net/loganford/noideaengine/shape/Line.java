@@ -84,6 +84,7 @@ public class Line extends Shape2D {
         return false;
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     public static boolean lineLineCollision(Line line1, Line line2) {
         if(ccw(line1.x1, line1.y1, line1.x2, line1.y2, line2.x1, line2.x2) * ccw(line1.x1, line1.y1, line1.x2, line1.y2, line2.x1, line2.x2) > 0)
             return false;

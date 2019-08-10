@@ -30,6 +30,7 @@ public class TextureBatch implements UnsafeMemory {
 
     private Texture currentTexture;
 
+    @SuppressWarnings("PointlessArithmeticExpression")
     public TextureBatch() {
         vao = new VertexArrayObject();
         positionVbo = vao.addVertexBufferObject(3, MAX_VERTICES, GL33.GL_STREAM_DRAW);

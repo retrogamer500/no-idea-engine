@@ -14,7 +14,6 @@ import net.loganford.noideaengine.state.View;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.file.JarResourceLocationFactory;
 import org.joml.*;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL33;
 
 import java.lang.Math;
