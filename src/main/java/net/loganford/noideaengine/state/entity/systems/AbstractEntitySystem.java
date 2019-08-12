@@ -9,6 +9,7 @@ import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.Component;
 import net.loganford.noideaengine.state.entity.components.RegisterComponent;
 import net.loganford.noideaengine.state.entity.signals.ComponentRemovedSignal;
+import net.loganford.noideaengine.state.entity.signals.DestructionSignal;
 import net.loganford.noideaengine.utils.messaging.Listener;
 import net.loganford.noideaengine.utils.messaging.Signal;
 
@@ -17,19 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractEntitySystem implements Listener<Entity> {
-    @Getter private List<Class<Component>> componentList;
+    @Getter private List<Class<? extends Component>> componentList;
 
     public AbstractEntitySystem() {
         componentList = new ArrayList<>();
 
-        //Load components
-        for (Annotation annotation : getClass().getAnnotations()) {
-            if(annotation instanceof RequireGroup.List) {
-                RegisterComponent.List requireComponentList = (RegisterComponent.List) annotation;
-                for(RegisterComponent registerComponent: requireComponentList.value()) {
-                    componentList.add(registerComponent.clazz());
-                }
+        Class clazz = getClass();
+        while(clazz != null) {
+            for (Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
+                Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
+                componentList.add(componentClazz);
             }
+
+            clazz = clazz.getSuperclass();
         }
     }
 
@@ -44,7 +45,7 @@ public abstract class AbstractEntitySystem implements Listener<Entity> {
     public abstract void render(Game game, Scene scene, Renderer renderer);
 
     public boolean entityBelongs(Entity entity) {
-        for(Class<Component> clazz : getComponentList()) {
+        for(Class<? extends Component> clazz : getComponentList()) {
             if(entity.getComponents().get(clazz) == null) {
                 return false;
             }
@@ -58,6 +59,9 @@ public abstract class AbstractEntitySystem implements Listener<Entity> {
             if(!entityBelongs(entity)) {
                 removeEntity(entity);
             }
+        }
+        else if(signal instanceof DestructionSignal) {
+            removeEntity(entity);
         }
     }
 }

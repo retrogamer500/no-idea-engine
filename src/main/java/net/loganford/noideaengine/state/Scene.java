@@ -14,6 +14,8 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
+import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem;
+import net.loganford.noideaengine.state.entity.systems.collision.NaiveCollisionSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.lang.annotation.Annotation;
@@ -21,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 @Log4j2
+@RegisterSystem(NaiveCollisionSystem.class)
 public class Scene<G extends Game> extends GameState<G> {
     private G game;
 
@@ -30,7 +33,8 @@ public class Scene<G extends Game> extends GameState<G> {
     private int currentEntity = 0;
     @Getter private EntitySystemEngine entitySystemEngine;
 
-    @Getter @Setter private CollisionSystem2D collisionSystem2D = new NaiveBroadphase();
+    //@Getter @Setter private CollisionSystem2D collisionSystem2D = new NaiveBroadphase();
+    @Getter CollisionSystem collisionSystem;
 
     /**
      * Adds an entity to this scene.
@@ -57,7 +61,6 @@ public class Scene<G extends Game> extends GameState<G> {
 
             if(sceneBegun) {
                 entity.onCreate(game, this);
-                entity.postCreate(this);
             }
         }
         else {
@@ -76,26 +79,34 @@ public class Scene<G extends Game> extends GameState<G> {
         super.beginState(game);
         this.game = game;
         entities = new EntityStore();
-        collisionSystem2D.init();
         entitySystemEngine = new EntitySystemEngine(game, this);
         loadSystems();
     }
 
     private void loadSystems() {
-        for (Annotation annotation : getClass().getAnnotations()) {
-            if(annotation instanceof RegisterSystem.List) {
-                RegisterSystem.List requireSystemList = (RegisterSystem.List) annotation;
-                for(RegisterSystem registerSystem: requireSystemList.value()) {
-                    try {
-                        Class<AbstractEntitySystem> clazz = registerSystem.clazz();
-                        Constructor<AbstractEntitySystem> constructor = clazz.getConstructor();
-                        AbstractEntitySystem system = constructor.newInstance();
-                        entitySystemEngine.addSystem(system);
-                    }
-                    catch(Exception e) {
-                        throw new GameEngineException("Unable to setup entity components", e);
-                    }
+        Class clazz = getClass();
+        List<Class<? extends AbstractEntitySystem>> systemClazzList = new ArrayList<>();
+        while(clazz != null) {
+            for (Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
+                Class<? extends AbstractEntitySystem> systemClazz = ((RegisterSystem)annotation).value();
+                systemClazzList.add(systemClazz);
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        for(Class<? extends AbstractEntitySystem> systemClazz : systemClazzList) {
+            try {
+                Constructor<? extends AbstractEntitySystem> constructor = systemClazz.getConstructor();
+                AbstractEntitySystem system = constructor.newInstance();
+
+                if(system instanceof CollisionSystem) {
+                    collisionSystem = (CollisionSystem)system;
                 }
+
+                entitySystemEngine.addSystem(system);
+            }
+            catch(Exception e) {
+                throw new GameEngineException("Unable to setup entity components", e);
             }
         }
     }
@@ -129,7 +140,6 @@ public class Scene<G extends Game> extends GameState<G> {
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
             Entity entity = entities.get(currentEntity);
             entity.onCreate(game, this);
-            entity.postCreate(this);
         }
     }
 
@@ -213,7 +223,6 @@ public class Scene<G extends Game> extends GameState<G> {
             }
         }
 
-        collisionSystem2D.destroy();
         entities = null;
     }
 

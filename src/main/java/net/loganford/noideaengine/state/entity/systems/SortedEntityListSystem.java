@@ -60,10 +60,7 @@ public abstract class SortedEntityListSystem extends AbstractEntitySystem {
     public void receive(Signal<Entity> signal, Entity entity) {
         super.receive(signal, entity);
 
-        if(signal instanceof DestructionSignal) {
-            removeEntity(entity);
-        }
-        else if(signal instanceof DepthChangedSignal) {
+        if(signal instanceof DepthChangedSignal) {
             resort = true;
         }
     }

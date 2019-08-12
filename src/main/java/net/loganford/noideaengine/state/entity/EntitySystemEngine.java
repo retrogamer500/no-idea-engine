@@ -32,7 +32,7 @@ public class EntitySystemEngine {
      * Adds an entity to all the systems interested in it's components
      * @param entity the entity to add
      */
-    protected void addEntityToEngine(Entity entity) {
+    protected void processNewEntityComponents(Entity entity) {
         for(AbstractEntitySystem system : systems) {
             if(system.entityBelongs(entity)) {
                 if(!entity.getSystems().contains(system)) {

@@ -13,7 +13,6 @@ public class SceneTest {
     @Test
     public void testScene() {
         TestScene testScene = new TestScene();
-        testScene.setCollisionSystem2D(new SpacialPartitionBroadphase(32, 4096));
 
         Game game = new Game(testScene);
         game.setTransition(new FadeTransition(1000));
