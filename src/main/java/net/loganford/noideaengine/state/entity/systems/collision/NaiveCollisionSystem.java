@@ -1,6 +1,6 @@
 package net.loganford.noideaengine.state.entity.systems.collision;
 
-import net.loganford.noideaengine.shape.Shape2D;
+import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.entity.Entity;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
     }
 
     @Override
-    public boolean collidesWith(Shape2D shape, Class<? extends Entity> clazz) {
+    public boolean collidesWith(Shape shape, Class<? extends Entity> clazz) {
         for(Entity entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass())) {
                 if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
@@ -40,7 +40,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> C getCollision(Shape2D shape, Class<C> clazz) {
+    public <C extends Entity> C getCollision(Shape shape, Class<C> clazz) {
         for(Entity entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass())) {
                 if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
@@ -53,7 +53,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> List<C> getCollisions(Shape2D shape, Class<C> clazz) {
+    public <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz) {
         List<C> results = new ArrayList<>();
         for(Entity entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass())) {

@@ -2,7 +2,6 @@ package net.loganford.noideaengine.state;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
-import net.loganford.noideaengine.state.collisionSystem.SpacialPartitionBroadphase;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.transition.FadeTransition;
 import net.loganford.noideaengine.utils.math.MathUtils;

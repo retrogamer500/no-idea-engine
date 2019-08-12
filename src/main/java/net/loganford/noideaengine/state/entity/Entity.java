@@ -9,7 +9,7 @@ import net.loganford.noideaengine.graphics.Frame;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Sprite;
 import net.loganford.noideaengine.shape.Rect;
-import net.loganford.noideaengine.shape.Shape2D;
+import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
@@ -35,7 +35,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter private Set<AbstractEntitySystem> systems;
 
     @Getter @Setter private Sprite sprite;
-    @Getter private Shape2D shape;
+    @Getter private Shape shape;
     @Getter private float shapeOffsetX = 0;
     @Getter private float shapeOffsetY = 0;
 
@@ -239,7 +239,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * Sets the collision mask of this entity.
      * @param shape
      */
-    public void setShape(Shape2D shape) {
+    public void setShape(Shape shape) {
         beforeMotionSignal.dispatch(this);
         this.shape = shape;
         afterMotionSignal.dispatch(this);

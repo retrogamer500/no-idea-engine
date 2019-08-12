@@ -4,13 +4,20 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
-public class Circle extends Shape2D {
+public class Circle extends Shape {
     @Getter @Setter private float x;
     @Getter @Setter private float y;
     @Getter @Setter private float radius;
 
+    public Circle(float x, float y, float radius) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+
     @Override
-    public void setPosition(float x, float y) {
+    public void setPosition(float x, float y, float z) {
         this.x = x;
         this.y = y;
     }
@@ -23,41 +30,30 @@ public class Circle extends Shape2D {
         rect.setHeight(2 * radius);
     }
 
-    public static boolean circleCircleCollision(Circle circle1, Circle circle2) {
-        return MathUtils.distanceSqr(circle1.getX(), circle1.getY(), circle2.getX(), circle2.getY()) <=
-                (circle1.getRadius() + circle2.getRadius()) * (circle1.getRadius() + circle2.getRadius());
-    }
+    //Circle collision handlers
+    static {
+        ShapeIntersectionEngine.addHandler(Circle.class, Circle.class, (IntersectionHandler<Circle, Circle>) (circle1, circle2) ->
+                MathUtils.distanceSqr(circle1.getX(), circle1.getY(), circle2.getX(), circle2.getY()) <=
+                (circle1.getRadius() + circle2.getRadius()) * (circle1.getRadius() + circle2.getRadius())
+        );
 
-    public static boolean circlePointCollision(Circle circle, Point2D s2) {
-        return MathUtils.distanceSqr(circle.getX(), circle.getY(), s2.getX(), s2.getY()) <=
-                (circle.getRadius()) * (circle.getRadius());
-    }
+        ShapeIntersectionEngine.addHandler(Circle.class, Line.class, (IntersectionHandler<Circle, Line>) (circle, line) -> {
+            float a = line.getX2()-line.getX1();
+            float b = line.getY2()-line.getY1();
+            float c = circle.getX() - line.getX1();
+            float d = circle.getY() - line.getY1();
+            float r = circle.getRadius();
 
-    public static boolean circleRectCollision(Circle circle, Rect rect) {
-        float cDisX = Math.abs(circle.x - (rect.getX() + (rect.getWidth()/2)));
-        float cDisY = Math.abs(circle.y - (rect.getY() + (rect.getHeight()/2)));
-
-        float halfWidth = .5f * rect.getWidth();
-        float halfHeight = .5f * rect.getHeight();
-
-        if(cDisX > (halfWidth + circle.getRadius())) {
+            if ((d*a-c*b)*(d*a-c*b) <= r*r*(a*a+b*b))
+            {
+                if (c*c + d*d <= r*r)
+                    return true;
+                else if ((a-c)*(a-c)+(b-d)*(b-d) <= r*r)
+                    return true;
+                else if(c*a+d*b>=0 && c*a+d*b <= a*a+b*b)
+                    return true;
+            }
             return false;
-        }
-        if(cDisY > (halfHeight + circle.getRadius())) {
-            return false;
-        }
-
-        if(cDisX <= halfWidth + circle.getRadius() && cDisY <= halfHeight) {
-            return true;
-        }
-
-        if(cDisY <= halfHeight + circle.getRadius() && cDisX <= halfWidth) {
-            return true;
-        }
-
-        float cornerDistance = (cDisX - halfWidth) * (cDisX - halfWidth) +
-                (cDisY - halfHeight) * (cDisY - halfHeight);
-
-        return cornerDistance <= circle.getRadius() * circle.getRadius();
+        });
     }
 }

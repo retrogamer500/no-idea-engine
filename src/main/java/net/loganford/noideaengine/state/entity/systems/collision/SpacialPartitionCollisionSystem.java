@@ -2,7 +2,7 @@ package net.loganford.noideaengine.state.entity.systems.collision;
 
 import net.loganford.noideaengine.shape.Line;
 import net.loganford.noideaengine.shape.Rect;
-import net.loganford.noideaengine.shape.Shape2D;
+import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.signals.AfterMotionSignal;
 import net.loganford.noideaengine.state.entity.signals.BeforeMotionSignal;
@@ -53,7 +53,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     }
 
     @Override
-    public boolean collidesWith(Shape2D shape, Class<? extends Entity> clazz) {
+    public boolean collidesWith(Shape shape, Class<? extends Entity> clazz) {
         if(shape instanceof Line) {
             return doActionWithLine((Line) shape, (bucket -> {
                 for (int i = 0; i < bucket.size(); i++) {
@@ -94,7 +94,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> C getCollision(Shape2D shape, Class<C> clazz) {
+    public <C extends Entity> C getCollision(Shape shape, Class<C> clazz) {
         if(shape instanceof Line) {
             Entity[] result = {null};
             doActionWithLine((Line) shape, (bucket -> {
@@ -138,7 +138,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> List<C> getCollisions(Shape2D shape, Class<C> clazz) {
+    public <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz) {
         Set<C> resultSet = new HashSet<>();
         if(shape instanceof Line) {
             doActionWithLine((Line) shape, (bucket -> {
