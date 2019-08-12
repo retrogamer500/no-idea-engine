@@ -35,9 +35,6 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter private Set<AbstractEntitySystem> systems;
 
     @Getter @Setter private Sprite sprite;
-    @Getter private Shape shape;
-    @Getter private float shapeOffsetX = 0;
-    @Getter private float shapeOffsetY = 0;
 
     @Getter private ComponentRemovedSignal componentRemovedSignal = new ComponentRemovedSignal();
     @Getter private DepthChangedSignal depthChangedSignal = new DepthChangedSignal();
@@ -46,15 +43,14 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter private AfterMotionSignal afterMotionSignal = new AfterMotionSignal();
 
     //Components that are frequently accessed-- want to avoid a hashmap access
-    @Getter private PositionComponent positionComponent;
-    @Getter private CollisionComponent collisionComponent;
+    @Getter private AbstractPositionComponent positionComponent;
+    @Getter private BasicCollisionComponent collisionComponent;
 
     public Entity() {
         alarms = new AlarmSystem();
         components = new HashMap<>();
         systems = new HashSet<>();
         loadComponents();
-        System.out.println("test");
     }
 
     /**
@@ -85,7 +81,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
             try {
                 Constructor<? extends Component> constructor = componentClazz.getConstructor();
                 Component component = constructor.newInstance();
-                component.setEntity(this);
+                component.init(this);
                 addComponent(component);
             }
             catch(Exception e) {
@@ -175,11 +171,11 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
         }
 
         //We maintain a cache of important component types to avoid lookups every step for every entity
-        if(component instanceof PositionComponent) {
-            positionComponent = (PositionComponent)component;
+        if(component instanceof AbstractPositionComponent) {
+            positionComponent = (AbstractPositionComponent)component;
         }
-        else if(component instanceof CollisionComponent) {
-            collisionComponent = (CollisionComponent) component;
+        else if(component instanceof BasicCollisionComponent) {
+            collisionComponent = (BasicCollisionComponent) component;
         }
 
         if(scene != null) {
@@ -226,6 +222,14 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
         positionComponent.setY(y);
     }
 
+    public float getZ() {
+        return positionComponent.getZ();
+    }
+
+    public void setZ(float z) {
+        positionComponent.setZ(z);
+    }
+
     /**
      * Sets the position of the entity. This method is slightly faster then setting both x and y independently.
      * @param x
@@ -235,14 +239,24 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
         positionComponent.setPos(x, y);
     }
 
+    public void setPos(float x, float y, float z) {
+        positionComponent.setPos(x, y, z);
+    }
+
+    public Shape getShape() {
+        return collisionComponent.getShape();
+    }
+
     /**
      * Sets the collision mask of this entity.
      * @param shape
      */
     public void setShape(Shape shape) {
-        beforeMotionSignal.dispatch(this);
-        this.shape = shape;
-        afterMotionSignal.dispatch(this);
+        collisionComponent.setShape(shape);
+    }
+
+    public float getShapeOffsetX() {
+        return collisionComponent.getShapeOffsetX();
     }
 
     /**
@@ -250,9 +264,11 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @param shapeOffsetX
      */
     public void setShapeOffsetX(float shapeOffsetX) {
-        beforeMotionSignal.dispatch(this);
-        this.shapeOffsetX = shapeOffsetX;
-        afterMotionSignal.dispatch(this);
+        collisionComponent.setShapeOffsetX(shapeOffsetX);
+    }
+
+    public float getShapeOffsetY() {
+        return collisionComponent.getShapeOffsetY();
     }
 
     /**
@@ -260,9 +276,15 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @param shapeOffsetY
      */
     public void setShapeOffsetY(float shapeOffsetY) {
-        beforeMotionSignal.dispatch(this);
-        this.shapeOffsetY = shapeOffsetY;
-        afterMotionSignal.dispatch(this);
+        collisionComponent.setShapeOffsetY(shapeOffsetY);
+    }
+
+    public float getShapeOffsetZ() {
+        return collisionComponent.getShapeOffsetZ();
+    }
+
+    public void setShapeOffsetZ(float shapeOffsetZ) {
+        collisionComponent.setShapeOffsetZ(shapeOffsetZ);
     }
 
     /**
@@ -271,8 +293,8 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     public void createMaskFromSprite() {
         Frame firstFrame = sprite.getFrames().get(0);
         Rect rect = new Rect(getX(), getY(), firstFrame.getImage().getWidth(), firstFrame.getImage().getHeight());
-        shapeOffsetX = firstFrame.getOffsetX();
-        shapeOffsetY = firstFrame.getOffsetY();
+        setShapeOffsetX(firstFrame.getOffsetX());
+        setShapeOffsetY(firstFrame.getOffsetY());
         setShape(rect);
     }
 
@@ -285,7 +307,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @return
      */
     public boolean collidesWith(Class<? extends Entity> clazz) {
-        return getScene().getCollisionSystem().collidesWith(shape, clazz);
+        return getScene().getCollisionSystem().collidesWith(getShape(), clazz);
     }
 
     /**
@@ -294,13 +316,13 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @return
      */
     public <C extends Entity> C getCollision(Class<C> clazz) {
-        return getScene().getCollisionSystem().getCollision(shape, clazz);
+        return getScene().getCollisionSystem().getCollision(getShape(), clazz);
     }
 
     public <C extends Entity> C getCollisionAt(Class<C> clazz, float x, float y) {
-        shape.setPosition(x - shapeOffsetX, y - shapeOffsetY);
-        C entity = getScene().getCollisionSystem().getCollision(shape, clazz);
-        shape.setPosition(this.getX() - shapeOffsetX, this.getY() - shapeOffsetY);
+        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY());
+        C entity = getScene().getCollisionSystem().getCollision(getShape(), clazz);
+        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY());
         return entity;
     }
 
@@ -311,13 +333,13 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @return
      */
     public <C extends Entity> List<C> getCollisions(Class<C> clazz) {
-        return getScene().getCollisionSystem().getCollisions(shape, clazz);
+        return getScene().getCollisionSystem().getCollisions(getShape(), clazz);
     }
 
     public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, float x, float y) {
-        shape.setPosition(x - shapeOffsetX, y - shapeOffsetY);
-        List<C> entities = getScene().getCollisionSystem().getCollisions(shape, clazz);
-        shape.setPosition(this.getX() - shapeOffsetX, this.getY() - shapeOffsetY);
+        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY());
+        List<C> entities = getScene().getCollisionSystem().getCollisions(getShape(), clazz);
+        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY());
         return entities;
     }
 
@@ -329,9 +351,9 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @return
      */
     public boolean placeMeeting(Class<? extends Entity> clazz, float x, float y) {
-        shape.setPosition(x - shapeOffsetX, y - shapeOffsetY);
+        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY());
         boolean returnValue = collidesWith(clazz);
-        shape.setPosition(this.getX() - shapeOffsetX, this.getY() - shapeOffsetY);
+        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY());
         return returnValue;
     }
 

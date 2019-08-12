@@ -1,6 +1,6 @@
 package net.loganford.noideaengine.state.entity.components;
 
-public class BasicPositionComponent extends PositionComponent {
+public class BasicPositionComponent extends AbstractPositionComponent {
     private float x;
     private float y;
     private float z;
