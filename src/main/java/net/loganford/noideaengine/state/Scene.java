@@ -8,14 +8,12 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
-import net.loganford.noideaengine.state.collisionSystem.CollisionSystem2D;
-import net.loganford.noideaengine.state.collisionSystem.NaiveBroadphase;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem;
-import net.loganford.noideaengine.state.entity.systems.collision.NaiveCollisionSystem;
+import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.lang.annotation.Annotation;
@@ -23,17 +21,17 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 @Log4j2
-@RegisterSystem(NaiveCollisionSystem.class)
+@RegisterSystem(SpacialPartitionCollisionSystem.class)
 public class Scene<G extends Game> extends GameState<G> {
     private G game;
+    private int currentEntity = 0;
 
     @Getter private boolean sceneBegun = false;
     //List of entities in the scene
     @Getter private EntityStore entities;
-    private int currentEntity = 0;
+    //ECS Engine
     @Getter private EntitySystemEngine entitySystemEngine;
-
-    //@Getter @Setter private CollisionSystem2D collisionSystem2D = new NaiveBroadphase();
+    //Cache of collision system. Move to Entity in the future?
     @Getter CollisionSystem collisionSystem;
 
     /**
