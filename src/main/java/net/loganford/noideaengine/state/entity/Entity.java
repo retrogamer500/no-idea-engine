@@ -31,7 +31,8 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter @Setter private boolean persistent;
 
     @Getter private AlarmSystem alarms;
-    @Getter private Map<Class, Component> components;
+    private Map<Class, Component> components;
+    private Map<Class, Component> unmodifiableComponents;
     @Getter private Set<AbstractEntitySystem> systems;
 
     @Getter @Setter private Sprite sprite;
@@ -50,8 +51,9 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     public Entity() {
         alarms = new AlarmSystem();
         components = new HashMap<>();
+        unmodifiableComponents = Collections.unmodifiableMap(components);
         systems = new HashSet<>();
-        loadComponents();
+        loadAndInitializeComponents();
     }
 
     /**
@@ -66,29 +68,39 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     /**
      * Load components for entity based on annotations
      */
-    private void loadComponents() {
+    private void loadAndInitializeComponents() {
         Class clazz = getClass();
-        List<Class<? extends Component>> componentClazzList = new ArrayList<>();
-        while(clazz != null) {
-            for (Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
-                Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
-                componentClazzList.add(componentClazz);
-            }
-
-            clazz = clazz.getSuperclass();
-        }
+        List<Class<? extends Component>> componentClazzList = loadComponentsForClass(getClass());
 
         for(Class<? extends Component> componentClazz : componentClazzList) {
             try {
                 Constructor<? extends Component> constructor = componentClazz.getConstructor();
                 Component component = constructor.newInstance();
-                component.init(this);
+                component.componentAdded(this);
                 addComponent(component);
             }
             catch(Exception e) {
                 throw new GameEngineException("Unable to setup entity components", e);
             }
         }
+    }
+
+    private List<Class<? extends Component>> loadComponentsForClass(Class clazz) {
+        List<Class<? extends Component>> componentClazzList = new ArrayList<>();
+        if(clazz != null) {
+            componentClazzList.addAll(loadComponentsForClass(clazz.getSuperclass()));
+
+            for(Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
+                Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
+                componentClazzList.add(componentClazz);
+            }
+
+            for(Annotation annotation : clazz.getAnnotationsByType(UnregisterComponent.class)) {
+                Class<? extends Component> componentClazz = ((UnregisterComponent)annotation).value();
+                componentClazzList.remove(componentClazz);
+            }
+        }
+        return componentClazzList;
     }
 
     /**
@@ -188,6 +200,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     }
 
     public void removeComponent(Component component) {
+        component.componentRemoved();
         Class clazz = component.getClass();
         while(clazz != null) {
             components.remove(clazz, component);
@@ -196,6 +209,10 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
         if(scene != null) {
             componentRemovedSignal.dispatch(this);
         }
+    }
+
+    public Map<Class, Component> getComponents() {
+        return unmodifiableComponents;
     }
 
     public Component getComponent(Class<Component> clazz) {

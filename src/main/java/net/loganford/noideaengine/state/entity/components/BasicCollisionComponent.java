@@ -14,8 +14,8 @@ public class BasicCollisionComponent extends Component implements Listener<Entit
     @Getter private float shapeOffsetZ = 0;
 
     @Override
-    public void init(Entity entity) {
-        super.init(entity);
+    public void componentAdded(Entity entity) {
+        super.componentAdded(entity);
         entity.getAfterMotionSignal().subscribe(this);
     }
 
@@ -50,5 +50,12 @@ public class BasicCollisionComponent extends Component implements Listener<Entit
                 shape.setPosition(entity.getX() + shapeOffsetX, entity.getY() + shapeOffsetY, entity.getZ() + shapeOffsetZ);
             }
         }
+    }
+
+    @Override
+    public void componentRemoved() {
+        super.componentRemoved();
+        //Set shape to null so that any listeners are informed that the component is being removed from the entity
+        setShape(null);
     }
 }
