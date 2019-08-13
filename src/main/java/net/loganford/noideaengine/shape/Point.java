@@ -37,11 +37,11 @@ public class Point extends Shape {
 
     //Point collision handlers
     static {
-        ShapeIntersectionEngine.addHandler(Point.class, Point.class, (IntersectionHandler<Point, Point>) (point1, point2) ->
+        ShapeIntersectionEngine.addHandler(Point.class, Point.class, (point1, point2) ->
                 Math.abs(point1.x - point2.x) < MathUtils.EPSILON && Math.abs(point1.y - point2.y) < MathUtils.EPSILON
         );
 
-        ShapeIntersectionEngine.addHandler(Point.class, Circle.class, (IntersectionHandler<Point, Circle>) (point, circle) ->
+        ShapeIntersectionEngine.addHandler(Point.class, Circle.class, (point, circle) ->
                 MathUtils.distanceSqr(circle.getX(), circle.getY(), point.getX(), point.getY()) <=
                 (circle.getRadius()) * (circle.getRadius())
         );

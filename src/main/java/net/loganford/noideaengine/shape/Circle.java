@@ -32,12 +32,12 @@ public class Circle extends Shape {
 
     //Circle collision handlers
     static {
-        ShapeIntersectionEngine.addHandler(Circle.class, Circle.class, (IntersectionHandler<Circle, Circle>) (circle1, circle2) ->
+        ShapeIntersectionEngine.addHandler(Circle.class, Circle.class, (circle1, circle2) ->
                 MathUtils.distanceSqr(circle1.getX(), circle1.getY(), circle2.getX(), circle2.getY()) <=
                 (circle1.getRadius() + circle2.getRadius()) * (circle1.getRadius() + circle2.getRadius())
         );
 
-        ShapeIntersectionEngine.addHandler(Circle.class, Line.class, (IntersectionHandler<Circle, Line>) (circle, line) -> {
+        ShapeIntersectionEngine.addHandler(Circle.class, Line.class, (circle, line) -> {
             float a = line.getX2()-line.getX1();
             float b = line.getY2()-line.getY1();
             float c = circle.getX() - line.getX1();

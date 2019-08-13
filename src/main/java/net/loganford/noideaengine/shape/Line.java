@@ -37,7 +37,7 @@ public class Line extends Shape {
 
     //Line collision handlers
     static {
-        ShapeIntersectionEngine.addHandler(Line.class, Line.class, (IntersectionHandler<Line, Line>) (line1, line2) -> {
+        ShapeIntersectionEngine.addHandler(Line.class, Line.class, (line1, line2) -> {
             if(ccw(line1.getX1(), line1.getY1(), line1.getX2(), line1.getY2(), line2.getX1(), line2.getX2()) * ccw(line1.getX1(), line1.getY1(), line1.getX2(), line1.getY2(), line2.getX1(), line2.getX2()) > 0)
                 return false;
             if(ccw(line2.getX1(), line2.getY1(), line2.getX2(), line2.getY2(), line1.getX1(), line1.getX2()) * ccw(line2.getX1(), line2.getY1(), line2.getX2(), line2.getY2(), line1.getX1(), line1.getX2()) > 0)

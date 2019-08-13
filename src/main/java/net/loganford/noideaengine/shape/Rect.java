@@ -34,7 +34,7 @@ public class Rect extends Shape {
 
     //Rectangle collision handlers
     static {
-        ShapeIntersectionEngine.addHandler(Rect.class, Rect.class, (IntersectionHandler<Rect, Rect>) (rect1, rect2) -> {
+        ShapeIntersectionEngine.addHandler(Rect.class, Rect.class, (rect1, rect2) -> {
             if(rect2.getX() + rect2.getWidth() < rect1.getX()) {
                 return false;
             }
@@ -50,7 +50,7 @@ public class Rect extends Shape {
             return true;
         });
 
-        ShapeIntersectionEngine.addHandler(Rect.class, Circle.class, (IntersectionHandler<Rect, Circle>) (rect, circle) -> {
+        ShapeIntersectionEngine.addHandler(Rect.class, Circle.class, (rect, circle) -> {
             float cDisX = Math.abs(circle.getX() - (rect.getX() + (rect.getWidth()/2)));
             float cDisY = Math.abs(circle.getY() - (rect.getY() + (rect.getHeight()/2)));
 
@@ -78,7 +78,7 @@ public class Rect extends Shape {
             return cornerDistance <= circle.getRadius() * circle.getRadius();
         });
 
-        ShapeIntersectionEngine.addHandler(Rect.class, Point.class, (IntersectionHandler<Rect, Point>) (rect, point) -> {
+        ShapeIntersectionEngine.addHandler(Rect.class, Point.class, (rect, point) -> {
             if(point.getX() < rect.getX()) {
                 return false;
             }
@@ -94,7 +94,7 @@ public class Rect extends Shape {
             return true;
         });
 
-        ShapeIntersectionEngine.addHandler(Rect.class, Line.class, (IntersectionHandler<Rect, Line>) (rect, line) -> {
+        ShapeIntersectionEngine.addHandler(Rect.class, Line.class, (rect, line) -> {
             float len = MathUtils.distance(line.getX1(), line.getY1(), line.getX2(), line.getY2());
 
             float unitX = (line.getX2() - line.getX1())/len;

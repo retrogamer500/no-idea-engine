@@ -36,7 +36,7 @@ public class ShapeIntersectionEngine {
         return handler.intersects(a, b);
     }
 
-    public static void addHandler(Class<? extends Shape> clazzA, Class<? extends Shape> clazzB, IntersectionHandler handler) {
+    public static <A extends Shape, B extends Shape> void addHandler(Class<A> clazzA, Class<B> clazzB, IntersectionHandler<A, B> handler) {
         Integer registrationA = shapeIds.get(clazzA);
         Integer registrationB = shapeIds.get(clazzB);
 
