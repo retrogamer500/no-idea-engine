@@ -47,7 +47,20 @@ public class ShapeIntersectionEngine {
             registrationB = registerShape(clazzB);
         }
 
+        handlers[registrationB + registrationA * MAX_SHAPES] = new SwappedHandler<>(handler);
         handlers[registrationA + registrationB * MAX_SHAPES] = handler;
-        handlers[registrationB + registrationA * MAX_SHAPES] = handler;
+
+    }
+
+    private static class SwappedHandler<A extends Shape, B extends Shape> implements IntersectionHandler<A, B> {
+        private IntersectionHandler<B, A> other;
+        public SwappedHandler(IntersectionHandler<B, A> other) {
+            this.other = other;
+        }
+
+        @Override
+        public boolean intersects(A a, B b) {
+            return other.intersects(b, a);
+        }
     }
 }

@@ -36,6 +36,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
 
     @Getter @Setter private Sprite sprite;
 
+    @Getter private ComponentAddedSignal componentAddedSignal = new ComponentAddedSignal();
     @Getter private ComponentRemovedSignal componentRemovedSignal = new ComponentRemovedSignal();
     @Getter private DepthChangedSignal depthChangedSignal = new DepthChangedSignal();
     @Getter private DestructionSignal destructionSignal = new DestructionSignal();
@@ -170,16 +171,19 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
             clazz = clazz.getSuperclass();
         }
 
+        if(scene != null) {
+            //Tell the entity system engine that components have been added
+            scene.getEntitySystemEngine().processNewEntityComponents(this);
+        }
+
+        componentAddedSignal.dispatch(this);
+
         //We maintain a cache of important component types to avoid lookups every step for every entity
         if(component instanceof AbstractPositionComponent) {
             positionComponent = (AbstractPositionComponent)component;
         }
         else if(component instanceof BasicCollisionComponent) {
             collisionComponent = (BasicCollisionComponent) component;
-        }
-
-        if(scene != null) {
-            scene.getEntitySystemEngine().processNewEntityComponents(this);
         }
     }
 

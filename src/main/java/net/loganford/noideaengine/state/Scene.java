@@ -119,25 +119,31 @@ public class Scene<G extends Game> extends GameState<G> {
     public void postBeginState(G game) {
         super.postBeginState(game);
 
+        //Create any new entities added prior to the state beginning
+        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
+            Entity entity = entities.get(currentEntity);
+            entity.onCreate(game, this);
+            entity.beginScene(game, this);
+        }
+
+        //Officially mark the scene as started
+        sceneBegun = true;
+
+        //Handle persistent entities
         Iterator<Entity> it = game.getPersistentEntities().iterator();
         while(it.hasNext()) {
             Entity entity = it.next();
             if(testEntityGenerics(entity)) {
                 if(testEntityGenerics(entity)) {
+                    entity.getSystems().clear(); //Clear cache of systems from last scene
                     add(entity);
+                    entity.beginScene(game, this);
                     it.remove();
                 }
                 else {
                     log.info("Tried to add persistent entity to scene with improper generics: " + entity.getClass().getName());
                 }
             }
-        }
-
-        sceneBegun = true;
-
-        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            Entity entity = entities.get(currentEntity);
-            entity.onCreate(game, this);
         }
     }
 
