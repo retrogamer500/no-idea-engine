@@ -3,7 +3,6 @@ package net.loganford.noideaengine.state.entity.systems;
 import lombok.Getter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.resources.RequireGroup;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.Component;
@@ -36,9 +35,11 @@ public abstract class AbstractEntitySystem implements Listener<Entity> {
 
     public void addEntity(Entity entity) {
         entity.getComponentRemovedSignal().subscribe(this);
+        entity.getDestructionSignal().subscribe(this);
     }
     public void removeEntity(Entity entity) {
         entity.getComponentRemovedSignal().unsubscribe(this);
+        entity.getDestructionSignal().unsubscribe(this);
     }
 
     public abstract void step(Game game, Scene scene, float delta);

@@ -183,14 +183,39 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         super.receive(signal, entity);
 
         if(signal instanceof BeforeMotionSignal) {
-            handleEntityAddition(entity);
+            handleEntityRemoval(entity);
         }
         else if(signal instanceof AfterMotionSignal) {
-            handleEntityRemoval(entity);
+            handleEntityAddition(entity);
         }
     }
 
     private void handleEntityAddition(Entity entity) {
+        if(entity.getShape() != null) {
+            if(entity.getShape() instanceof  Line) {
+                doActionWithLine((Line) entity.getShape(), (bucket -> {
+                    bucket.add(entity);
+                    return false;
+                }));
+            }
+            else {
+                entity.getShape().getBoundingBox(rect);
+                int x1 = (int) (rect.getX() / cellSize);
+                int y1 = (int) (rect.getY() / cellSize);
+                int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
+                int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
+
+                for (int tx = x1; tx <= x2; tx++) {
+                    for (int ty = y1; ty <= y2; ty++) {
+                        int bucketNum = hash2d(tx, ty);
+                        buckets.get(bucketNum).add(entity);
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleEntityRemoval(Entity entity) {
         if(entity.getShape() != null) {
             if(entity.getShape() instanceof Line) {
                 doActionWithLine((Line) entity.getShape(), (bucket -> {
@@ -218,31 +243,6 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
                                 bucket.remove(i);
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    private void handleEntityRemoval(Entity entity) {
-        if(entity.getShape() != null) {
-            if(entity.getShape() instanceof  Line) {
-                doActionWithLine((Line) entity.getShape(), (bucket -> {
-                    bucket.add(entity);
-                    return false;
-                }));
-            }
-            else {
-                entity.getShape().getBoundingBox(rect);
-                int x1 = (int) (rect.getX() / cellSize);
-                int y1 = (int) (rect.getY() / cellSize);
-                int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
-                int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
-
-                for (int tx = x1; tx <= x2; tx++) {
-                    for (int ty = y1; ty <= y2; ty++) {
-                        int bucketNum = hash2d(tx, ty);
-                        buckets.get(bucketNum).add(entity);
                     }
                 }
             }
