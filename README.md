@@ -32,7 +32,7 @@ The engine should be compatible with Java all the way down to Java 8. This engin
 
 To create a game using this engine, add the following to your POM.xml:
 
-```
+```xml
 <repositories>
     <repository>
         <id>noideaengine-mvn-repo</id>
