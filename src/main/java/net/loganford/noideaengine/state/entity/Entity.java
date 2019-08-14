@@ -88,7 +88,11 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     private List<Class<? extends Component>> loadComponentsForClass(Class clazz) {
         List<Class<? extends Component>> componentClazzList = new ArrayList<>();
         if(clazz != null) {
-            componentClazzList.addAll(loadComponentsForClass(clazz.getSuperclass()));
+
+            Annotation inherit = clazz.getAnnotation(InheritComponents.class);
+            if(inherit == null || ((InheritComponents) inherit).value()) {
+                componentClazzList.addAll(loadComponentsForClass(clazz.getSuperclass()));
+            }
 
             for(Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
                 Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
