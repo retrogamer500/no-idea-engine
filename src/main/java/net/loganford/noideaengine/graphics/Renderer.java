@@ -11,12 +11,16 @@ import net.loganford.noideaengine.resources.loading.ShaderLoader;
 import net.loganford.noideaengine.resources.loading.TextureLoader;
 import net.loganford.noideaengine.state.Camera;
 import net.loganford.noideaengine.state.View;
-import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.file.JarResourceLocationFactory;
-import org.joml.*;
+import net.loganford.noideaengine.utils.math.MathUtils;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL33;
 
-import java.lang.Math;
+import java.util.Objects;
+import java.util.Stack;
 
 @Log4j2
 public class Renderer {
@@ -47,10 +51,10 @@ public class Renderer {
     @Getter private ShaderProgram shaderTile;
 
     //Render state
-    @Getter private ShaderProgram shader;
+    private Stack<ShaderProgram> shaderStack = new Stack<>();
     @Getter @Setter private View view;
     @Getter @Setter private Camera camera;
-    private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
+    @Getter @Setter private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
     @Getter private Vector3f lightDirection = new Vector3f();
     @Getter private Vector3f lightColor = new Vector3f();
     @Getter private Vector3f ambientLightColor = new Vector3f();
@@ -128,20 +132,45 @@ public class Renderer {
         polygonCircle = new Polygon(circleAccuracy, pointNum -> new Vector2f((float)Math.cos(pointNum*Math.PI*2/circleAccuracy), (float)Math.sin(pointNum*Math.PI*2/circleAccuracy)));
     }
 
+    public ShaderProgram getShader() {
+        return shaderStack.isEmpty() ? null : shaderStack.peek();
+    }
+
+    public ShaderProgram popShader() {
+        ShaderProgram oldShader = shaderStack.pop();
+        ShaderProgram newShader = shaderStack.peek();
+        swapShaders(oldShader, newShader);
+        return oldShader;
+    }
+
+    public void pushShader(ShaderProgram shader) {
+        ShaderProgram oldShader = shaderStack.peek();
+        ShaderProgram newShader = shaderStack.push(shader);
+        swapShaders(oldShader, newShader);
+    }
+
+
     public void setShader(ShaderProgram shader) {
-        if(!shader.equals(this.shader)) {
+        ShaderProgram oldShader = getShader();
+        if (shaderStack.isEmpty()) {
+            shaderStack.push(shader);
+        } else {
+            shaderStack.set(shaderStack.size() - 1, shader);
+        }
+        swapShaders(oldShader, shader);
+    }
+
+    private void swapShaders(ShaderProgram oldProgram, ShaderProgram newProgram) {
+        if(!Objects.equals(oldProgram, newProgram)) {
             if(getTextureBatch() != null) {
                 getTextureBatch().flush(this);
             }
-            this.shader = shader;
-            GL33.glUseProgram(shader.getProgramId());
+            GL33.glUseProgram(newProgram.getProgramId());
         }
     }
 
     public void resetShader() {
-        ShaderProgram defaultShader = shaderDefault;
-        setShader(defaultShader);
-        GL33.glUseProgram(defaultShader.getProgramId());
+        setShader(shaderDefault);
     }
 
     public void clear(float r, float g, float b) {
@@ -167,10 +196,6 @@ public class Renderer {
             log.error("OpenGL error occurred: " + error);
             assert false;
         }
-    }
-
-    public Vector4fc getColor() {
-        return color;
     }
 
     public void setColor(float r, float g, float b, float alpha) {
@@ -224,7 +249,7 @@ public class Renderer {
 
     /**
      * Draws a quad. The only uniforms that are populated will be the model, view and projection matrix, based off
-     * of the shape of the quad and the current view. Useful for implementing your own shaders.
+     * of the shape of the quad and the current view. Useful for implementing your own effects.
      * @param x x position of quad (world space)
      * @param y y position of quad (world space)
      * @param width width of quad
@@ -256,7 +281,7 @@ public class Renderer {
 
     /**
      * Draws a fullscreen quad. The only uniforms that are populated will be the model, view and projection matrix,
-     * based off of the current view. Useful for implementing your own shaders.
+     * based off of the current view. Useful for implementing your own effects.
      */
     public void drawFullscreenQuad() {
         drawQuad(getView().getX(), getView().getY(), getView().getWidth(), getView().getHeight());

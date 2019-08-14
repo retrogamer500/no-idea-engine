@@ -6,7 +6,6 @@ import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Texture;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
-import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
@@ -86,8 +85,7 @@ public class TileLayer extends Entity<Game, Scene<Game>> implements UnsafeMemory
             dirty = false;
         }
 
-        ShaderProgram oldShader = renderer.getShader();
-        renderer.setShader(renderer.getShaderTile());
+        renderer.pushShader(renderer.getShaderTile());
 
         renderer.getShader().setUniform(ShaderUniform.TEX_DIFFUSE, tileImage.getTexture());
         renderer.getShader().setUniform(ShaderUniform.TEX_TILE_LOOKUP, tileLookupTexture);
@@ -96,8 +94,10 @@ public class TileLayer extends Entity<Game, Scene<Game>> implements UnsafeMemory
         renderer.getShader().setUniform(ShaderUniform.TILE_UV_SIZE, V2F.set(tileWidth/tileImage.getTexture().getWidth(), tileHeight/tileImage.getTexture().getHeight()));
         renderer.getShader().setUniform(ShaderUniform.TILE_SIZE, V2F.set(tileWidth, tileHeight));
 
+        //Drawing the quad flushes the texture batch and resets the bound texture count
         renderer.drawQuad(0, 0, width * tileWidth, height * tileHeight);
-        renderer.setShader(oldShader);
+
+        renderer.popShader();
     }
 
     @Override
