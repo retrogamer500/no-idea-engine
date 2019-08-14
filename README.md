@@ -2,7 +2,7 @@
 <img src="https://i.imgur.com/u7eLfbt.png" align="right"
      title="no-idea-engine logo">
 
-No-idea-engine is an OpenGL 3.3 game engine for Java heavily inspired by the architecture of GameMaker Studio. The goal is to create an engine suitable for rapid prototyping, as well as releasing moderately-scoped games. Target platforms are PC and Linux.
+No‑idea‑engine is an OpenGL 3.3 game engine for Java heavily inspired by the architecture of GameMaker Studio. The goal is to create an engine suitable for rapid prototyping, as well as releasing moderately-scoped games. Target platforms are PC and Linux.
 
 ### Documentation:
 View the wiki [here](https://github.com/retrogamer500/no-idea-engine/wiki) for more details. Documentation is an ongoing effort.
