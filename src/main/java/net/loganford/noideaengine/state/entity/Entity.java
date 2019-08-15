@@ -58,8 +58,8 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
 
     /**
      * This method is called at the beginning of the step, after the entity has been placed in the scene.
-     * @param game
-     * @param scene
+     * @param game the current game
+     * @param scene the current scene
      */
     public void onCreate(G game, S scene) {
         scene.getEntitySystemEngine().processNewEntityComponents(this);
@@ -119,7 +119,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     /**
      * Sets the depth of the entity. Entities are drawn from the entity with the highest depth to the lowest. The entity
      * with the highest depth will appear below other entities. The step method will also be called in this order.
-     * @param depth
+     * @param depth the desired depth
      */
     public void setDepth(float depth) {
         if(depth != this.depth) {
@@ -130,19 +130,19 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * This method is called prior to step
-     * @param game
-     * @param scene
-     * @param delta
+     * This method is called prior to step.
+     * @param game the current game
+     * @param scene the current scene
+     * @param delta time since the previous frame, in milliseconds
      */
     public void beforeStep(G game, S scene, float delta) {}
 
     /**
      * This method is called every step of the game loop. Delta time is passed through here. Do not call any draw
      * methods within this or any of the other step methods.
-     * @param game
-     * @param scene
-     * @param delta
+     * @param game the current game
+     * @param scene the current scene
+     * @param delta time since the previous frame, in milliseconds
      */
     public void step(G game, S scene, float delta) {
         alarms.step(delta);
@@ -153,19 +153,19 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * This method is called after step
-     * @param game
-     * @param scene
-     * @param delta
+     * This method is called after step.
+     * @param game the current game
+     * @param scene the current scene
+     * @param delta time since the previous frame, in milliseconds
      */
     public void afterStep(G game, S scene, float delta) {}
 
     /**
      * This method is called once per step. Render the entity here. Do not change the state of the entity-- do that in
      * the step method.
-     * @param game
-     * @param scene
-     * @param renderer
+     * @param game the current game
+     * @param scene the current scene
+     * @param renderer reference to the renderer for primate rendering and more advanced drawing functionality
      */
     public void render(G game, S scene, Renderer renderer) {
         if(sprite != null) {
@@ -175,11 +175,15 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
 
     /**
      * This method is called when the entity is destroyed. You may place custom logic here.
-     * @param game
-     * @param scene
+     * @param game the current game
+     * @param scene the current scene
      */
     public void onDestroy(G game, S scene) {}
 
+    /**
+     * Adds a component to the entity. A call to this may add this entity to any of the scene's systems.
+     * @param component the component to add to the entity
+     */
     public void addComponent(Component component) {
         Class clazz = component.getClass();
         while(clazz != null) {
@@ -203,111 +207,169 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
         }
     }
 
+    /**
+     * Removes a component from the entity. This may remove the entity from the systems which it is registered to.
+     * @param component the component which to remove.
+     */
     public void removeComponent(Component component) {
         component.componentRemoved();
         Class clazz = component.getClass();
         while(clazz != null) {
-            components.remove(clazz, component);
-            clazz = clazz.getSuperclass();
+            if(components.get(clazz).equals(component)) {
+                components.remove(clazz, component);
+                clazz = clazz.getSuperclass();
+            }
         }
         if(scene != null) {
             componentRemovedSignal.dispatch(this);
         }
     }
 
+    /**
+     * Returns a map of components assigned to this entity. This map cannot be modified.
+     * @return the component map
+     */
     public Map<Class, Component> getComponents() {
         return unmodifiableComponents;
     }
 
-    public Component getComponent(Class<Component> clazz) {
-        return components.get(clazz);
+    /**
+     * Returns a specific component.
+     * @param clazz class of component
+     * @return a component, or null if  it doesn't belong to this entity.
+     */
+    @SuppressWarnings("unchecked")
+    public <C extends Component> C getComponent(Class<C> clazz) {
+        return (C) components.get(clazz);
     }
 
+    /**
+     * Returns the x position of the entity.
+     * @return the x position
+     */
     public float getX() {
         return positionComponent.getX();
     }
 
     /**
      * Sets the x position of the entity.
-     * @param x
+     * @param x the x position
      */
     public void setX(float x) {
         positionComponent.setX(x);
     }
 
+    /**
+     * Returns the y position of the entity.
+     * @return the y position.
+     */
     public float getY() {
         return positionComponent.getY();
     }
 
     /**
      * Sets the y position of the entity.
-     * @param y
+     * @param y the y position
      */
     public void setY(float y) {
         positionComponent.setY(y);
     }
 
+    /**
+     * Returns the z position of the entity.
+     * @return the z position
+     */
     public float getZ() {
         return positionComponent.getZ();
     }
 
+    /**
+     * Sets the z position of the entity.
+     * @param z the z position
+     */
     public void setZ(float z) {
         positionComponent.setZ(z);
     }
 
     /**
      * Sets the position of the entity. This method is slightly faster then setting both x and y independently.
-     * @param x
-     * @param y
+     * @param x the x position
+     * @param y the y position
      */
     public void setPos(float x, float y) {
         positionComponent.setPos(x, y);
     }
 
+    /**
+     * Sets the position of the entity in 3D space in a single call.
+     * @param x the x position
+     * @param y the y position
+     * @param z the z position
+     */
     public void setPos(float x, float y, float z) {
         positionComponent.setPos(x, y, z);
     }
 
+    /**
+     * Retrieves the current collision mask of the entity.
+     * @return the current collision mask
+     */
     public Shape getShape() {
         return collisionComponent.getShape();
     }
 
     /**
      * Sets the collision mask of this entity.
-     * @param shape
+     * @param shape the desired collision mask
      */
     public void setShape(Shape shape) {
         collisionComponent.setShape(shape);
     }
 
+    /**
+     * Gets the x offset of the collision mask.
+     * @return the x offset
+     */
     public float getShapeOffsetX() {
         return collisionComponent.getShapeOffsetX();
     }
 
     /**
-     * Sets the y offset of the collision mask from the entity's position.
-     * @param shapeOffsetX
+     * Sets the x offset of the collision mask.
+     * @param shapeOffsetX the x offset
      */
     public void setShapeOffsetX(float shapeOffsetX) {
         collisionComponent.setShapeOffsetX(shapeOffsetX);
     }
 
+    /**
+     * Gets the y offset of the collision mask.
+     * @return the y offset
+     */
     public float getShapeOffsetY() {
         return collisionComponent.getShapeOffsetY();
     }
 
     /**
-     * Sets the y offset of the collision mask from the entity's position.
-     * @param shapeOffsetY
+     * Sets the y offset of the collision mask.
+     * @param shapeOffsetY the y offset
      */
     public void setShapeOffsetY(float shapeOffsetY) {
         collisionComponent.setShapeOffsetY(shapeOffsetY);
     }
 
+    /**
+     * Gets the z offset of the collision mask.
+     * @return the z offset
+     */
     public float getShapeOffsetZ() {
         return collisionComponent.getShapeOffsetZ();
     }
 
+    /**
+     * Sets the z offset of the collision mask.
+     * @param shapeOffsetZ the z offset
+     */
     public void setShapeOffsetZ(float shapeOffsetZ) {
         collisionComponent.setShapeOffsetZ(shapeOffsetZ);
     }
@@ -323,13 +385,24 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
         setShape(rect);
     }
 
+    /**
+     * Called after onCreate when the scene begins.
+     * @param game the current game
+     * @param scene the current scene
+     */
     public void beginScene(G game, S scene) {}
+
+    /**
+     * Called when the scene ends.
+     * @param game the current game
+     * @param scene the current scene
+     */
     public void endScene(G game, S scene) {}
 
     /**
      * Checks for collisions with entities.
-     * @param clazz
-     * @return
+     * @param clazz class of entities to search for collisions against
+     * @return whether this entity collides with another of the specific class
      */
     public boolean collidesWith(Class<? extends Entity> clazz) {
         return getScene().getCollisionSystem().collidesWith(getShape(), clazz);
@@ -337,68 +410,128 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
 
     /**
      * Checks for collisions with entities.
-     * @param clazz
-     * @return
+     * @param clazz class of entities to search for collisions against
+     * @return one entity of the specific class which collides with this entity, or null if none exists
      */
     public <C extends Entity> C getCollision(Class<C> clazz) {
         return getScene().getCollisionSystem().getCollision(getShape(), clazz);
     }
 
+    /**
+     * Checks for collisions with entities at a hypothetical location.
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @return one entity of the specific class which collides with this entity, or null if none exists
+     */
     public <C extends Entity> C getCollisionAt(Class<C> clazz, float x, float y) {
-        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY());
+        return getCollisionAt(clazz, x, y, 0);
+    }
+
+    /**
+     * Checks for collisions with entities at a hypothetical location.
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @param z z position to check for collisions
+     * @return one entity of the specific class which collides with this entity, or null if none exists
+     */
+    public <C extends Entity> C getCollisionAt(Class<C> clazz, float x, float y, float z) {
+        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY(), z - getShapeOffsetZ());
         C entity = getScene().getCollisionSystem().getCollision(getShape(), clazz);
-        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY());
+        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY(), this.getZ() - getShapeOffsetZ());
         return entity;
     }
 
     /**
      * Checks for collisions with entities.
-     * @param clazz
-     * @param <C>
-     * @return
+     * @param clazz class of entities to search for collisions against
+     * @return a list of all entities which collide with the entity
      */
     public <C extends Entity> List<C> getCollisions(Class<C> clazz) {
         return getScene().getCollisionSystem().getCollisions(getShape(), clazz);
     }
 
+    /**
+     * Checks for collisions with entities at a hypothetical location.
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @return a list of all entities which collide with the entity
+     */
     public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, float x, float y) {
-        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY());
+        return getCollisionsAt(clazz, x, y);
+    }
+
+    /**
+     * Checks for collisions with entities at a hypothetical location.
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @param z z position to check for collisions
+     * @return a list of all entities which collide with the entity
+     */
+    public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, float x, float y, float z) {
+        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY(), z - getShapeOffsetZ());
         List<C> entities = getScene().getCollisionSystem().getCollisions(getShape(), clazz);
-        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY());
+        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY(), this.getZ() - getShapeOffsetZ());
         return entities;
     }
 
     /**
      * Checks for a potential collision assuming that this entity is moved to a certain position.
-     * @param clazz
-     * @param x
-     * @param y
-     * @return
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @return whether a collision occurs at the specified location
      */
     public boolean placeMeeting(Class<? extends Entity> clazz, float x, float y) {
-        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY());
+        return placeMeeting(clazz, x, y, 0);
+    }
+
+    /**
+     * The opposite of the placeMeeting method-- checks if a certain position is free from collisions with a certain entity.
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @return whether a certain position is free from collisions.
+     */
+    public boolean placeFree(Class<? extends Entity> clazz, float x, float y) {
+        return placeFree(clazz, x, y, 0);
+    }
+
+    /**
+     * Checks for a potential collision assuming that this entity is moved to a certain position.
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @param z z position to check for collisions
+     * @return whether a collision occurs at the specified location
+     */
+    public boolean placeMeeting(Class<? extends Entity> clazz, float x, float y, float z) {
+        getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY(), z - getShapeOffsetZ());
         boolean returnValue = collidesWith(clazz);
-        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY());
+        getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY(), this.getZ() - getShapeOffsetZ());
         return returnValue;
     }
 
     /**
-     * See the placeMeeting method.
-     * @param clazz
-     * @param x
-     * @param y
-     * @return
+     * The opposite of the placeMeeting method-- checks if a certain position is free from collisions with a certain entity.
+     * @param clazz class of entities to search for collisions against
+     * @param x x position to check for collisions
+     * @param y y position to check for collisions
+     * @param z z position to check for collisions
+     * @return whether a certain position is free from collisions.
      */
-    public boolean placeFree(Class<? extends Entity> clazz, float x, float y) {
-        return !placeMeeting(clazz, x, y);
+    public boolean placeFree(Class<? extends Entity> clazz, float x, float y, float z) {
+        return !placeMeeting(clazz, x, y, z);
     }
 
 
     /**
      * Gets the nearest entity to this entity.
-     * @param clazz
-     * @param <C>
-     * @return
+     * @param clazz class of entity to find
+     * @return the nearest entity
      */
     public <C extends Entity> C nearest(Class<C> clazz) {
         return getScene().nearest(clazz, getX(), getY());
@@ -406,9 +539,8 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
 
     /**
      * Gets the furthest entity to this entity.
-     * @param clazz
-     * @param <C>
-     * @return
+     * @param clazz class of entity to find
+     * @return the furthest entity
      */
     public <C extends Entity> C furthest(Class<C> clazz) {
         return getScene().furthest(clazz, getX(), getY());
@@ -416,10 +548,9 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
 
     /**
      * Gets the N closest entities to this entity, sorted nearest to furthest.
-     * @param clazz
-     * @param count
-     * @param <C>
-     * @return
+     * @param clazz class of entity to find
+     * @param count the number of entities to find
+     * @return a list of nearby entities
      */
     public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, int count) {
         return getScene().nearest(clazz, getX(), getY(), count);
@@ -427,19 +558,19 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
 
     /**
      * Gets the distance between this entity and another entity.
-     * @param other
-     * @return
+     * @param other entity to find the distance to
+     * @return the distance between the specified entity and this one
      */
     public float distance(Entity other) {
-        return MathUtils.distance(getX(), getY(), other.getX(), other.getY());
+        return MathUtils.distance(getX(), getY(), getZ(), other.getX(), other.getY(), other.getZ());
     }
 
     /**
      * Gets the distance^2 between this entity and another entity.
-     * @param other
-     * @return
+     * @param other entity to find the distance to
+     * @return the square of the distance between the specified entity and this one
      */
     public float distanceSqr(Entity other) {
-        return MathUtils.distanceSqr(getX(), getY(), other.getX(), other.getY());
+        return MathUtils.distanceSqr(getX(), getY(), getZ(), other.getX(), other.getY(), other.getZ());
     }
 }

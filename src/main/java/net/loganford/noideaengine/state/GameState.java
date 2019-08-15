@@ -26,7 +26,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     @Getter @Setter private View view;
     private List<UILayer> uiLayers;
     @Getter private FrameBufferObject frameBufferObject;
-    private Vector4f clearColor;
+    @Getter @Setter private Vector4f backgroundColor;
     private Matrix4f M4 = new Matrix4f();
 
     @Getter @Setter private float scale = 1;
@@ -50,7 +50,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         height = view.getHeight();
         camera = new Camera(game, this);
         frameBufferObject = new FrameBufferObject(game, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale), 1, true);
-        clearColor = new Vector4f(0f, 0f, 0f, 1f);
+        backgroundColor = new Vector4f(0f, 0f, 0f, 1f);
         alarms = new AlarmSystem();
         uiLayers = new ArrayList<>();
     }
@@ -119,7 +119,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
 
         //Use FBO
         frameBufferObject.use();
-        GL33.glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+        GL33.glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
         GL33.glClear(GL33.GL_COLOR_BUFFER_BIT | GL33.GL_DEPTH_BUFFER_BIT);
 
         //Render scene
@@ -182,7 +182,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param a
      */
     public void setBackgroundColor(float r, float g, float b, float a) {
-        clearColor.set(r, g, b, a);
+        backgroundColor.set(r, g, b, a);
     }
 
     /**

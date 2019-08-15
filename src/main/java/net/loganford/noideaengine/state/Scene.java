@@ -1,14 +1,13 @@
 package net.loganford.noideaengine.state;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.jodah.typetools.TypeResolver;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
-import net.loganford.noideaengine.graphics.UnsafeMemory;
 import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.graphics.UnsafeMemory;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
@@ -18,7 +17,9 @@ import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Log4j2
 @RegisterSystem(SpacialPartitionCollisionSystem.class)
@@ -238,13 +239,17 @@ public class Scene<G extends Game> extends GameState<G> {
     }
 
     public <C extends Entity> C nearest(Class<C> clazz, float x, float y) {
+        return nearest(clazz, x, y, 0f);
+    }
+
+    public <C extends Entity> C nearest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float minDisSqr = Float.MAX_VALUE;
 
         for(Entity entity : entities.byClass(clazz)) {
             //AssignableFrom method above avoids any exceptions
             @SuppressWarnings("unchecked") C casted = (C) entity;
-            float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
+            float disSqr = MathUtils.distanceSqr(x, y, z, casted.getX(), casted.getY(), casted.getZ());
             if(disSqr < minDisSqr) {
                 minDisSqr = disSqr;
                 returnValue = casted;
@@ -255,12 +260,16 @@ public class Scene<G extends Game> extends GameState<G> {
     }
 
     public <C extends Entity> C furthest(Class<C> clazz, float x, float y) {
+        return furthest(clazz, x, y, 0);
+    }
+
+    public <C extends Entity> C furthest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float maxDisSqr = Float.MAX_VALUE;
 
         for(Entity entity : entities.byClass(clazz)) {
             @SuppressWarnings("unchecked") C casted = (C) entity;
-            float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
+            float disSqr = MathUtils.distanceSqr(x, y, z, casted.getX(), casted.getY(), casted.getZ());
             if(disSqr > maxDisSqr) {
                 maxDisSqr = disSqr;
                 returnValue = casted;
@@ -271,12 +280,16 @@ public class Scene<G extends Game> extends GameState<G> {
     }
 
     public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
+        return nearest(clazz, x, y, 0, count);
+    }
+
+    public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, float z, int count) {
         List<EntityDistancePair<C>> pairs = new ArrayList<>(count);
 
         for(Entity entity : entities.byClass(clazz)) {
             //AssignableFrom method above avoids any exceptions
             @SuppressWarnings("unchecked") C casted = (C) entity;
-            float disSqr = MathUtils.distanceSqr(x, y, casted.getX(), casted.getY());
+            float disSqr = MathUtils.distanceSqr(x, y, z, casted.getX(), casted.getY(), casted.getZ());
             EntityDistancePair<C> pair = new EntityDistancePair<>(casted, disSqr);
 
             if(pairs.size() == 0) {
