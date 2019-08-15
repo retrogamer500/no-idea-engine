@@ -39,12 +39,6 @@ public class Scene<G extends Game> extends GameState<G> {
      * Adds an entity to this scene.
      * @param entity the entity to add
      */
-    /*
-    We suppress a lot of unchecked warnings in this whole class. The generics are tested here within the
-    testEntityGenerics method as the generics are way to complicated to check at compile-time. A GameEngineException
-    will be thrown if an Entity with incorrect generics is added. This could easily be changed to not add the entity,
-    but the developer would probably prefer to know if they make this mistake.
-     */
     @SuppressWarnings("unchecked")
     public void add(Entity entity) {
         log.debug("Adding entity: " + entity.getClass().getName() + " Entity count: " + entities.size());
@@ -67,12 +61,11 @@ public class Scene<G extends Game> extends GameState<G> {
         }
     }
 
-    private boolean testEntityGenerics(Entity e) {
-        Class<?>[] generics = TypeResolver.resolveRawArguments(Entity.class, e.getClass());
-        return generics[0].isAssignableFrom(game.getClass()) && generics[1].isAssignableFrom(getClass());
-    }
-
-
+    /**
+     * Called to initialize the state. May be overridden to do things such as populate the scene with entities. Be sure
+     * to call super otherwise the scene will error out.
+     * @param game the game
+     */
     @Override
     public void beginState(G game) {
         super.beginState(game);
@@ -80,34 +73,6 @@ public class Scene<G extends Game> extends GameState<G> {
         entities = new EntityStore();
         entitySystemEngine = new EntitySystemEngine(game, this);
         loadSystems();
-    }
-
-    private void loadSystems() {
-        Class clazz = getClass();
-        List<Class<? extends AbstractEntitySystem>> systemClazzList = new ArrayList<>();
-        while(clazz != null) {
-            for (Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
-                Class<? extends AbstractEntitySystem> systemClazz = ((RegisterSystem)annotation).value();
-                systemClazzList.add(systemClazz);
-            }
-            clazz = clazz.getSuperclass();
-        }
-
-        for(Class<? extends AbstractEntitySystem> systemClazz : systemClazzList) {
-            try {
-                Constructor<? extends AbstractEntitySystem> constructor = systemClazz.getConstructor();
-                AbstractEntitySystem system = constructor.newInstance();
-
-                if(system instanceof CollisionSystem) {
-                    collisionSystem = (CollisionSystem)system;
-                }
-
-                entitySystemEngine.addSystem(system);
-            }
-            catch(Exception e) {
-                throw new GameEngineException("Unable to setup entity components", e);
-            }
-        }
     }
 
     /**
@@ -148,6 +113,11 @@ public class Scene<G extends Game> extends GameState<G> {
         }
     }
 
+    /**
+     * Steps the scene. May be overridden to add custom logic.
+     * @param game the game
+     * @param delta time since last frame, in milliseconds
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void step(G game, float delta) {
@@ -183,6 +153,11 @@ public class Scene<G extends Game> extends GameState<G> {
         entities.removeDestroyed();
     }
 
+    /**
+     * Renders the scene
+     * @param game the game
+     * @param renderer the renderer
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void render(Game game, Renderer renderer) {
@@ -209,6 +184,11 @@ public class Scene<G extends Game> extends GameState<G> {
         return layer;
     }
 
+    /**
+     * Called by the engine when the scene is ended. You may override, but be sure to call super. You may wish to call
+     * super as the last line of the overridden method, otherwise all of the entities will have been destroyed.
+     * @param game the game
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void endState(G game) {
@@ -231,6 +211,11 @@ public class Scene<G extends Game> extends GameState<G> {
         entities = null;
     }
 
+    /**
+     * Performs an action for each entity of a certain class
+     * @param clazz the class to search for
+     * @param action the action to perform
+     */
     public <C extends Entity> void with(Class<C> clazz, EntityAction<C> action) {
         for(Entity entity : entities.byClass(clazz)) {
             C castedEntity = clazz.cast(entity);
@@ -238,16 +223,30 @@ public class Scene<G extends Game> extends GameState<G> {
         }
     }
 
+    /**
+     * Gets the nearest entity to a location.
+     * @param clazz class of entity to find
+     * @param x position in world space
+     * @param y position in world space
+     * @return the nearest entity to a location
+     */
     public <C extends Entity> C nearest(Class<C> clazz, float x, float y) {
         return nearest(clazz, x, y, 0f);
     }
 
+    /**
+     * Gets the nearest entity to a location.
+     * @param clazz class of entity to find
+     * @param x position in world space
+     * @param y position in world space
+     * @param z position in world space
+     * @return the nearest entity to a location
+     */
     public <C extends Entity> C nearest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float minDisSqr = Float.MAX_VALUE;
 
         for(Entity entity : entities.byClass(clazz)) {
-            //AssignableFrom method above avoids any exceptions
             @SuppressWarnings("unchecked") C casted = (C) entity;
             float disSqr = MathUtils.distanceSqr(x, y, z, casted.getX(), casted.getY(), casted.getZ());
             if(disSqr < minDisSqr) {
@@ -259,10 +258,25 @@ public class Scene<G extends Game> extends GameState<G> {
         return returnValue;
     }
 
+    /**
+     * Gets the furthest entity to a location.
+     * @param clazz class of entity to find
+     * @param x position in world space
+     * @param y position in world space
+     * @return the furthest entity to a location
+     */
     public <C extends Entity> C furthest(Class<C> clazz, float x, float y) {
         return furthest(clazz, x, y, 0);
     }
 
+    /**
+     * Gets the furthest entity to a location.
+     * @param clazz class of entity to find
+     * @param x position in world space
+     * @param y position in world space
+     * @param z position in world space
+     * @return the furthest entity to a location
+     */
     public <C extends Entity> C furthest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float maxDisSqr = Float.MAX_VALUE;
@@ -279,10 +293,28 @@ public class Scene<G extends Game> extends GameState<G> {
         return returnValue;
     }
 
+    /**
+     * Gets the N closest entities to a location, sorted nearest to furthest.
+     * @param clazz class of entity to find
+     * @param x position in world space
+     * @param y position in world space
+     * @param count the number of entities to find
+     * @return a list of nearby entities
+     */
     public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
         return nearest(clazz, x, y, 0, count);
     }
 
+
+    /**
+     * Gets the N closest entities to a location, sorted nearest to furthest.
+     * @param clazz class of entity to find
+     * @param x position in world space
+     * @param y position in world space
+     * @param z position in world space
+     * @param count the number of entities to find
+     * @return a list of nearby entities
+     */
     public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, float z, int count) {
         List<EntityDistancePair<C>> pairs = new ArrayList<>(count);
 
@@ -312,7 +344,53 @@ public class Scene<G extends Game> extends GameState<G> {
         return pairs;
     }
 
+    /**
+     * Counts the total number of entities of a certain class.
+     * @param clazz Entity or a subclass
+     * @return the number of entities in the scene that are, or are a subclass of, the parameter
+     */
     public <C extends Entity> int count(Class<C> clazz) {
         return entities.byClass(clazz).size();
+    }
+
+    /**
+     * Tests whether an entity can be placed in the scene.
+     * @param e the entity to test
+     * @return whether the entity's generics allow it to be entered into this scene.
+     */
+    private boolean testEntityGenerics(Entity e) {
+        Class<?>[] generics = TypeResolver.resolveRawArguments(Entity.class, e.getClass());
+        return generics[0].isAssignableFrom(game.getClass()) && generics[1].isAssignableFrom(getClass());
+    }
+
+    /**
+     * Loads and creates all the systems in the scene based off of the annotations.
+     */
+    private void loadSystems() {
+        Class clazz = getClass();
+        List<Class<? extends AbstractEntitySystem>> systemClazzList = new ArrayList<>();
+        while(clazz != null) {
+            for (Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
+                Class<? extends AbstractEntitySystem> systemClazz = ((RegisterSystem)annotation).value();
+                systemClazzList.add(systemClazz);
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        for(Class<? extends AbstractEntitySystem> systemClazz : systemClazzList) {
+            try {
+                Constructor<? extends AbstractEntitySystem> constructor = systemClazz.getConstructor();
+                AbstractEntitySystem system = constructor.newInstance();
+
+                if(system instanceof CollisionSystem) {
+                    collisionSystem = (CollisionSystem)system;
+                }
+
+                entitySystemEngine.addSystem(system);
+            }
+            catch(Exception e) {
+                throw new GameEngineException("Unable to setup entity components", e);
+            }
+        }
     }
 }

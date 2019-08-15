@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.resources.loading.ModelLoader;
@@ -191,8 +192,9 @@ public class Renderer {
     public static void errorCheck() {
         int error = GL33.glGetError();
         if (error != 0) {
-            log.error("OpenGL error occurred: " + error);
-            assert false;
+            String message = "OpenGL error occurred: " + error;
+            log.error(message);
+            throw new GameEngineException(message);
         }
     }
 

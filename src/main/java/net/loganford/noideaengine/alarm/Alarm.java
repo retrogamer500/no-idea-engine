@@ -12,12 +12,22 @@ public class Alarm {
     @Getter @Setter private boolean active = true;
     @Getter @Setter private boolean repeatable;
 
+    /**
+     * Creates an alarm.
+     * @param frequency how long until the alarm executes an action
+     * @param repeatable whether the alarm repeats
+     * @param action the action to perform
+     */
     public Alarm(double frequency, boolean repeatable, Action action) {
         this.frequency = frequency;
         this.repeatable = repeatable;
         this.action = action;
     }
 
+    /**
+     * Steps the alarm by a certain amount
+     * @param delta
+     */
     public void step(float delta) {
         counter+= delta;
         while(counter > frequency) {

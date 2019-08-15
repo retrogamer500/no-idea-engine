@@ -3,7 +3,6 @@ package net.loganford.noideaengine.state;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.Game;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera extends ScreenTransformation {
@@ -18,9 +17,6 @@ public class Camera extends ScreenTransformation {
 
     public Camera(Game game, GameState gameState, float fov) {
         super(game, gameState);
-
-        projectionMatrix = new Matrix4f();
-        viewMatrix = new Matrix4f().identity();
 
         position = new Vector3f();
         focus = new Vector3f();

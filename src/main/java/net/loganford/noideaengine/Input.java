@@ -211,16 +211,16 @@ public class Input {
         }
     }
 
-    public boolean mousePressed(int key) {
-        return enabled && mouseButtonsPressed[key];
+    public boolean mousePressed(int button) {
+        return enabled && mouseButtonsPressed[button];
     }
 
-    public boolean mouseReleased(int key) {
-        return enabled && mouseButtonsReleased[key];
+    public boolean mouseReleased(int button) {
+        return enabled && mouseButtonsReleased[button];
     }
 
-    public boolean mouseDown(int key) {
-        return enabled && mouseButtonsDown[key];
+    public boolean mouseDown(int button) {
+        return enabled && mouseButtonsDown[button];
     }
 
     public boolean keyPressed(int key) {

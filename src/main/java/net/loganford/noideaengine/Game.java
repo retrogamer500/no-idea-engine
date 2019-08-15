@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-/*Warnings are suppressed as we type-check the GameState class when the method setState is called*/
 @SuppressWarnings("unchecked")
 @Log4j2
 public class Game {
@@ -49,8 +48,10 @@ public class Game {
 
     @Getter private GameState gameState;
     private GameState nextGameState;
+    /**The transition which will be used between states*/
     @Getter @Setter private Transition transition = new InstantTransition();
-    @Getter private LoadingScreen loadingScreen = new BasicLoadingScreen();
+    /**The loading screen which will be used between states and at the beginning of the game*/
+    @Getter @Setter private LoadingScreen loadingScreen = new BasicLoadingScreen();
 
     @Getter private int maxFps;
     @Getter private int minFps;
@@ -60,16 +61,18 @@ public class Game {
 
     @Getter private ConfigurationLoader configurationLoader;
     @Getter private GameConfig config;
+    /**Alarm system used by the game*/
     @Getter private AlarmSystem alarms;
+    /**Audio system which may be used to play sounds and music*/
     @Getter private AudioSystem audioSystem;
 
-    //Used to store persistent entities between states
-    @Getter @Setter private List<Entity> persistentEntities = new ArrayList<>();
+    /**List of persistent entities between scenes*/
+    @Getter private List<Entity> persistentEntities = new ArrayList<>();
 
-    //Default resource location factory to use when converting resource paths in the config.json into files
+    /**Default resource location factory to use when converting resource paths in the config.json into files*/
     @Getter @Setter private ResourceLocationFactory resourceLocationFactory = new FileResourceLocationFactory(new File(""));
 
-    //Keep track of loaded resource groups
+    /**Keep track of loaded resource groups*/
     @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
 
     //Resource managers
@@ -85,9 +88,10 @@ public class Game {
     private FramerateMonitor framerateMonitor;
     private PerformanceTracker renderTimeTracker, updateTimeTracker, idleTimeTracker;
 
-
-
-
+    /**
+     * Creates a game. You must call {@link #run()} later to actually begin the game loop.
+     * @param gameState the initial state for the game
+     */
     public Game(GameState gameState) {
         input = new Input();
         window = new Window(this);
@@ -119,7 +123,7 @@ public class Game {
     }
 
     /**
-     * Loads configuration file, and initializes the OpenGL context
+     * Loads configuration file, and initializes the OpenGL context.
      */
     private void startGame() {
         config = configurationLoader.loadConfiguration(this);
@@ -135,6 +139,9 @@ public class Game {
         gameState.postBeginState(this);
     }
 
+    /**
+     * Starts the game and enters the game loop.
+     */
     public void run() {
         log.info("Initializing game");
         startGame();
@@ -191,7 +198,7 @@ public class Game {
                 renderTimeTracker.end();
                 idleTimeTracker.start();
 
-                checkForErrors();
+                Renderer.errorCheck();
                 window.setTitle("FPS: " + framerateMonitor.getFramesPerSecond());
 
                 //Performance Tracking
@@ -221,6 +228,9 @@ public class Game {
         terminate();
     }
 
+    /**
+     * Called before the game terminates.
+     */
     private void terminate() {
         transition.endState(this);
         gameState.endState(this);
@@ -228,6 +238,9 @@ public class Game {
         GLFW.glfwTerminate();
     }
 
+    /**
+     * Handles the transitions between states.
+     */
     protected void handleTransitions() {
         if(nextGameState != null) {
             if (!(gameState instanceof Transition)) {
@@ -259,15 +272,28 @@ public class Game {
         }
     }
 
+    /**
+     * Called whenever the window is resized.
+     * @param width new width of the window
+     * @param height new height of the window
+     */
     public void onResize(int width, int height) {
         gameState.onResize(width, height);
     }
 
+    /**
+     * Call this to end the game.
+     */
     public void endGame() {
         log.info("Ending game");
         running = false;
     }
 
+    /**
+     * Sets the fps of the game.
+     * @param min min fps, if the frames drops below this, the game will slow down
+     * @param max target fps
+     */
     public void setFps(int min, int max) {
         this.minFps = min;
         this.maxFps = max;
@@ -276,10 +302,11 @@ public class Game {
         minFrameTimeNs = NANOSECONDS_IN_SECOND / (long)min;
     }
 
-    private void checkForErrors() {
-        Renderer.errorCheck();
-    }
-
+    /**
+     * Returns a list of resource loaders which will be used to load resources from the filesystem into memory and
+     * initialize the resources.
+     * @return the list of loaders
+     */
     public List<ResourceLoader> getResourceLoaders() {
         List<ResourceLoader> resourceLoaders = new ArrayList<>();
         resourceLoaders.add(new ShaderLoader(this));
@@ -293,6 +320,10 @@ public class Game {
         return resourceLoaders;
     }
 
+    /**
+     * Changes the game state.
+     * @param state new state
+     */
     public void setState(GameState state) {
         if(state != null) {
             if (state instanceof Transition) {

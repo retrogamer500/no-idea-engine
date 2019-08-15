@@ -80,7 +80,6 @@ public class EntityStore implements Iterable<Entity> {
         return entities.iterator();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void forEach(Consumer<? super Entity> action) {
         entities.forEach(action);
@@ -96,25 +95,35 @@ public class EntityStore implements Iterable<Entity> {
      * Internal class which provides a quick map between Class and entities
      */
     private class EntityTypeCache {
-        private Map<Class<? extends Entity>, Set<Entity>> map;
+        private Map<Class<? extends Entity>, Set<? extends Entity>> map;
 
         private EntityTypeCache() {
             map = new HashMap<>();
         }
 
+        @SuppressWarnings("unchecked")
         public void add(Entity entity) {
-            map.computeIfAbsent(entity.getClass(), key -> new HashSet<>()).add(entity);
+            Class clazz = entity.getClass();
+            while(clazz != null) {
+                map.computeIfAbsent(clazz, key -> new HashSet<>()).add(entity);
+                clazz = clazz.getSuperclass();
+            }
         }
 
+        @SuppressWarnings("unchecked")
         public void remove(Entity entity) {
-            map.computeIfPresent(entity.getClass(), (k, v) -> {v.remove(entity); return v;});
+            Class clazz = entity.getClass();
+            while(clazz != null) {
+                map.computeIfPresent(clazz, (k, v) -> {v.remove(entity); return v;});
+                clazz = clazz.getSuperclass();
+            }
         }
 
         @SuppressWarnings("unchecked")
         public <C extends Entity> List<C> get(Class<C> clazz) {
-            ArrayList<C> entityList = new ArrayList();
+            ArrayList<C> entityList = new ArrayList<>();
 
-            for (Map.Entry<Class<? extends Entity>, Set<Entity>> entry : map.entrySet()) {
+            for (Map.Entry<Class<? extends Entity>, Set<? extends Entity>> entry : map.entrySet()) {
                 if (clazz.isAssignableFrom(entry.getKey())) {
                     entityList.addAll((Collection<? extends C>) entry.getValue());
                 }

@@ -11,7 +11,6 @@ import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
 import net.loganford.noideaengine.resources.RequireGroup;
-import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL33;
 
@@ -21,27 +20,35 @@ import java.util.List;
 
 @Log4j2
 public abstract class GameState<G extends Game> implements UnsafeMemory {
-
+    /**The state's camera object, which controls how 3D objects are rendered.*/
     @Getter @Setter private Camera camera;
+    /**The state's view object, controls how 2D objects are rendered.*/
     @Getter @Setter private View view;
     private List<UILayer> uiLayers;
-    @Getter private FrameBufferObject frameBufferObject;
-    @Getter @Setter private Vector4f backgroundColor;
-    private Matrix4f M4 = new Matrix4f();
+    /**The state's alarms.*/
+    @Getter private AlarmSystem alarms;
 
+    /**The scale of the framebuffer. Higher values are more zoomed in and pixelated. Keep the value an integer for best results.*/
     @Getter @Setter private float scale = 1;
+    /**Whether the view should stretch, or show more of the state when the window is resized.*/
     @Getter @Setter private boolean stretch = false;
 
+    /**The width of the state. Currently does not affect too much.*/
     @Getter @Setter private float width;
+    /**The height of the state. Currently does not affect too much.*/
     @Getter @Setter private float height;
 
-    @Getter private AlarmSystem alarms;
+    /**The framebuffer used for rendering anything in this state.*/
+    @Getter private FrameBufferObject frameBufferObject;
+    /**The background color of the state.*/
+    @Getter @Setter private Vector4f backgroundColor;
+
     private G game;
 
     /**
      * Called to initialize the state when the game switches to it. Override to add custom logic, but be sure to
      * call super.
-     * @param game
+     * @param game the game
      */
     public void beginState(G game) {
         this.game = game;
@@ -55,8 +62,17 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         uiLayers = new ArrayList<>();
     }
 
+    /**
+     * Called after beginState has been called.
+     * @param game the game
+     */
     public void postBeginState(G game) {}
 
+    /**
+     * Steps the state. This method handles stepping any UI layers and typically should only be called by the engine.
+     * @param game the game
+     * @param delta time since last frame, in milliseconds
+     */
     public final void stepState(G game, float delta) {
         int stepDepth = getStepDepth();
         int inputDepth = getInputDepth();
@@ -88,11 +104,11 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     }
 
     /**
-     * Called once per game loop. Most of your game logic will take place within this method, including moving entities.
+     * Called once per frame. Most of your game logic will take place within this method.
      * The delta time is passed in in order to allow frame-rate independence. Override to add custom logic, but be
      * sure to call super.
-     * @param game
-     * @param delta
+     * @param game the game
+     * @param delta time since last frame, in milliseconds
      */
     public void step(G game, float delta) {
         view.step();
@@ -101,9 +117,10 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     }
 
     /**
-     * Final method. Sets the current target for drawing to the state's FBO, then calls the render method.
-     * @param game
-     * @param renderer
+     * Final method. Sets the current target for drawing to the state's FBO, then calls the render method. This should
+     * only be called by the engine, any other rendering should happen in the render method.
+     * @param game the game
+     * @param renderer the renderer
      */
     public final void renderState(G game, Renderer renderer) {
         //Calculate viewMatrix
@@ -132,11 +149,10 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         renderer.getTextureBatch().flush(renderer);
 
         //Render UI
-        Matrix4f oldView = getView().getViewMatrix();
-        renderer.getView().setViewMatrix(M4.identity());
+        getView().getViewMatrix().pushMatrix().identity();
         renderUI(game, renderer);
         renderer.getTextureBatch().flush(renderer);
-        renderer.getView().setViewMatrix(oldView);
+        getView().getViewMatrix().popMatrix();
 
         //Render FBO
         GL33.glViewport(0, 0, game.getWindow().getWidth(), game.getWindow().getHeight());
@@ -146,13 +162,19 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     /**
      * The render method. This gets called once per loop. You may do all the rendering here. As with all of these methods,
      * if you override, be sure to call super().
-     * @param game
-     * @param renderer
+     * @param game the game
+     * @param renderer the renderer
      */
     public void render(G game, Renderer renderer) {
 
     }
 
+    /**
+     * Renders the UI stack. May be overridden. Anything rendered within this method will use screen coordinates
+     * instead of world coordinates.
+     * @param game the game
+     * @param renderer the renderer
+     */
     public void renderUI(G game, Renderer renderer) {
         int renderDepth = getRenderDepth();
         for(int i = Math.max(0, renderDepth); i < uiLayers.size(); i++) {
@@ -162,13 +184,17 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     }
 
     /**
-     * Called when the state is ended. Override to add custom logic.
-     * @param game
+     * Called when the state is ended. Override to add custom logic. Failure to call super will result in framebuffer
+     * memory being leaked!
+     * @param game the game
      */
     public void endState(G game) {
         freeMemory();
     }
 
+    /**
+     * Deletes the associated framebuffer.
+     */
     @Override
     public final void freeMemory() {
         frameBufferObject.freeMemory();
@@ -176,10 +202,10 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
 
     /**
      * Set the color of the background.
-     * @param r
-     * @param g
-     * @param b
-     * @param a
+     * @param r red
+     * @param g green
+     * @param b blue
+     * @param a alpha
      */
     public void setBackgroundColor(float r, float g, float b, float a) {
         backgroundColor.set(r, g, b, a);
@@ -187,8 +213,8 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
 
     /**
      * Called whenever the window is resized. This method performs logic to resize the FBO if necessary.
-     * @param width
-     * @param height
+     * @param width desired width
+     * @param height desired height
      */
     public void onResize(int width, int height) {
         if(view != null) {
@@ -210,7 +236,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * Returns a List of resource groups required by this level. If this contains a resource group which is not currently
      * loaded by the game, then prior to loading this state, a loading screen will appear and the required resources
      * will be loaded.
-     * @return
+     * @return a list of resources which the state requires
      */
     public List<Integer> getRequiredResourceGroups() {
         List<Integer> requiredResources = new ArrayList<>();
@@ -228,10 +254,17 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         return requiredResources;
     }
 
+    /**
+     * Calling this will restart the state
+     */
     public void restart() {
         game.setState(this);
     }
 
+    /**
+     * Adds a UI Layer to the UI stack.
+     * @param layer
+     */
     @SuppressWarnings("unchecked")
     public void addUILayer(UILayer layer) {
         Class<?>[] generics = TypeResolver.resolveRawArguments(UILayer.class, uiLayers.getClass());
@@ -245,6 +278,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     }
 
     /**
+     * Determines how deep through the UI stack we should render.
      * @return the first UI layer to render, or -1 if this state should be rendered
      */
     public final int getRenderDepth() {
@@ -259,6 +293,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     }
 
     /**
+     * Determines how deep through the UI stack we should step.
      * @return the first UI layer to update, or -1 if this state should be rendered
      */
     public final int getStepDepth() {
@@ -273,6 +308,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     }
 
     /**
+     * Determines how deep through the UI stack we should send input.
      * @return the first UI layer to send input to, or -1 if this state should be rendered
      */
     public final int getInputDepth() {
