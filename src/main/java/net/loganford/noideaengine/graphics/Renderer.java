@@ -13,12 +13,10 @@ import net.loganford.noideaengine.state.Camera;
 import net.loganford.noideaengine.state.View;
 import net.loganford.noideaengine.utils.file.JarResourceLocationFactory;
 import net.loganford.noideaengine.utils.math.MathUtils;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.opengl.GL33;
 
+import java.lang.Math;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -54,7 +52,7 @@ public class Renderer {
     private Stack<ShaderProgram> shaderStack = new Stack<>();
     @Getter @Setter private View view;
     @Getter @Setter private Camera camera;
-    @Getter @Setter private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
+    private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
     @Getter private Vector3f lightDirection = new Vector3f();
     @Getter private Vector3f lightColor = new Vector3f();
     @Getter private Vector3f ambientLightColor = new Vector3f();
@@ -196,6 +194,14 @@ public class Renderer {
             log.error("OpenGL error occurred: " + error);
             assert false;
         }
+    }
+
+    public Vector4fc getColor() {
+        return color;
+    }
+
+    public void setColor(Vector4f color) {
+
     }
 
     public void setColor(float r, float g, float b, float alpha) {

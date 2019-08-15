@@ -80,19 +80,6 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * Sets the depth of the entity. Entities are drawn from the entity with the highest depth to the lowest. The entity
-     * with the highest depth will appear below other entities. The step method will also be called in this order.
-     * @param depth the desired depth
-     */
-    public void setDepth(float depth) {
-        if(depth != this.depth) {
-            depthChanged = true;
-            depthChangedSignal.dispatch(this);
-        }
-        this.depth = depth;
-    }
-
-    /**
      * This method is called prior to step.
      * @param game the current game
      * @param scene the current scene
@@ -142,6 +129,79 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @param scene the current scene
      */
     public void onDestroy(G game, S scene) {}
+
+    /**
+     * Called after onCreate when the scene begins.
+     * @param game the current game
+     * @param scene the current scene
+     */
+    public void beginScene(G game, S scene) {}
+
+    /**
+     * Called when the scene ends.
+     * @param game the current game
+     * @param scene the current scene
+     */
+    public void endScene(G game, S scene) {}
+
+    /**
+     * Sets the depth of the entity. Entities are drawn from the entity with the highest depth to the lowest. The entity
+     * with the highest depth will appear below other entities. The step method will also be called in this order.
+     * @param depth the desired depth
+     */
+    public void setDepth(float depth) {
+        if(depth != this.depth) {
+            depthChanged = true;
+            depthChangedSignal.dispatch(this);
+        }
+        this.depth = depth;
+    }
+
+    /**
+     * Gets the nearest entity to this entity.
+     * @param clazz class of entity to find
+     * @return the nearest entity
+     */
+    public <C extends Entity> C nearest(Class<C> clazz) {
+        return getScene().nearest(clazz, getX(), getY());
+    }
+
+    /**
+     * Gets the furthest entity to this entity.
+     * @param clazz class of entity to find
+     * @return the furthest entity
+     */
+    public <C extends Entity> C furthest(Class<C> clazz) {
+        return getScene().furthest(clazz, getX(), getY());
+    }
+
+    /**
+     * Gets the N closest entities to this entity, sorted nearest to furthest.
+     * @param clazz class of entity to find
+     * @param count the number of entities to find
+     * @return a list of nearby entities
+     */
+    public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, int count) {
+        return getScene().nearest(clazz, getX(), getY(), count);
+    }
+
+    /**
+     * Gets the distance between this entity and another entity.
+     * @param other entity to find the distance to
+     * @return the distance between the specified entity and this one
+     */
+    public float distance(Entity other) {
+        return MathUtils.distance(getX(), getY(), getZ(), other.getX(), other.getY(), other.getZ());
+    }
+
+    /**
+     * Gets the distance^2 between this entity and another entity.
+     * @param other entity to find the distance to
+     * @return the square of the distance between the specified entity and this one
+     */
+    public float distanceSqr(Entity other) {
+        return MathUtils.distanceSqr(getX(), getY(), getZ(), other.getX(), other.getY(), other.getZ());
+    }
 
     /**
      * Adds a component to the entity. A call to this may add this entity to any of the scene's systems.
@@ -342,25 +402,11 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      */
     public void createMaskFromSprite() {
         Frame firstFrame = sprite.getFrames().get(0);
-        Rect rect = new Rect(getX(), getY(), firstFrame.getImage().getWidth(), firstFrame.getImage().getHeight());
-        setShapeOffsetX(firstFrame.getOffsetX());
-        setShapeOffsetY(firstFrame.getOffsetY());
+        Rect rect = new Rect(getX(), getY(), sprite.getWidth(), sprite.getHeight());
+        setShapeOffsetX(sprite.getOffsetX());
+        setShapeOffsetY(sprite.getOffsetY());
         setShape(rect);
     }
-
-    /**
-     * Called after onCreate when the scene begins.
-     * @param game the current game
-     * @param scene the current scene
-     */
-    public void beginScene(G game, S scene) {}
-
-    /**
-     * Called when the scene ends.
-     * @param game the current game
-     * @param scene the current scene
-     */
-    public void endScene(G game, S scene) {}
 
     /**
      * Checks for collisions with entities.
@@ -423,7 +469,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @return a list of all entities which collide with the entity
      */
     public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, float x, float y) {
-        return getCollisionsAt(clazz, x, y);
+        return getCollisionsAt(clazz, x, y, 0);
     }
 
     /**
@@ -488,53 +534,6 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      */
     public boolean placeFree(Class<? extends Entity> clazz, float x, float y, float z) {
         return !placeMeeting(clazz, x, y, z);
-    }
-
-
-    /**
-     * Gets the nearest entity to this entity.
-     * @param clazz class of entity to find
-     * @return the nearest entity
-     */
-    public <C extends Entity> C nearest(Class<C> clazz) {
-        return getScene().nearest(clazz, getX(), getY());
-    }
-
-    /**
-     * Gets the furthest entity to this entity.
-     * @param clazz class of entity to find
-     * @return the furthest entity
-     */
-    public <C extends Entity> C furthest(Class<C> clazz) {
-        return getScene().furthest(clazz, getX(), getY());
-    }
-
-    /**
-     * Gets the N closest entities to this entity, sorted nearest to furthest.
-     * @param clazz class of entity to find
-     * @param count the number of entities to find
-     * @return a list of nearby entities
-     */
-    public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, int count) {
-        return getScene().nearest(clazz, getX(), getY(), count);
-    }
-
-    /**
-     * Gets the distance between this entity and another entity.
-     * @param other entity to find the distance to
-     * @return the distance between the specified entity and this one
-     */
-    public float distance(Entity other) {
-        return MathUtils.distance(getX(), getY(), getZ(), other.getX(), other.getY(), other.getZ());
-    }
-
-    /**
-     * Gets the distance^2 between this entity and another entity.
-     * @param other entity to find the distance to
-     * @return the square of the distance between the specified entity and this one
-     */
-    public float distanceSqr(Entity other) {
-        return MathUtils.distanceSqr(getX(), getY(), getZ(), other.getX(), other.getY(), other.getZ());
     }
 
     /**
