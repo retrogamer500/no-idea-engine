@@ -18,7 +18,9 @@ import net.loganford.noideaengine.state.loading.BasicLoadingScreen;
 import net.loganford.noideaengine.state.loading.LoadingScreen;
 import net.loganford.noideaengine.state.transition.InstantTransition;
 import net.loganford.noideaengine.state.transition.Transition;
-import net.loganford.noideaengine.utils.*;
+import net.loganford.noideaengine.utils.FramerateMonitor;
+import net.loganford.noideaengine.utils.PerformanceTracker;
+import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
 import net.loganford.noideaengine.utils.file.FileResourceLocationFactory;
 import net.loganford.noideaengine.utils.file.ResourceLocationFactory;
 import org.lwjgl.glfw.GLFW;
@@ -33,7 +35,6 @@ import java.util.List;
 @Log4j2
 public class Game {
 
-
     public static final long NANOSECONDS_IN_SECOND = 1000000000;
     public static final long NANOSECONDS_IN_MILLISECOND = 1000000;
     public static final long MILLISECONDS_IN_SECOND = 1000;
@@ -43,26 +44,9 @@ public class Game {
     @Getter private Window window;
     @Getter private Input input;
     @Getter private Renderer renderer;
-    private FramerateMonitor framerateMonitor;
-    private PerformanceTracker renderTimeTracker, updateTimeTracker, idleTimeTracker;
-    @Getter private ConfigurationLoader configurationLoader;
-    @Getter private GameConfig config;
-    @Getter private AlarmSystem alarms;
-    @Getter private AudioSystem audioSystem;
-
-    @Getter @Setter private ResourceLocationFactory resourceLocationFactory = new FileResourceLocationFactory(new File(""));
-    //Keep track of loaded resource groups
-    @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
-    //Resource managers
-    @Getter private ResourceManager<Image> imageManager = new ResourceManager<>();
-    @Getter private ResourceManager<Texture> textureManager = new ResourceManager<>();
-    @Getter private ResourceManager<ShaderProgram> shaderManager = new ResourceManager<>();
-    @Getter private ResourceManager<Model> modelManager = new ResourceManager<>();
-    @Getter private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
-    @Getter private ResourceManager<Font> fontManager = new ResourceManager<>();
-    @Getter private ResourceManager<Audio> audioManager = new ResourceManager<>();
 
     private boolean running = true;
+
     @Getter private GameState gameState;
     private GameState nextGameState;
     @Getter @Setter private Transition transition = new InstantTransition();
@@ -74,8 +58,35 @@ public class Game {
     private long maxFrameTimeNs = NANOSECONDS_IN_SECOND / 144L;
     private long minFrameTimeNs = NANOSECONDS_IN_SECOND / 60L;
 
+    @Getter private ConfigurationLoader configurationLoader;
+    @Getter private GameConfig config;
+    @Getter private AlarmSystem alarms;
+    @Getter private AudioSystem audioSystem;
+
     //Used to store persistent entities between states
     @Getter @Setter private List<Entity> persistentEntities = new ArrayList<>();
+
+    //Default resource location factory to use when converting resource paths in the config.json into files
+    @Getter @Setter private ResourceLocationFactory resourceLocationFactory = new FileResourceLocationFactory(new File(""));
+
+    //Keep track of loaded resource groups
+    @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
+
+    //Resource managers
+    @Getter private ResourceManager<Image> imageManager = new ResourceManager<>();
+    @Getter private ResourceManager<Texture> textureManager = new ResourceManager<>();
+    @Getter private ResourceManager<ShaderProgram> shaderManager = new ResourceManager<>();
+    @Getter private ResourceManager<Model> modelManager = new ResourceManager<>();
+    @Getter private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
+    @Getter private ResourceManager<Font> fontManager = new ResourceManager<>();
+    @Getter private ResourceManager<Audio> audioManager = new ResourceManager<>();
+
+    //Measure fps and performance of engine
+    private FramerateMonitor framerateMonitor;
+    private PerformanceTracker renderTimeTracker, updateTimeTracker, idleTimeTracker;
+
+
+
 
     public Game(GameState gameState) {
         input = new Input();

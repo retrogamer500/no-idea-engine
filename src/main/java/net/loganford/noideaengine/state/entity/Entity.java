@@ -50,6 +50,9 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter private AbstractPositionComponent positionComponent;
     @Getter private BasicCollisionComponent collisionComponent;
 
+    /**
+     * Creates the entity at position (0,0,0), but does not add it to the scene.
+     */
     public Entity() {
         alarms = new AlarmSystem();
         components = new HashMap<>();
