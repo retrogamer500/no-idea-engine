@@ -58,14 +58,13 @@ public class Font extends PrototypeResource implements UnsafeMemory {
     }
 
     public float getWidth(String text) {
-        float width = 0;
+        xb.put(0, 0);
+        yb.put(0, 0);
+        charData.position(0);
         for(int i = 0; i < text.length(); i++) {
             STBTruetype.stbtt_GetPackedQuad(charData, FontLoader.BITMAP_W, FontLoader.BITMAP_H, text.charAt(i), xb, yb, q, false);
-
-            float quadWidth = q.x1() - q.x0();
-            width+= quadWidth;
         }
-        return width * scale;
+        return q.x1() * scale;
     }
 
     public void setColor(float r, float g, float b, float a) {
