@@ -2,7 +2,6 @@ package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.loganford.noideaengine.utils.math.MathUtils;
 
 public class Rect extends Shape {
 
@@ -95,33 +94,26 @@ public class Rect extends Shape {
         });
 
         ShapeIntersectionEngine.addHandler(Rect.class, Line.class, (rect, line) -> {
-            float len = MathUtils.distance(line.getX1(), line.getY1(), line.getX2(), line.getY2());
+            float deltaX = line.getX2() - line.getX1();
+            float deltaY = line.getY2() - line.getY1();
+            float scaleX = 1f / deltaX;
+            float scaleY = 1f / deltaY;
+            float signX = Math.signum(scaleX);
+            float signY = Math.signum(scaleY);
+            float halfX = .5f * rect.getWidth();
+            float halfY = .5f * rect.getHeight();
+            float posX = rect.getX() + halfX;
+            float posY = rect.getY() + halfY;
 
-            float unitX = (line.getX2() - line.getX1())/len;
-            float unitY = (line.getY2() - line.getX1())/len;
-            float fx = 1f/unitX;
-            float fy = 1f/unitY;
+            float nearTimeX = (posX - signX * halfX - line.getX1()) * scaleX;
+            float nearTimeY = (posY - signY * halfY - line.getY1()) * scaleY;
+            float farTimeX = (posX + signX * halfX - line.getX1()) * scaleX;
+            float farTimeY = (posY + signY * halfY - line.getY1()) * scaleY;
 
-            float t1 = ((rect.getX()) - line.getX1())*fx;
-            float t2 = ((rect.getX() + rect.getWidth()) - line.getX1())*fx;
-            float t3 = ((rect.getY() + rect.getHeight()) - line.getY1())*fy;
-            float t4 = ((rect.getY()) - line.getY1())*fy;
+            float nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
+            float farTime = farTimeX < farTimeY ? farTimeX : farTimeY;
 
-            float t5 = ((rect.getX()) - line.getX2())*-fx;
-            float t6 = ((rect.getX() + rect.getWidth()) - line.getX2())*-fx;
-            float t7 = ((rect.getY() + rect.getHeight()) - line.getY2())*-fy;
-            float t8 = ((rect.getY()) - line.getY2())*-fy;
-
-            float tMin1 = Math.max(Math.min(t1, t2), Math.min(t3, t4));
-            float tMax1 = Math.min(Math.max(t1, t2), Math.max(t3, t4));
-            float tMin2 = Math.max(Math.min(t5, t6), Math.min(t7, t8));
-            float tMax2 = Math.min(Math.max(t5, t6), Math.max(t7, t8));
-
-            if(tMax1 < 0 || tMax2 < 0)
-                return false;
-            if(tMin1 > tMax1 || tMin2 > tMax2)
-                return false;
-            return true;
+            return !(nearTime >= 1 || farTime <= 0);
         });
     }
 }

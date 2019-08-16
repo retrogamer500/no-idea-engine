@@ -14,7 +14,8 @@ import org.lwjgl.stb.STBRPRect;
 import org.lwjgl.stb.STBRectPack;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -35,7 +36,6 @@ public class ImageAtlasPacker extends ResourceLoader {
     @Override
     public void init(Game game, LoadingContext ctx) {
         if(game.getConfig().getResources().getImages() != null) {
-            //Todo: when implementing loading groups, check all in group where texture id is null
             imagesLeftToInsert = game.getConfig().getResources().getImages()
                     .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()).size();
         }
