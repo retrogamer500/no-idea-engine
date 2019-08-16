@@ -16,7 +16,6 @@ public abstract class Transition<G extends Game> extends GameState<G> {
      * @param nextState
      */
     public final void beginTransition(G game, GameState<G> previousState, GameState<G> nextState) {
-        game.setState(null);
         this.previousState = previousState;
         this.nextState = nextState;
         this.nextState.beginState(game);
@@ -29,5 +28,11 @@ public abstract class Transition<G extends Game> extends GameState<G> {
      */
     public final void endTransition(Game game) {
         game.setState(nextState);
+    }
+
+    @Override
+    public void endState(G game) {
+        super.endState(game);
+        getPreviousState().endState(game);
     }
 }

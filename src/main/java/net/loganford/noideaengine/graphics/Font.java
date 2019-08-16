@@ -26,7 +26,7 @@ public class Font extends PrototypeResource implements UnsafeMemory {
     @Getter private float decent;
     @Getter private float lineGap;
     @Getter @Setter private float scale = 1f;
-    @Getter private Vector4f color = new Vector4f(0f, 0f, 0f, 1f);
+    @Getter @Setter private Vector4f color = new Vector4f(0f, 0f, 0f, 1f);
     private STBTTPackedchar.Buffer charData;
 
     public Font(Texture texture, STBTTPackedchar.Buffer charData, float size, float accent, float decent, float lineGap) {
@@ -68,8 +68,8 @@ public class Font extends PrototypeResource implements UnsafeMemory {
         return width * scale;
     }
 
-    protected void setColor(Vector4f color) {
-        this.color = color;
+    public void setColor(float r, float g, float b, float a) {
+        color.set(r, g, b, a);
     }
 
     @Override

@@ -242,32 +242,18 @@ public class Game {
      * Handles the transitions between states.
      */
     protected void handleTransitions() {
-        if(nextGameState != null) {
-            if (!(gameState instanceof Transition)) {
-
-                if(!(gameState instanceof LoadingScreen)) {
-                    LoadingContext ctx = new LoadingContext(this, nextGameState);
-                    if (ctx.isLoadingRequired()) {
-                        loadingScreen.beginLoadingScreen(ctx, nextGameState);
-                        nextGameState = loadingScreen;
-                        loadedResourceGroups.removeAll(ctx.getUnloadingGroups());
-                        loadedResourceGroups.addAll(ctx.getLoadingGroups());
-                    }
-                }
-
-                transition.beginTransition(this, gameState, nextGameState);
-                transition.beginState(this);
-                transition.postBeginState(this);
-                gameState = transition;
-            }
-        }
-        if(nextGameState != null) {
-            //noinspection ConstantConditions (left for clarity)
-            if (gameState instanceof Transition) {
+        while(nextGameState != null) {
+            /*We must handle beginning and ending the state for transitions here. We don't need to call this for regular
+            * states or loading screens since the transitions that transition to/away from those states call their begin
+            * and end state methods.*/
+            if(gameState instanceof Transition) {
                 transition.endState(this);
-                transition.getPreviousState().endState(this);
-                gameState = transition.getNextState();
-                nextGameState = null;
+            }
+            gameState = nextGameState;
+            nextGameState = null;
+            if(gameState instanceof Transition) {
+                gameState.beginState(this);
+                gameState.postBeginState(this);
             }
         }
     }
@@ -322,20 +308,31 @@ public class Game {
 
     /**
      * Changes the game state.
-     * @param state new state
+     * @param requestedNextState new state
      */
-    public void setState(GameState state) {
-        if(state != null) {
-            if (state instanceof Transition) {
-                throw new GameEngineException("Cannot directly set state to transitions or loading screens.");
-            }
-
-            Class<?> generic = TypeResolver.resolveRawArgument(GameState.class, state.getClass());
-            if (!getClass().isAssignableFrom(generic)) {
-                throw new GameEngineException("Invalid GameState: state cannot be casted due to generics.");
-            }
+    public void setState(GameState requestedNextState) {
+        Class<?> generic = TypeResolver.resolveRawArgument(GameState.class, requestedNextState.getClass());
+        if (!getClass().isAssignableFrom(generic)) {
+            throw new GameEngineException("Invalid GameState: state cannot be casted due to generics.");
         }
 
-        this.nextGameState = state;
+        //If the current state is a transition, we simply go to the next state.
+        //Otherwise, if loading is required we go to a loading screen, but if not we go to a transition.
+        if (nextGameState == null) {
+            if (!(gameState instanceof Transition)) {
+                LoadingContext ctx = new LoadingContext(this, requestedNextState);
+                if (ctx.isLoadingRequired()) {
+                    loadingScreen.beginLoadingScreen(ctx, requestedNextState);
+                    requestedNextState = loadingScreen;
+                    loadedResourceGroups.removeAll(ctx.getUnloadingGroups());
+                    loadedResourceGroups.addAll(ctx.getLoadingGroups());
+                }
+
+                transition.beginTransition(this, gameState, requestedNextState);
+                nextGameState = transition;
+            } else {
+                nextGameState = requestedNextState;
+            }
+        }
     }
 }
