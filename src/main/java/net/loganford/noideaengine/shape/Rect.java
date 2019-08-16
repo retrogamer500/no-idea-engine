@@ -110,10 +110,18 @@ public class Rect extends Shape {
             float farTimeX = (posX + signX * halfX - line.getX1()) * scaleX;
             float farTimeY = (posY + signY * halfY - line.getY1()) * scaleY;
 
+            if (nearTimeX > farTimeY || nearTimeY > farTimeX) {
+                return false;
+            }
+
             float nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
             float farTime = farTimeX < farTimeY ? farTimeX : farTimeY;
 
-            return !(nearTime >= 1 || farTime <= 0);
+            if (nearTime >= 1 || farTime <= 0) {
+                return false;
+            }
+
+            return true;
         });
     }
 }
