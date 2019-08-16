@@ -42,8 +42,8 @@
       {
         "imageKey": "sprite_sheet.png",
         "frameWidth": 16.0,
-        "offsetX": 8.0,
-        "offsetY": 8.0,
+        "offsetX": -8.0,
+        "offsetY": -8.0,
         "key": "test_sprite",
         "group": 0
       }

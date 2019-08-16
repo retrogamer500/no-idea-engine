@@ -66,10 +66,8 @@ public class Sprite extends PrototypeResource {
         frame.getImage().setAngle(angle);
         frame.getImage().setScaleX(scaleX);
         frame.getImage().setScaleY(scaleY);
-        frame.getImage().setOffsetX(offsetX);
-        frame.getImage().setOffsetY(offsetY);
         frame.getImage().setColor(color);
-        frame.getImage().render(renderer, x, y);
+        frame.getImage().render(renderer, x + offsetX, y + offsetY);
     }
 
     public float getWidth() {

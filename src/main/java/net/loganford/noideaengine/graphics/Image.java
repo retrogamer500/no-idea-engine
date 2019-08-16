@@ -24,8 +24,6 @@ public class Image extends PrototypeResource {
     @Getter @Setter private float angle = 0;
     @Getter @Setter private float scaleX = 1;
     @Getter @Setter private float scaleY = 1;
-    @Getter @Setter private float offsetX = 0;
-    @Getter @Setter private float offsetY = 0;
 
     private boolean initialized = false;
 

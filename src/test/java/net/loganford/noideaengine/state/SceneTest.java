@@ -2,9 +2,10 @@ package net.loganford.noideaengine.state;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
+import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.shape.Line;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.transition.FadeTransition;
-import net.loganford.noideaengine.utils.math.MathUtils;
 import org.junit.Test;
 
 public class SceneTest {
@@ -24,13 +25,34 @@ public class SceneTest {
         @Override
         public void beginState(Game game) {
             super.beginState(game);
-            for(int i = 0; i < 1000; i++) {
+            /*for(int i = 0; i < 1000; i++) {
                 TestEntity e = new TestEntity();
                 e.setPos(MathUtils.randRangeF(16, 640 - 16), MathUtils.randRangeF(16, 480 - 16));
                 add(e);
-            }
+            }*/
             playerEntity = new PlayerEntity();
             add(playerEntity);
+        }
+
+        @Override
+        public void render(Game game, Renderer renderer) {
+            super.render(game, renderer);
+            renderer.setColor(1, 1, 1, 1);
+            renderer.drawLine(32, 32, 200, 300);
+            renderer.drawLine(0, 0, 200, 300);
+            renderer.drawLine(0, 0, 300, 100);
+        }
+
+        @Override
+        public void step(Game game, float delta) {
+            super.step(game, delta);
+            Line line = new Line(32, 32, 200, 300);
+            /*if(line.collidesWith(playerEntity.getShape())) {
+                System.out.println("test");
+            }*/
+            if(getCollisionSystem().collidesWith(line, PlayerEntity.class)) {
+                System.out.println("test");
+            }
         }
     }
 

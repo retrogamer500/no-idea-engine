@@ -92,7 +92,6 @@ public class TextureBatch implements UnsafeMemory {
     }
 
     private void put(Renderer renderer, Image image, Vector3f pos, float x, float y, float u, float v) {
-        pos.add(-image.getOffsetX(), -image.getOffsetY(), 0f);
         pos.rotateZ(-image.getAngle());
         pos.mul(image.getScaleX(), image.getScaleY(), 1f);
         pos.add(x, y, 0);
