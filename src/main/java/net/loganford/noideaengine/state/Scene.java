@@ -154,7 +154,7 @@ public class Scene<G extends Game> extends GameState<G> {
     }
 
     /**
-     * Renders the scene
+     * Renders the scene.
      * @param game the game
      * @param renderer the renderer
      */
