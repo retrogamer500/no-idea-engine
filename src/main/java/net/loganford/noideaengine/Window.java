@@ -93,6 +93,7 @@ public class Window {
         //Setup a keyboard and mouse callbacks
         GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mod) -> game.getInput().handleKeyboard(window, key, scancode, action, mod));
         GLFW.glfwSetMouseButtonCallback(window, (window, button, action, mod) -> game.getInput().handleMouseButtons(window, button, action, mod));
+        GLFW.glfwSetScrollCallback(window, (window, xOffset, yOffset) -> game.getInput().handleScroll(xOffset, yOffset));
 
         //Get the resolution of the primary monitor
         GLFWVidMode vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());

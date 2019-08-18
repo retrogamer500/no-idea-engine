@@ -97,6 +97,8 @@ public class ShaderLoader extends ResourceLoader {
         int programId = GL33.glCreateProgram();
         GL33.glAttachShader(programId, vertexShader.getShaderId());
         GL33.glAttachShader(programId, fragmentShader.getShaderId());
+        //This next line shouldn't be necessary since we specify that fragColor is at position 0 in the shader
+        //GL33.glBindFragDataLocation(programId, 0, "fragColor");
         GL33.glLinkProgram(programId);
         GL33.glValidateProgram(programId);
         validateProgram(programId);

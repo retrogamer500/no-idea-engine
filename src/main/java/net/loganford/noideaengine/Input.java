@@ -151,6 +151,11 @@ public class Input {
     @Getter private float mouseDeltaY;
     @Getter private float glfwMouseX;
     @Getter private float glfwMouseY;
+    @Getter private float mouseScrollX;
+    @Getter private float mouseScrollY;
+
+    private float mouseScrollXBuffer;
+    private float mouseScrollYBuffer;
 
     private boolean[] keysPressed = new boolean[MAX_KEYCODE];
     private boolean[] keysDown = new boolean[MAX_KEYCODE];
@@ -197,6 +202,11 @@ public class Input {
             mouseDeltaX = 0;
             mouseDeltaY = 0;
         }
+
+        mouseScrollX = mouseScrollXBuffer;
+        mouseScrollY = mouseScrollYBuffer;
+        mouseScrollXBuffer = 0;
+        mouseScrollYBuffer = 0;
     }
 
     protected void swapInputBuffers() {
@@ -209,6 +219,11 @@ public class Input {
             mouseButtonsPressed[i] = false;
             mouseButtonsReleased[i] = false;
         }
+    }
+
+    protected void handleScroll(double scrollX, double scrollY) {
+        mouseScrollXBuffer += scrollX;
+        mouseScrollYBuffer += scrollY;
     }
 
     public boolean mousePressed(int button) {

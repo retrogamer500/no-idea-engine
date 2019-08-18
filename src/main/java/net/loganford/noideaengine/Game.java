@@ -175,43 +175,9 @@ public class Game {
 
                 //Update input
                 input.stepInput(window);
-
                 lastFrameTime = currentTime;
 
-                //Update window state
-                getWindow().swapBuffers();
-                getWindow().pollEvents();
-                getWindow().clearFramebuffer();
-
-                //Step
-                float deltaTime = (float)deltaTimeNs / NANOSECONDS_IN_MILLISECOND;
-                idleTimeTracker.end();
-                updateTimeTracker.start();
-                alarms.step(deltaTime);
-                gameState.stepState(this, deltaTime);
-                updateTimeTracker.end();
-
-                //Render
-                renderTimeTracker.start();
-                gameState.renderState(this, this.getRenderer());
-                gameState.getFrameBufferObject().renderToScreen(this, gameState, renderer);
-                renderTimeTracker.end();
-                idleTimeTracker.start();
-
-                Renderer.errorCheck();
-                window.setTitle("FPS: " + framerateMonitor.getFramesPerSecond());
-
-                //Performance Tracking
-                framerateMonitor.update();
-
-                if(input.keyReleased(GLFW.GLFW_KEY_ESCAPE)) {
-                    endGame();
-                }
-
-                //Handle state transitions
-                handleTransitions();
-
-                window.step();
+                step((float)deltaTimeNs / NANOSECONDS_IN_MILLISECOND);
 
                 //Handle input
                 window.step();
@@ -226,6 +192,43 @@ public class Game {
         }
 
         terminate();
+    }
+
+    /**
+     * Steps and renders the current state. May be overridden to apply additional game-wide functionality like exiting
+     * the game when escape is pressed.
+     * @param delta
+     */
+    protected void step(float delta) {
+        //Update window state
+        getWindow().swapBuffers();
+        getWindow().pollEvents();
+        getWindow().clearFramebuffer();
+
+        //Step
+        idleTimeTracker.end();
+        updateTimeTracker.start();
+        alarms.step(delta);
+        gameState.stepState(this, delta);
+        updateTimeTracker.end();
+
+        //Render
+        renderTimeTracker.start();
+        gameState.renderState(this, this.getRenderer());
+        gameState.getFrameBufferObject().renderToScreen(this, gameState, renderer);
+        renderTimeTracker.end();
+        idleTimeTracker.start();
+
+        Renderer.errorCheck();
+        window.setTitle("FPS: " + framerateMonitor.getFramesPerSecond());
+
+        //Performance Tracking
+        framerateMonitor.update();
+
+        //Handle state transitions
+        handleTransitions();
+
+        window.step();
     }
 
     /**

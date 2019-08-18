@@ -12,6 +12,8 @@ in vec4 vColor;
 in vec2 texCoord;
 in vec2 modelPosition;
 
+layout(location=0) out vec4 fragColor;
+
 void main(void) {
     ivec2 tileLookupPos = ivec2(modelPosition/tileSize);
     vec4 tileLookupResult =  texelFetch(texTileLookup, tileLookupPos, 0);
@@ -22,5 +24,5 @@ void main(void) {
     }
 
     vec2 samplePos = tileUv0 + (tilePos - 1 + fract(modelPosition/tileSize)) * tileUvSize;
-    gl_FragColor = texture(texDiffuse, samplePos);
+    fragColor = texture(texDiffuse, samplePos);
 }
