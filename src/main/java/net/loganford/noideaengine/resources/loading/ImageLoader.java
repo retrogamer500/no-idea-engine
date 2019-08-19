@@ -5,7 +5,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.config.json.ImageConfig;
 import net.loganford.noideaengine.graphics.Image;
-import net.loganford.noideaengine.utils.file.ResourceLocation;
+import net.loganford.noideaengine.utils.file.AbstractResource;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
@@ -50,7 +50,7 @@ public class ImageLoader extends ResourceLoader {
     }
 
     public Image load(ImageConfig imageConfig) {
-        ResourceLocation location = getGame().getResourceLocationFactory().get((imageConfig.getFilename()));
+        AbstractResource location = imageConfig.getAbstractResourceMapper().get((imageConfig.getFilename()));
 
         ByteBuffer imageBuffer;
         Image image;

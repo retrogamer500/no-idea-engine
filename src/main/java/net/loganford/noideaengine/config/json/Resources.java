@@ -6,8 +6,6 @@ import java.util.List;
 
 @Data
 public class Resources {
-    private String scanDirectory = null;
-
     private List<ImageConfig> images;
     private List<ShaderConfig> shaders;
     private List<ModelConfig> models;

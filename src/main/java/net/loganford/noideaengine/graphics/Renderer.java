@@ -12,7 +12,7 @@ import net.loganford.noideaengine.resources.loading.ShaderLoader;
 import net.loganford.noideaengine.resources.loading.TextureLoader;
 import net.loganford.noideaengine.state.Camera;
 import net.loganford.noideaengine.state.View;
-import net.loganford.noideaengine.utils.file.JarResourceLocationFactory;
+import net.loganford.noideaengine.utils.file.JarResourceMapper;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.*;
 import org.lwjgl.opengl.GL33;
@@ -118,10 +118,10 @@ public class Renderer {
 
     private void loadBuildInShaders() {
         ShaderLoader shaderLoader = new ShaderLoader(game);
-        JarResourceLocationFactory resourceLocationFactory = new JarResourceLocationFactory(getClass().getClassLoader());
-        shaderDefault = shaderLoader.load("SHADER_DEFAULT", resourceLocationFactory.get("default.vert"), resourceLocationFactory.get("default.frag"));
-        shaderSolid = shaderLoader.load("SHADER_SOLID", resourceLocationFactory.get("solid.vert"), resourceLocationFactory.get("solid.frag"));
-        shaderTile = shaderLoader.load("SHADER_TILE", resourceLocationFactory.get("tile.vert"), resourceLocationFactory.get("tile.frag"));
+        JarResourceMapper jarResourceMapper = new JarResourceMapper(getClass().getClassLoader());
+        shaderDefault = shaderLoader.load("SHADER_DEFAULT", jarResourceMapper.get("default.vert"), jarResourceMapper.get("default.frag"));
+        shaderSolid = shaderLoader.load("SHADER_SOLID", jarResourceMapper.get("solid.vert"), jarResourceMapper.get("solid.frag"));
+        shaderTile = shaderLoader.load("SHADER_TILE", jarResourceMapper.get("tile.vert"), jarResourceMapper.get("tile.frag"));
     }
 
     private void loadBuildInPolygons() {

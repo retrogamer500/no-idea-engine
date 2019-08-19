@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipFileResourceLocationFactory extends ResourceLocationFactory {
+public class ZipResourceMapper extends AbstractResourceMapper {
 
     private ZipFile zipFile;
     private HashMap<String, ZipEntry> entryMap = new HashMap<>();
 
-    public ZipFileResourceLocationFactory(File file) {
+    public ZipResourceMapper(File file) {
         try {
             zipFile = new ZipFile(file);
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -29,12 +29,12 @@ public class ZipFileResourceLocationFactory extends ResourceLocationFactory {
     }
 
     @Override
-    public ResourceLocation get(String resourceLocation) {
-        if(entryMap.containsKey(resourceLocation)) {
-            return new ZipFileResourceLocation(zipFile, entryMap.get(resourceLocation));
+    public AbstractResource get(String resourceKey) {
+        if(entryMap.containsKey(resourceKey)) {
+            return new ZipResource(zipFile, entryMap.get(resourceKey));
         }
         else {
-            throw new GameEngineException("Resource does not exist in zip file: " + resourceLocation);
+            throw new GameEngineException("Resource does not exist in zip file: " + resourceKey);
         }
     }
 }

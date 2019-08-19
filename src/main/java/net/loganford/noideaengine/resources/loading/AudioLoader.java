@@ -5,18 +5,17 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.audio.Audio;
 import net.loganford.noideaengine.config.json.AudioConfig;
-import net.loganford.noideaengine.utils.file.ResourceLocation;
+import net.loganford.noideaengine.utils.file.AbstractResource;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.openal.AL11;
+import org.lwjgl.stb.STBVorbis;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.lwjgl.openal.AL11;
-import org.lwjgl.stb.STBVorbis;
-import org.lwjgl.system.MemoryUtil;
 
 @Log4j2
 public class AudioLoader extends ResourceLoader {
@@ -52,11 +51,11 @@ public class AudioLoader extends ResourceLoader {
         return audioToLoad.size();
     }
 
-    public Audio load(AudioConfig config) {
+    public Audio load(AudioConfig audioConfig) {
         IntBuffer channelsBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer sampleRateBuffer = BufferUtils.createIntBuffer(1);
 
-        ResourceLocation location = getGame().getResourceLocationFactory().get((config.getFilename()));
+        AbstractResource location = audioConfig.getAbstractResourceMapper().get((audioConfig.getFilename()));
         ShortBuffer audioBuffer = STBVorbis.stb_vorbis_decode_memory(location.loadBytes(), channelsBuffer, sampleRateBuffer);
 
         if(audioBuffer == null) {

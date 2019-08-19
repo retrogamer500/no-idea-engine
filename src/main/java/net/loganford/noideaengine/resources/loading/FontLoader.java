@@ -5,7 +5,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.config.json.FontConfig;
 import net.loganford.noideaengine.graphics.Font;
 import net.loganford.noideaengine.graphics.Texture;
-import net.loganford.noideaengine.utils.file.ResourceLocation;
+import net.loganford.noideaengine.utils.file.AbstractResource;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -56,20 +56,20 @@ public class FontLoader extends ResourceLoader {
         return fontsToLoad.size();
     }
 
-    public Font load(FontConfig description) {
+    public Font load(FontConfig fontConfig) {
         Font font;
         int fontTexture = GL33.glGenTextures();
         STBTTPackedchar.Buffer charData = STBTTPackedchar.malloc(128);
         STBTTPackContext packContext;
 
         packContext = STBTTPackContext.malloc();
-        ResourceLocation location = getGame().getResourceLocationFactory().get(description.getFilename());
+        AbstractResource location = fontConfig.getAbstractResourceMapper().get(fontConfig.getFilename());
         ByteBuffer ttf = location.loadBytes();
 
         //Get the scale and font info
         STBTTFontinfo fontInfo = STBTTFontinfo.create();
         STBTruetype.stbtt_InitFont(fontInfo, ttf);
-        float scale = STBTruetype.stbtt_ScaleForPixelHeight(fontInfo, description.getSize());
+        float scale = STBTruetype.stbtt_ScaleForPixelHeight(fontInfo, fontConfig.getSize());
         IntBuffer accentBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer decentBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer lineGapBuffer = BufferUtils.createIntBuffer(1);
@@ -107,7 +107,7 @@ public class FontLoader extends ResourceLoader {
 
         Texture texture = new Texture(BITMAP_W, BITMAP_H, fontTexture);
 
-        font = new Font(texture, charData, description.getSize(), accent, decent, lineGap);
+        font = new Font(texture, charData, fontConfig.getSize(), accent, decent, lineGap);
 
         packContext.free();
 

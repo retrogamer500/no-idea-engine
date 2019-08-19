@@ -4,8 +4,11 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Window;
 import net.loganford.noideaengine.config.json.ModelConfig;
-import net.loganford.noideaengine.graphics.*;
-import net.loganford.noideaengine.utils.file.ResourceLocation;
+import net.loganford.noideaengine.graphics.Face;
+import net.loganford.noideaengine.graphics.Material;
+import net.loganford.noideaengine.graphics.Mesh;
+import net.loganford.noideaengine.graphics.Model;
+import net.loganford.noideaengine.utils.file.AbstractResource;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -58,10 +61,10 @@ public class ModelLoader extends ResourceLoader {
         return modelsToLoad.size();
     }
 
-    public Model load(Game game, ModelConfig description) {
-        File file = new File(description.getFilename());
+    public Model load(Game game, ModelConfig modelConfig) {
+        File file = new File(modelConfig.getFilename());
 
-        ResourceLocation location = game.getResourceLocationFactory().get(description.getFilename());
+        AbstractResource location = modelConfig.getAbstractResourceMapper().get(modelConfig.getFilename());
         String locationName = location.toString();
         String[] split = locationName.split("\\.");
         String phint = split[split.length-1]; //Todo: verify that this is working
@@ -73,8 +76,8 @@ public class ModelLoader extends ResourceLoader {
                 Assimp.aiProcess_GenUVCoords
         , phint);
 
-        boolean swapZY = description.isSwapZY();
-        float scale = description.getScale();
+        boolean swapZY = modelConfig.isSwapZY();
+        float scale = modelConfig.getScale();
 
         //Import meshes
         Model model = new Model();

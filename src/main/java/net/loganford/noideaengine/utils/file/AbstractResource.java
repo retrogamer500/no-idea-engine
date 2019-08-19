@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-public abstract class ResourceLocation {
+public abstract class AbstractResource {
     public static int DEFAULT_BUFFER_SIZE = 8192;
 
     protected abstract InputStream getInputStream();

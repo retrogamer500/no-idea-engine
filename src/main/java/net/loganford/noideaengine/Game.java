@@ -21,8 +21,10 @@ import net.loganford.noideaengine.state.transition.Transition;
 import net.loganford.noideaengine.utils.FramerateMonitor;
 import net.loganford.noideaengine.utils.PerformanceTracker;
 import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
-import net.loganford.noideaengine.utils.file.FileResourceLocationFactory;
-import net.loganford.noideaengine.utils.file.ResourceLocationFactory;
+import net.loganford.noideaengine.utils.file.AbstractResource;
+import net.loganford.noideaengine.utils.file.AbstractResourceMapper;
+import net.loganford.noideaengine.utils.file.FileResource;
+import net.loganford.noideaengine.utils.file.FileResourceMapper;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
@@ -69,8 +71,9 @@ public class Game {
     /**List of persistent entities between scenes*/
     @Getter private List<Entity> persistentEntities = new ArrayList<>();
 
-    /**Default resource location factory to use when converting resource paths in the config.json into files*/
-    @Getter @Setter private ResourceLocationFactory resourceLocationFactory = new FileResourceLocationFactory(new File(""));
+    /**Default resource mapper to use when converting resource paths in the config.json into files*/
+    @Getter @Setter private AbstractResourceMapper abstractResourceMapper = new FileResourceMapper(new File(""));
+    @Getter @Setter private AbstractResource configLocation = new FileResource(new File("game.json"));
 
     /**Keep track of loaded resource groups*/
     @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
@@ -126,7 +129,7 @@ public class Game {
      * Loads configuration file, and initializes the OpenGL context.
      */
     private void startGame() {
-        config = configurationLoader.loadConfiguration(this);
+        config = configurationLoader.loadConfiguration(this, abstractResourceMapper, configLocation);
 
         log.info("Initializing OpenGL context");
         getWindow().init();
@@ -197,7 +200,7 @@ public class Game {
     /**
      * Steps and renders the current state. May be overridden to apply additional game-wide functionality like exiting
      * the game when escape is pressed.
-     * @param delta
+     * @param delta time since last frame in milliseconds
      */
     protected void step(float delta) {
         //Update window state
