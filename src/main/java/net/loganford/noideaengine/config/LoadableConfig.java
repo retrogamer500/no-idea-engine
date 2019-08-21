@@ -1,11 +1,11 @@
 package net.loganford.noideaengine.config;
 
 import lombok.Data;
-import net.loganford.noideaengine.utils.file.AbstractResourceMapper;
+import net.loganford.noideaengine.utils.file.ResourceMapper;
 
 @Data
 public abstract class LoadableConfig {
-    private transient AbstractResourceMapper resourceMapper;
+    private transient ResourceMapper resourceMapper;
     @Required private String key;
     private int group = 0;
 }

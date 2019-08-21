@@ -7,7 +7,7 @@ import net.loganford.noideaengine.config.json.ShaderConfig;
 import net.loganford.noideaengine.graphics.shader.FragmentShader;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.VertexShader;
-import net.loganford.noideaengine.utils.file.AbstractResource;
+import net.loganford.noideaengine.utils.file.DataSource;
 import org.lwjgl.opengl.GL33;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class ShaderLoader extends ResourceLoader {
                 shaderDescription.getResourceMapper().get(shaderDescription.getFrag()));
     }
 
-    public ShaderProgram load(String key, AbstractResource vertexFile, AbstractResource fragmentFile) {
+    public ShaderProgram load(String key, DataSource vertexFile, DataSource fragmentFile) {
         return load(key, vertexFile.load(), vertexFile.toString(), fragmentFile.load(), fragmentFile.toString());
     }
 

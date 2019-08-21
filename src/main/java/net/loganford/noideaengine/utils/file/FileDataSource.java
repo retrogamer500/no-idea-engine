@@ -7,15 +7,15 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class FileResource extends AbstractResource {
+public class FileDataSource extends DataSource {
 
     @Getter private File file;
 
-    public FileResource(File fileLocation) {
+    public FileDataSource(File fileLocation) {
         file = fileLocation;
     }
 
-    public FileResource(File folder, String location) {
+    public FileDataSource(File folder, String location) {
         if(folder.isFile()) {
             throw new GameEngineException("Folder " + folder.getAbsolutePath() + " must be a valid directory.");
         }

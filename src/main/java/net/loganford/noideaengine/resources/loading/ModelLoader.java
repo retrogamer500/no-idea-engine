@@ -8,7 +8,7 @@ import net.loganford.noideaengine.graphics.Face;
 import net.loganford.noideaengine.graphics.Material;
 import net.loganford.noideaengine.graphics.Mesh;
 import net.loganford.noideaengine.graphics.Model;
-import net.loganford.noideaengine.utils.file.AbstractResource;
+import net.loganford.noideaengine.utils.file.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -64,7 +64,7 @@ public class ModelLoader extends ResourceLoader {
     public Model load(Game game, ModelConfig modelConfig) {
         File file = new File(modelConfig.getFilename());
 
-        AbstractResource location = modelConfig.getResourceMapper().get(modelConfig.getFilename());
+        DataSource location = modelConfig.getResourceMapper().get(modelConfig.getFilename());
         String locationName = location.toString();
         String[] split = locationName.split("\\.");
         String phint = split[split.length-1]; //Todo: verify that this is working

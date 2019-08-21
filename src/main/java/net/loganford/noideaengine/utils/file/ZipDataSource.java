@@ -7,11 +7,11 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipResource extends AbstractResource {
+public class ZipDataSource extends DataSource {
     private ZipFile zipFile;
     private ZipEntry zipEntry;
 
-    public ZipResource(ZipFile zipFile, ZipEntry zipEntry) {
+    public ZipDataSource(ZipFile zipFile, ZipEntry zipEntry) {
         this.zipFile = zipFile;
         this.zipEntry = zipEntry;
     }

@@ -21,10 +21,10 @@ import net.loganford.noideaengine.state.transition.Transition;
 import net.loganford.noideaengine.utils.FramerateMonitor;
 import net.loganford.noideaengine.utils.PerformanceTracker;
 import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
-import net.loganford.noideaengine.utils.file.AbstractResource;
-import net.loganford.noideaengine.utils.file.AbstractResourceMapper;
-import net.loganford.noideaengine.utils.file.FileResource;
+import net.loganford.noideaengine.utils.file.DataSource;
+import net.loganford.noideaengine.utils.file.FileDataSource;
 import net.loganford.noideaengine.utils.file.FileResourceMapper;
+import net.loganford.noideaengine.utils.file.ResourceMapper;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
@@ -72,8 +72,8 @@ public class Game {
     @Getter private List<Entity> persistentEntities = new ArrayList<>();
 
     /**Default resource mapper to use when converting resource paths in the config.json into files*/
-    @Getter @Setter private AbstractResourceMapper abstractResourceMapper = new FileResourceMapper(new File(""));
-    @Getter @Setter private AbstractResource configLocation = new FileResource(new File("game.json"));
+    @Getter @Setter private ResourceMapper resourceMapper = new FileResourceMapper(new File(""));
+    @Getter @Setter private DataSource configLocation = new FileDataSource(new File("game.json"));
 
     /**Keep track of loaded resource groups*/
     @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
@@ -129,7 +129,7 @@ public class Game {
      * Loads configuration file, and initializes the OpenGL context.
      */
     private void startGame() {
-        config = configurationLoader.loadConfiguration(this, abstractResourceMapper, configLocation);
+        config = configurationLoader.loadConfiguration(this, resourceMapper, configLocation);
 
         log.info("Initializing OpenGL context");
         getWindow().init();

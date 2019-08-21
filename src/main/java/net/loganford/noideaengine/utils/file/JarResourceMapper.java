@@ -1,6 +1,6 @@
 package net.loganford.noideaengine.utils.file;
 
-public class JarResourceMapper extends AbstractResourceMapper {
+public class JarResourceMapper extends ResourceMapper {
 
     private ClassLoader classLoader;
 
@@ -9,7 +9,7 @@ public class JarResourceMapper extends AbstractResourceMapper {
     }
 
     @Override
-    public AbstractResource get(String resourceKey) {
-        return new JarResource(classLoader, resourceKey);
+    public DataSource get(String resourceKey) {
+        return new JarDataSource(classLoader, resourceKey);
     }
 }

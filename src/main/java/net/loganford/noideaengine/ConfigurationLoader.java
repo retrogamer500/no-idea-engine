@@ -5,8 +5,8 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.config.LoadableConfig;
 import net.loganford.noideaengine.config.SingleFileConfig;
 import net.loganford.noideaengine.config.json.GameConfig;
-import net.loganford.noideaengine.utils.file.AbstractResource;
-import net.loganford.noideaengine.utils.file.AbstractResourceMapper;
+import net.loganford.noideaengine.utils.file.DataSource;
+import net.loganford.noideaengine.utils.file.ResourceMapper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class ConfigurationLoader {
         gson = new Gson();
     }
 
-    public GameConfig loadConfiguration(Game game, AbstractResourceMapper resourceMapper, AbstractResource configLocation) {
+    public GameConfig loadConfiguration(Game game, ResourceMapper resourceMapper, DataSource configLocation) {
         GameConfig config;
 
         if (configLocation.exists()) {
@@ -43,7 +43,7 @@ public class ConfigurationLoader {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadAdditionalResources(Game game, AbstractResourceMapper resourceMapper, AbstractResource newConfigLocation, GameConfig existingConfig) {
+    public void loadAdditionalResources(Game game, ResourceMapper resourceMapper, DataSource newConfigLocation, GameConfig existingConfig) {
         if (newConfigLocation.exists()) {
             log.info("Loading configuration file: " + newConfigLocation);
             String json = newConfigLocation.load();
@@ -81,7 +81,7 @@ public class ConfigurationLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private void expandGlobs(GameConfig base, AbstractResourceMapper resourceMapper) throws IllegalAccessException {
+    private void expandGlobs(GameConfig base, ResourceMapper resourceMapper) throws IllegalAccessException {
         List<Field> fields = getResourceListsOfType(base, SingleFileConfig.class);
         for(Field field : fields) {
             List<SingleFileConfig> configList = (List<SingleFileConfig>)field.get(base.getResources());
@@ -98,10 +98,10 @@ public class ConfigurationLoader {
         }
     }
 
-    private List<SingleFileConfig> expandGlob(SingleFileConfig singleFileConfig, AbstractResourceMapper abstractResourceMapper) {
+    private List<SingleFileConfig> expandGlob(SingleFileConfig singleFileConfig, ResourceMapper resourceMapper) {
         List<SingleFileConfig> resultList = new ArrayList<>();
 
-        abstractResourceMapper.expandGlob(singleFileConfig.getFilename().substring(5), (resourceKey, captureGroups) -> {
+        resourceMapper.expandGlob(singleFileConfig.getFilename().substring(5), (resourceKey, captureGroups) -> {
             try {
                 SingleFileConfig newConfig = singleFileConfig.clone();
                 newConfig.setFilename(resourceKey);
@@ -150,7 +150,7 @@ public class ConfigurationLoader {
         return resultList;
     }
 
-    private void populateResourceMappers(GameConfig gameConfig, AbstractResourceMapper resourceMapper) {
+    private void populateResourceMappers(GameConfig gameConfig, ResourceMapper resourceMapper) {
         for(LoadableConfig config : getConfigsWithClass(gameConfig, LoadableConfig.class)) {
             config.setResourceMapper(resourceMapper);
         }

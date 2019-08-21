@@ -5,7 +5,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.audio.Audio;
 import net.loganford.noideaengine.config.json.AudioConfig;
-import net.loganford.noideaengine.utils.file.AbstractResource;
+import net.loganford.noideaengine.utils.file.DataSource;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.stb.STBVorbis;
@@ -55,7 +55,7 @@ public class AudioLoader extends ResourceLoader {
         IntBuffer channelsBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer sampleRateBuffer = BufferUtils.createIntBuffer(1);
 
-        AbstractResource location = audioConfig.getResourceMapper().get((audioConfig.getFilename()));
+        DataSource location = audioConfig.getResourceMapper().get((audioConfig.getFilename()));
         ShortBuffer audioBuffer = STBVorbis.stb_vorbis_decode_memory(location.loadBytes(), channelsBuffer, sampleRateBuffer);
 
         if(audioBuffer == null) {

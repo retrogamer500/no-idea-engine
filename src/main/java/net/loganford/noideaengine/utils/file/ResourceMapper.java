@@ -10,13 +10,13 @@ import java.util.List;
  * anywhere else.
  */
 @Log4j2
-public abstract class AbstractResourceMapper {
+public abstract class ResourceMapper {
     /**
      * Converts a string into a resource.
      * @param resourceKey a string representing the resource
      * @return the resource, all ready for reading data
      */
-    public abstract AbstractResource get(String resourceKey);
+    public abstract DataSource get(String resourceKey);
 
     /**
      * Expands a glob.

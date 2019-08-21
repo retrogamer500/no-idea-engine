@@ -5,7 +5,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.config.json.FontConfig;
 import net.loganford.noideaengine.graphics.Font;
 import net.loganford.noideaengine.graphics.Texture;
-import net.loganford.noideaengine.utils.file.AbstractResource;
+import net.loganford.noideaengine.utils.file.DataSource;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -63,7 +63,7 @@ public class FontLoader extends ResourceLoader {
         STBTTPackContext packContext;
 
         packContext = STBTTPackContext.malloc();
-        AbstractResource location = fontConfig.getResourceMapper().get(fontConfig.getFilename());
+        DataSource location = fontConfig.getResourceMapper().get(fontConfig.getFilename());
         ByteBuffer ttf = location.loadBytes();
 
         //Get the scale and font info

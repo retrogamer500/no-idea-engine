@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FileResourceMapper extends AbstractResourceMapper {
+public class FileResourceMapper extends ResourceMapper {
     private File folder;
 
     public FileResourceMapper(File folder) {
@@ -22,8 +22,8 @@ public class FileResourceMapper extends AbstractResourceMapper {
     }
 
     @Override
-    public AbstractResource get(String resourceKey) {
-        return new FileResource(folder, resourceKey);
+    public DataSource get(String resourceKey) {
+        return new FileDataSource(folder, resourceKey);
     }
 
     @Override

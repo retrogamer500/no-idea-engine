@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipResourceMapper extends AbstractResourceMapper {
+public class ZipResourceMapper extends ResourceMapper {
 
     private ZipFile zipFile;
     private HashMap<String, ZipEntry> entryMap = new HashMap<>();
@@ -29,9 +29,9 @@ public class ZipResourceMapper extends AbstractResourceMapper {
     }
 
     @Override
-    public AbstractResource get(String resourceKey) {
+    public DataSource get(String resourceKey) {
         if(entryMap.containsKey(resourceKey)) {
-            return new ZipResource(zipFile, entryMap.get(resourceKey));
+            return new ZipDataSource(zipFile, entryMap.get(resourceKey));
         }
         else {
             throw new GameEngineException("Resource does not exist in zip file: " + resourceKey);
