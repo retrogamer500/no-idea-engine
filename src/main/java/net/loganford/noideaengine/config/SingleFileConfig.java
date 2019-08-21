@@ -5,6 +5,10 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SingleFileConfig extends LoadableConfig {
+public class SingleFileConfig extends LoadableConfig implements Cloneable {
     private String filename;
+
+    public SingleFileConfig clone() throws CloneNotSupportedException {
+        return (SingleFileConfig) super.clone();
+    }
 }

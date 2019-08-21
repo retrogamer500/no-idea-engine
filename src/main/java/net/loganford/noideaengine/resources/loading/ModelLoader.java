@@ -64,7 +64,7 @@ public class ModelLoader extends ResourceLoader {
     public Model load(Game game, ModelConfig modelConfig) {
         File file = new File(modelConfig.getFilename());
 
-        AbstractResource location = modelConfig.getAbstractResourceMapper().get(modelConfig.getFilename());
+        AbstractResource location = modelConfig.getResourceMapper().get(modelConfig.getFilename());
         String locationName = location.toString();
         String[] split = locationName.split("\\.");
         String phint = split[split.length-1]; //Todo: verify that this is working

@@ -50,7 +50,7 @@ public class ImageLoader extends ResourceLoader {
     }
 
     public Image load(ImageConfig imageConfig) {
-        AbstractResource location = imageConfig.getAbstractResourceMapper().get((imageConfig.getFilename()));
+        AbstractResource location = imageConfig.getResourceMapper().get((imageConfig.getFilename()));
 
         ByteBuffer imageBuffer;
         Image image;

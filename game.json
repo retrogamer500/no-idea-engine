@@ -3,6 +3,12 @@
     "images": [
       {
         "flipVertically": false,
+        "filename": "glob:data/**.png",
+        "key": "{1}",
+        "group": 0
+      },
+      {
+        "flipVertically": false,
         "filename": "data/images/sprite_sheet.png",
         "key": "sprite_sheet.png",
         "group": 0

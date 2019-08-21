@@ -2,6 +2,8 @@ package net.loganford.noideaengine.utils.file;
 
 import lombok.extern.log4j.Log4j2;
 
+import java.util.List;
+
 /**
  * A resource mapper allows the conversion between a string and a resource. This abstracts away the method of how game
  * resources are stored and allows us to store these resources in files, zip files, within the jar, or potentially
@@ -18,13 +20,13 @@ public abstract class AbstractResourceMapper {
 
     /**
      * Expands a glob.
-     * @param resourceKey A resource key. If the resource key does not contain a glob, nothing will happen. The glob MUST
+     * @param glob A resource key. If the resource key does not contain a glob, nothing will happen. The glob MUST
      *                    be a single asterisk at the end of the resourceKey. Globs elsewhere are not supported.
      * @param globAction an action to perform with the glob
      */
-    public void expandGlob(String resourceKey, globActionInterface globAction) {}
+    public void expandGlob(String glob, GlobActionInterface globAction) {}
 
-    public interface globActionInterface {
-        void doAction(String fullResourceKey, String glob);
+    public interface GlobActionInterface {
+        void doAction(String resourceKey, List<String> captureGroups);
     }
 }

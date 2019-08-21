@@ -55,7 +55,7 @@ public class AudioLoader extends ResourceLoader {
         IntBuffer channelsBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer sampleRateBuffer = BufferUtils.createIntBuffer(1);
 
-        AbstractResource location = audioConfig.getAbstractResourceMapper().get((audioConfig.getFilename()));
+        AbstractResource location = audioConfig.getResourceMapper().get((audioConfig.getFilename()));
         ShortBuffer audioBuffer = STBVorbis.stb_vorbis_decode_memory(location.loadBytes(), channelsBuffer, sampleRateBuffer);
 
         if(audioBuffer == null) {

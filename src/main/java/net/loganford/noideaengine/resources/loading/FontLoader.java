@@ -63,7 +63,7 @@ public class FontLoader extends ResourceLoader {
         STBTTPackContext packContext;
 
         packContext = STBTTPackContext.malloc();
-        AbstractResource location = fontConfig.getAbstractResourceMapper().get(fontConfig.getFilename());
+        AbstractResource location = fontConfig.getResourceMapper().get(fontConfig.getFilename());
         ByteBuffer ttf = location.loadBytes();
 
         //Get the scale and font info

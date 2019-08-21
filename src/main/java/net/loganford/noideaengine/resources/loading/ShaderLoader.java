@@ -51,8 +51,8 @@ public class ShaderLoader extends ResourceLoader {
     }
 
     public ShaderProgram load(ShaderConfig shaderDescription) {
-        return load(shaderDescription.getKey(), shaderDescription.getAbstractResourceMapper().get(shaderDescription.getVert()),
-                shaderDescription.getAbstractResourceMapper().get(shaderDescription.getFrag()));
+        return load(shaderDescription.getKey(), shaderDescription.getResourceMapper().get(shaderDescription.getVert()),
+                shaderDescription.getResourceMapper().get(shaderDescription.getFrag()));
     }
 
     public ShaderProgram load(String key, AbstractResource vertexFile, AbstractResource fragmentFile) {
