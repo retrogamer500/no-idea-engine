@@ -2,76 +2,35 @@
   "resources": {
     "images": [
       {
-        "flipVertically": false,
-        "filename": "glob:data/**.png",
-        "key": "{1}",
-        "group": 0
+        "filename": "glob:data/images/*.png",
+        "key": "{1}"
       },
       {
-        "flipVertically": false,
-        "filename": "data/images/sprite_sheet.png",
-        "key": "sprite_sheet.png",
-        "group": 0
-      },
-      {
-        "flipVertically": false,
         "filename": "data/images/sprite_sheet.png",
         "key": "sprite_sheet.png_2",
         "group": 1
-      },
-      {
-        "flipVertically": false,
-        "filename": "data/images/blue_ball.png",
-        "key": "blue_ball",
-        "group": 0
-      },
-      {
-        "flipVertically": false,
-        "filename": "data/images/red_ball.png",
-        "key": "red_ball",
-        "group": 0
-      },
-      {
-        "flipVertically": false,
-        "filename": "data/images/green_ball.png",
-        "key": "green_ball",
-        "group": 0
-      },
-      {
-        "flipVertically": false,
-        "filename": "data/images/tiles.png",
-        "key": "tiles",
-        "group": 0
       }
     ],
     "sprites": [
       {
-        "imageKey": "sprite_sheet.png",
+        "imageKey": "sprite_sheet",
         "frameWidth": 16.0,
         "offsetX": -8.0,
         "offsetY": -8.0,
-        "key": "test_sprite",
-        "group": 0
+        "key": "test_sprite"
       }
     ],
     "fonts": [
       {
         "size": 32.0,
         "filename": "data/roboto.ttf",
-        "key": "test_font",
-        "group": 0
+        "key": "test_font"
       }
     ],
     "audio": [
       {
         "filename": "data/audio/test.ogg",
-        "key": "test.ogg",
-        "group": 0
-      },
-      {
-        "filename": "data/audio/test.ogg",
-        "key": "test.ogg_2",
-        "group": 1
+        "key": "test.ogg"
       }
     ]
   }

@@ -7,6 +7,7 @@ import net.jodah.typetools.TypeResolver;
 import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.audio.Audio;
 import net.loganford.noideaengine.audio.AudioSystem;
+import net.loganford.noideaengine.config.ConfigurationLoader;
 import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.graphics.*;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
@@ -62,7 +63,6 @@ public class Game {
     private long minFrameTimeNs = NANOSECONDS_IN_SECOND / 60L;
 
     @Getter private ConfigurationLoader configurationLoader;
-    @Getter private GameConfig config;
     /**Alarm system used by the game*/
     @Getter private AlarmSystem alarms;
     /**Audio system which may be used to play sounds and music*/
@@ -73,7 +73,7 @@ public class Game {
 
     /**Default resource mapper to use when converting resource paths in the config.json into files*/
     @Getter @Setter private ResourceMapper resourceMapper = new FileResourceMapper(new File(""));
-    @Getter @Setter private DataSource configLocation = new FileDataSource(new File("game.json"));
+    @Getter @Setter private DataSource configSource = new FileDataSource(new File("game.json"));
 
     /**Keep track of loaded resource groups*/
     @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
@@ -126,11 +126,16 @@ public class Game {
     }
 
     /**
-     * Loads configuration file, and initializes the OpenGL context.
+     * Loads the game configuration.
      */
-    private void startGame() {
-        config = configurationLoader.loadConfiguration(this, resourceMapper, configLocation);
+    protected void loadConfiguration() {
+        configurationLoader.load(resourceMapper, configSource);
+    }
 
+    /**
+     * Initializes the OpenGL context.
+     */
+    protected void startGame() {
         log.info("Initializing OpenGL context");
         getWindow().init();
 
@@ -146,6 +151,8 @@ public class Game {
      * Starts the game and enters the game loop.
      */
     public void run() {
+        log.info("Loading configuration");
+        loadConfiguration();
         log.info("Initializing game");
         startGame();
 
@@ -340,5 +347,13 @@ public class Game {
                 nextGameState = requestedNextState;
             }
         }
+    }
+
+    /**
+     * Shortcut to getConfigurationLoader().getConfig().
+     * @return the current game configuration
+     */
+    public GameConfig getConfig() {
+        return getConfigurationLoader().getConfig();
     }
 }

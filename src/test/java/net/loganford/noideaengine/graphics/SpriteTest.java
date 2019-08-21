@@ -24,7 +24,7 @@ public class SpriteTest {
                 sprite.setColor(new Vector4f(1f, 0f, 0f, 1f));
                 sprite2 = game.getSpriteManager().get("test_sprite");
 
-                sprite3 = new Sprite(game.getImageManager().get("sprite_sheet.png"));
+                sprite3 = new Sprite(game.getImageManager().get("sprite_sheet"));
                 sprite3.setOffsetX(32);
                 sprite3.setOffsetY(8);
             }

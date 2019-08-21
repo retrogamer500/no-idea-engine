@@ -1,10 +1,11 @@
-package net.loganford.noideaengine;
+package net.loganford.noideaengine.config;
 
 import com.google.gson.Gson;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import net.loganford.noideaengine.config.LoadableConfig;
-import net.loganford.noideaengine.config.SingleFileConfig;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.config.json.GameConfig;
+import net.loganford.noideaengine.utils.JsonValidator;
 import net.loganford.noideaengine.utils.file.DataSource;
 import net.loganford.noideaengine.utils.file.ResourceMapper;
 
@@ -15,52 +16,50 @@ import java.util.List;
 
 @Log4j2
 public class ConfigurationLoader {
-    private Gson gson;
+    @Getter private GameConfig config;
+    @Getter private Gson gson;
 
     public ConfigurationLoader() {
         gson = new Gson();
     }
 
-    public GameConfig loadConfiguration(Game game, ResourceMapper resourceMapper, DataSource configLocation) {
-        GameConfig config;
-
-        if (configLocation.exists()) {
-            try {
-                log.info("Loading configuration file: " + configLocation);
-                String json = configLocation.load();
-                config = gson.fromJson(json, GameConfig.class);
-                populateResourceMappers(config, resourceMapper);
-                expandGlobs(config, resourceMapper);
-            }
-            catch(Exception e) {
-                throw new GameEngineException(e);
-            }
-        } else {
-            throw new GameEngineException("No configuration file exists.");
+    /**
+     * Loads a game configuration. If the configuration has already been loaded, then add new resources to the existing
+     * configuration.
+     * @param resourceMapper resource mapper for all the resources loaded
+     * @param configSource the data source of the config file
+     */
+    public void load(ResourceMapper resourceMapper, DataSource configSource) {
+        if(config == null) {
+            load(resourceMapper, configSource, true);
         }
-
-        return config;
+        else {
+            load(resourceMapper, configSource, false);
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    public void loadAdditionalResources(Game game, ResourceMapper resourceMapper, DataSource newConfigLocation, GameConfig existingConfig) {
-        if (newConfigLocation.exists()) {
-            log.info("Loading configuration file: " + newConfigLocation);
-            String json = newConfigLocation.load();
-            GameConfig newConfig = gson.fromJson(json, GameConfig.class);
-
-            //Copy new resources into existing config
-            try {
-                populateResourceMappers(newConfig, resourceMapper);
-                expandGlobs(newConfig, resourceMapper);
-                interleaveGameConfigurations(existingConfig, newConfig);
-            }
-            catch(Exception e) {
-                throw new GameEngineException(e);
+    public void load(ResourceMapper resourceMapper, DataSource configSource, boolean overwriteConfig) {
+        try {
+            if(!configSource.exists()) {
+                throw new GameEngineException("No configuration file exists.");
             }
 
-        } else {
-            throw new GameEngineException("No configuration file exists.");
+            log.info("Loading configuration file: " + configSource);
+            String json = configSource.load();
+            GameConfig loadedConfig = gson.fromJson(json, GameConfig.class);
+            JsonValidator.validateThenThrow(loadedConfig);
+            populateResourceMappers(loadedConfig, resourceMapper);
+            expandGlobs(loadedConfig, resourceMapper);
+
+            if(overwriteConfig) {
+                this.config = loadedConfig;
+            }
+            else {
+                interleaveGameConfigurations(this.config, loadedConfig);
+            }
+        }
+        catch(Exception e) {
+            throw new GameEngineException(e);
         }
     }
 

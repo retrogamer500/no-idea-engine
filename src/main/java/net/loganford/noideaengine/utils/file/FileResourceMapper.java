@@ -1,7 +1,7 @@
 package net.loganford.noideaengine.utils.file;
 
 import net.loganford.noideaengine.GameEngineException;
-import net.loganford.noideaengine.utils.GlobUtils;
+import net.loganford.noideaengine.utils.glob.Glob;
 
 import java.io.File;
 import java.nio.file.FileVisitResult;
@@ -30,7 +30,7 @@ public class FileResourceMapper extends ResourceMapper {
     public void expandGlob(String glob, GlobActionInterface globAction) {
         try {
             Path basePath = folder.toPath();
-            Pattern pattern = Pattern.compile(GlobUtils.regexFromGlob(glob));
+            Pattern pattern = Glob.globToRegex(glob);
             Files.walkFileTree(basePath, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
