@@ -16,10 +16,10 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractEntitySystem implements Listener<Entity> {
+public abstract class EntitySystem implements Listener<Entity> {
     @Getter private List<Class<? extends Component>> componentList;
 
-    public AbstractEntitySystem() {
+    public EntitySystem() {
         componentList = new ArrayList<>();
 
         Class clazz = getClass();

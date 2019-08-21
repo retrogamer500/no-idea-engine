@@ -6,10 +6,9 @@ import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.EntityStore;
 import net.loganford.noideaengine.state.entity.signals.DepthChangedSignal;
-import net.loganford.noideaengine.state.entity.signals.DestructionSignal;
 import net.loganford.noideaengine.utils.messaging.Signal;
 
-public abstract class SortedEntityListSystem extends AbstractEntitySystem {
+public abstract class SortedEntityListSystem extends EntitySystem {
 
     private boolean resort = false;
 

@@ -13,7 +13,7 @@ import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
-import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
+import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.lang.annotation.Annotation;
@@ -33,7 +33,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
     @Getter private AlarmSystem alarms;
     private Map<Class, Component> components;
     private Map<Class, Component> unmodifiableComponents;
-    @Getter private Set<AbstractEntitySystem> systems;
+    @Getter private Set<EntitySystem> systems;
 
     //Entity's sprite, when set gets drawn in the render method
     @Getter @Setter private Sprite sprite;

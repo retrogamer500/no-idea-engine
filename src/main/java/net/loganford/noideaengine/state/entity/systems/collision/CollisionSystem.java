@@ -5,16 +5,16 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.components.BasicCollisionComponent;
 import net.loganford.noideaengine.state.entity.components.AbstractPositionComponent;
+import net.loganford.noideaengine.state.entity.components.BasicCollisionComponent;
 import net.loganford.noideaengine.state.entity.components.RegisterComponent;
-import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
+import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 
 import java.util.List;
 
 @RegisterComponent(BasicCollisionComponent.class)
 @RegisterComponent(AbstractPositionComponent.class)
-public abstract class CollisionSystem extends AbstractEntitySystem {
+public abstract class CollisionSystem extends EntitySystem {
     public abstract boolean collidesWith(Shape shape, Class<? extends Entity> clazz);
     public abstract <C extends Entity> C getCollision(Shape shape, Class<C> clazz);
     public abstract <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz);

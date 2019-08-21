@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Repeatable(RegisterSystem.List.class)
 public @interface RegisterSystem {
-    Class<? extends AbstractEntitySystem> value();
+    Class<? extends EntitySystem> value();
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})

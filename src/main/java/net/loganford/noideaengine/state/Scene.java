@@ -9,7 +9,7 @@ import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.UnsafeMemory;
 import net.loganford.noideaengine.state.entity.*;
-import net.loganford.noideaengine.state.entity.systems.AbstractEntitySystem;
+import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
@@ -368,19 +368,19 @@ public class Scene<G extends Game> extends GameState<G> {
      */
     private void loadSystems() {
         Class clazz = getClass();
-        List<Class<? extends AbstractEntitySystem>> systemClazzList = new ArrayList<>();
+        List<Class<? extends EntitySystem>> systemClazzList = new ArrayList<>();
         while(clazz != null) {
             for (Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
-                Class<? extends AbstractEntitySystem> systemClazz = ((RegisterSystem)annotation).value();
+                Class<? extends EntitySystem> systemClazz = ((RegisterSystem)annotation).value();
                 systemClazzList.add(systemClazz);
             }
             clazz = clazz.getSuperclass();
         }
 
-        for(Class<? extends AbstractEntitySystem> systemClazz : systemClazzList) {
+        for(Class<? extends EntitySystem> systemClazz : systemClazzList) {
             try {
-                Constructor<? extends AbstractEntitySystem> constructor = systemClazz.getConstructor();
-                AbstractEntitySystem system = constructor.newInstance();
+                Constructor<? extends EntitySystem> constructor = systemClazz.getConstructor();
+                EntitySystem system = constructor.newInstance();
 
                 if(system instanceof CollisionSystem) {
                     collisionSystem = (CollisionSystem)system;
