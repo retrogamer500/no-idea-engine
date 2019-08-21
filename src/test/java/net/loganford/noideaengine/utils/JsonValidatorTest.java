@@ -1,7 +1,9 @@
 package net.loganford.noideaengine.utils;
 
 import lombok.Data;
-import net.loganford.noideaengine.config.Required;
+import net.loganford.noideaengine.utils.json.JsonValidationResult;
+import net.loganford.noideaengine.utils.json.JsonValidator;
+import net.loganford.noideaengine.utils.json.Required;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +17,8 @@ public class JsonValidatorTest {
 
             @Data
             class TestClass2 {
-                @Required private String f1 = "";
+                @Required
+                private String f1 = "";
             }
 
             @Required private String f1 = "test";

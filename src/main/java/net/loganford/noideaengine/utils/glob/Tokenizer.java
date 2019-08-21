@@ -26,16 +26,7 @@ public class Tokenizer {
             }
 
             if(currentToken == null) {
-                StringBuilder error = new StringBuilder();
-                error.append("Invalid character! Got: ").append(currentCharacter).append(" Expected: ");
-                for(int i = 0; i < nextTokens.length; i++) {
-                    if(i != 0) {
-                        error.append(" OR ");
-                    }
-                    error.append(nextTokens[i].getTokenName());
-                }
-                error.append("!");
-                throw new RuntimeException(error.toString());
+                error(parseString, nextTokens);
             }
 
             tokenList.add(currentToken);
@@ -51,12 +42,16 @@ public class Tokenizer {
             nextTokens = currentToken.getNextTokens();
         }
 
+        if(!tokenList.get(tokenList.size()-1).isTerminal()) {
+            error(parseString, nextTokens);
+        }
+
         return tokenList;
     }
 
     private void error(ParseString parseString, Token[] nextTokens) {
         int index = parseString.getIndex();
-        char character = parseString.get();
+        char character = parseString.getIndex() < parseString.getString().length() ? parseString.get() : ' ';
 
         log.error("Unexpected character in parseString at position " + index + ": " + character + ".");
         log.error(parseString.getString());

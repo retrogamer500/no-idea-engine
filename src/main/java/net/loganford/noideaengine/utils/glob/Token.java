@@ -24,5 +24,8 @@ abstract class Token {
     public boolean canConsume(char character) {
         return (toString()+character).matches(getTokenRegex());
     }
+    public boolean isTerminal() {
+        return true;
+    }
 }
 

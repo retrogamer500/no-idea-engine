@@ -1,4 +1,4 @@
-package net.loganford.noideaengine.config;
+package net.loganford.noideaengine.config.json;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

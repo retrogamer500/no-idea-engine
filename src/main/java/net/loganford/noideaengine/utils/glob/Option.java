@@ -10,4 +10,9 @@ class Option extends Word {
     public String getTokenRegex() {
         return "^[^\\*\\{\\},]+$";
     }
+
+    @Override
+    public boolean isTerminal() {
+        return false;
+    }
 }

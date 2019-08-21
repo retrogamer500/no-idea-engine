@@ -20,4 +20,9 @@ class BeginOption extends Token {
     public String getGlobRegex() {
         return "(";
     }
+
+    @Override
+    public boolean isTerminal() {
+        return false;
+    }
 }
