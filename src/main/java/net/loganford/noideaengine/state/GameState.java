@@ -9,7 +9,7 @@ import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.resources.RequireGroup;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL33;

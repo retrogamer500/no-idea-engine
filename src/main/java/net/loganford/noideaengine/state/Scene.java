@@ -7,7 +7,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;

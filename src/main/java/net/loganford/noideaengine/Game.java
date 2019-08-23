@@ -19,9 +19,9 @@ import net.loganford.noideaengine.state.loading.BasicLoadingScreen;
 import net.loganford.noideaengine.state.loading.LoadingScreen;
 import net.loganford.noideaengine.state.transition.InstantTransition;
 import net.loganford.noideaengine.state.transition.Transition;
-import net.loganford.noideaengine.utils.FramerateMonitor;
-import net.loganford.noideaengine.utils.PerformanceTracker;
-import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
+import net.loganford.noideaengine.utils.performance.FramerateMonitor;
+import net.loganford.noideaengine.utils.performance.PerformanceTracker;
+import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import net.loganford.noideaengine.utils.file.DataSource;
 import net.loganford.noideaengine.utils.file.FileDataSource;
 import net.loganford.noideaengine.utils.file.FileResourceMapper;
@@ -244,7 +244,7 @@ public class Game {
     /**
      * Called before the game terminates.
      */
-    private void terminate() {
+    protected void terminate() {
         transition.endState(this);
         gameState.endState(this);
         audioSystem.freeMemory();

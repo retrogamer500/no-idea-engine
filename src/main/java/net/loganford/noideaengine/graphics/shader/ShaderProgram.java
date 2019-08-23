@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Texture;
-import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.resources.Resource;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

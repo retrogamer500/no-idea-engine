@@ -2,7 +2,8 @@ package net.loganford.noideaengine.graphics;
 
 import lombok.Getter;
 import net.loganford.noideaengine.GameEngineException;
-import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;

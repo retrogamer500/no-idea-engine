@@ -2,7 +2,8 @@ package net.loganford.noideaengine.graphics;
 
 import lombok.Getter;
 import net.loganford.noideaengine.resources.Resource;
-import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import org.lwjgl.opengl.GL33;
 
 import java.nio.ByteBuffer;

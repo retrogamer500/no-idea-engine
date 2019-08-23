@@ -1,7 +1,6 @@
-package net.loganford.noideaengine.utils;
+package net.loganford.noideaengine.utils.memory;
 
 import lombok.extern.log4j.Log4j2;
-import net.loganford.noideaengine.graphics.UnsafeMemory;
 
 import java.util.HashMap;
 import java.util.HashSet;

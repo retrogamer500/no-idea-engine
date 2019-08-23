@@ -2,7 +2,8 @@ package net.loganford.noideaengine.graphics;
 
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
-import net.loganford.noideaengine.utils.UnsafeMemoryTracker;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL33;

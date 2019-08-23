@@ -1,7 +1,7 @@
 package net.loganford.noideaengine.resources;
 
 import net.loganford.noideaengine.GameEngineException;
-import net.loganford.noideaengine.graphics.UnsafeMemory;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.resources.loading.LoadingContext;
 import java.util.*;
 
@@ -13,7 +13,12 @@ public class ResourceManager<T extends Resource> {
     }
 
     public void put(String key, T resource) {
-        resources.put(key, resource);
+        if(resources.containsKey(key)) {
+            throw new GameEngineException("Entity manager contains key: " + key + ".");
+        }
+        else {
+            resources.put(key, resource);
+        }
     }
 
     @SuppressWarnings("unchecked")

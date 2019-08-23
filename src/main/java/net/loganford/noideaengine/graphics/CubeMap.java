@@ -1,5 +1,7 @@
 package net.loganford.noideaengine.graphics;
 
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+
 @Deprecated
 public class CubeMap implements UnsafeMemory {
     @Override

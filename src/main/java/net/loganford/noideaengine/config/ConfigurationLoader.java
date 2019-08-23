@@ -2,6 +2,7 @@ package net.loganford.noideaengine.config;
 
 import com.google.gson.Gson;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.config.json.GameConfig;
@@ -18,8 +19,11 @@ import java.util.List;
 
 @Log4j2
 public class ConfigurationLoader {
+
+    @Getter @Setter private Class<? extends GameConfig> configurationClass = GameConfig.class;
     @Getter private GameConfig config;
-    @Getter private Gson gson;
+    private Gson gson;
+
 
     public ConfigurationLoader() {
         gson = new Gson();
@@ -48,7 +52,7 @@ public class ConfigurationLoader {
 
             log.info("Loading configuration file: " + configSource);
             String json = configSource.load();
-            GameConfig loadedConfig = gson.fromJson(json, GameConfig.class);
+            GameConfig loadedConfig = gson.fromJson(json, configurationClass);
             JsonValidator.validateThenThrow(loadedConfig);
             populateResourceMappers(loadedConfig, resourceMapper);
             expandGlobs(loadedConfig, resourceMapper);
