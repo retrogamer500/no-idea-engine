@@ -1,15 +1,13 @@
 'use strict'
 function getClass() {
-    print('Generating class!');
-    var parentClass = Java.type('net.loganford.noideaengine.state.entity.Entity');
-    var newClass = JavaTools.extend(parentClass, {
+    return JavaTools.extend(Java.type('net.loganford.noideaengine.state.entity.Entity'), {
         i:1,
         step: function(game, scene, delta) {
-            entity.i++;
-            if(entity.i % 100 == 0) {
-                print("Hello world!");
+            this.i+=delta;
+            if(this.i > 1000) {
+                this.i-=1000;
+                print(this.i);
             }
         }
     });
-    return newClass;
 }
