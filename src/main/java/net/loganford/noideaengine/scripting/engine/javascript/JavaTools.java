@@ -12,7 +12,6 @@ import net.bytebuddy.implementation.bind.annotation.SuperCall;
 import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.loganford.noideaengine.scripting.Scriptable;
-import net.loganford.noideaengine.scripting.engine.GraalToolsException;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
@@ -28,22 +27,22 @@ import java.util.concurrent.Callable;
 public class JavaTools {
     //Maybe make this thread-local in the future to better support async code
     private static Stack<Callable> superStack = new Stack<>();
-
-    private static Value callMethodFunction;
-
     static {
         superStack.push(null);
     }
+
+    private static Value callMethodFunction;
 
     private Context context;
 
     public JavaTools(Context context) {
         this.context = context;
 
+        /*We need this intermediate call between java and javascript in order to populate the 'this' keyword with the
+        * target entity.*/
         String callMethodString = "(function(fun, thiz, args) {\n" +
                                       "return fun.apply(thiz, args);\n" +
                                   "})";
-
         callMethodFunction = context.eval(JsScriptEngine.LANGUAGE_ID, callMethodString);
     }
 
@@ -81,7 +80,7 @@ public class JavaTools {
                 Field field = result.getField(key);
                 defaultFields.put(field, entry.getValue());
             } catch (NoSuchFieldException e) {
-                throw new GraalToolsException("Unable to set field: " + key + ".", e);
+                throw new JavaToolsException("Unable to set field: " + key + ".", e);
             }
 
         }
@@ -92,6 +91,11 @@ public class JavaTools {
     @Scriptable
     public Object superCall() throws Exception {
         Callable<?> callable = superStack.peek();
+
+        if(callable == null) {
+            throw new JavaToolsException("Tried to call a super method in a method which doesn't override another method!");
+        }
+
         return callable.call();
     }
 
@@ -132,7 +136,7 @@ public class JavaTools {
             return builder;
         }
         catch(Exception e) {
-            throw new GraalToolsException("Unable to create field: " + key + ".", e);
+            throw new JavaToolsException("Unable to create field: " + key + ".", e);
         }
     }
 
