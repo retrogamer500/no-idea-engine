@@ -7,13 +7,13 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -360,7 +360,8 @@ public class Scene<G extends Game> extends GameState<G> {
      */
     private boolean testEntityGenerics(Entity e) {
         Class<?>[] generics = TypeResolver.resolveRawArguments(Entity.class, e.getClass());
-        return generics[0].isAssignableFrom(game.getClass()) && generics[1].isAssignableFrom(getClass());
+        return generics[0].isAssignableFrom(game.getClass()) &&
+                (generics[1] == TypeResolver.Unknown.class || generics[1].isAssignableFrom(getClass()));
     }
 
     /**

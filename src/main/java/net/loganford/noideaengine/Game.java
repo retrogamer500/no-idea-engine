@@ -13,19 +13,22 @@ import net.loganford.noideaengine.graphics.*;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.resources.ResourceManager;
 import net.loganford.noideaengine.resources.loading.*;
+import net.loganford.noideaengine.scripting.Script;
+import net.loganford.noideaengine.scripting.ScriptEngine;
+import net.loganford.noideaengine.scripting.engine.javascript.JsScriptEngine;
 import net.loganford.noideaengine.state.GameState;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.loading.BasicLoadingScreen;
 import net.loganford.noideaengine.state.loading.LoadingScreen;
 import net.loganford.noideaengine.state.transition.InstantTransition;
 import net.loganford.noideaengine.state.transition.Transition;
-import net.loganford.noideaengine.utils.performance.FramerateMonitor;
-import net.loganford.noideaengine.utils.performance.PerformanceTracker;
-import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import net.loganford.noideaengine.utils.file.DataSource;
 import net.loganford.noideaengine.utils.file.FileDataSource;
 import net.loganford.noideaengine.utils.file.FileResourceMapper;
 import net.loganford.noideaengine.utils.file.ResourceMapper;
+import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
+import net.loganford.noideaengine.utils.performance.FramerateMonitor;
+import net.loganford.noideaengine.utils.performance.PerformanceTracker;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
@@ -78,6 +81,8 @@ public class Game {
     /**Keep track of loaded resource groups*/
     @Getter private HashSet<Integer> loadedResourceGroups = new HashSet<>();
 
+    @Getter @Setter private ScriptEngine scriptEngine = new JsScriptEngine();
+
     //Resource managers
     @Getter private ResourceManager<Image> imageManager = new ResourceManager<>();
     @Getter private ResourceManager<Texture> textureManager = new ResourceManager<>();
@@ -86,6 +91,7 @@ public class Game {
     @Getter private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
     @Getter private ResourceManager<Font> fontManager = new ResourceManager<>();
     @Getter private ResourceManager<Audio> audioManager = new ResourceManager<>();
+    @Getter private ResourceManager<Script> scriptManager = new ResourceManager<>();
 
     //Measure fps and performance of engine
     private FramerateMonitor framerateMonitor;
@@ -316,6 +322,7 @@ public class Game {
         resourceLoaders.add(new SpriteLoader(this));
         resourceLoaders.add(new FontLoader(this));
         resourceLoaders.add(new AudioLoader(this));
+        resourceLoaders.add(new ScriptLoader(this));
         return resourceLoaders;
     }
 

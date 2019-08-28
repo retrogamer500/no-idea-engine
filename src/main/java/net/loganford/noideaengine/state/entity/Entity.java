@@ -8,6 +8,7 @@ import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.Frame;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Sprite;
+import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.Scene;
@@ -22,7 +23,8 @@ import java.util.*;
 
 @RegisterComponent(BasicPositionComponent.class)
 @RegisterComponent(BasicCollisionComponent.class)
-public abstract class Entity<G extends Game, S extends Scene<G>> {
+@Scriptable
+public class Entity<G extends Game, S extends Scene<G>> {
     @Getter @Setter private S scene;
     @Getter @Setter private G game;
     @Getter @Setter private boolean persistent;
@@ -94,6 +96,7 @@ public abstract class Entity<G extends Game, S extends Scene<G>> {
      * @param scene the current scene
      * @param delta time since the previous frame, in milliseconds
      */
+    @Scriptable
     public void step(G game, S scene, float delta) {
         alarms.step(delta);
 

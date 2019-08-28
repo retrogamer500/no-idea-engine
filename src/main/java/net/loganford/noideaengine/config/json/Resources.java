@@ -12,4 +12,5 @@ public class Resources {
     private List<SpriteConfig> sprites;
     private List<FontConfig> fonts;
     private List<AudioConfig> audio;
+    private List<ScriptConfig> scripts;
 }

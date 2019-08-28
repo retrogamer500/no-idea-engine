@@ -10,6 +10,6 @@ public class GameEngineException extends RuntimeException {
     }
 
     public GameEngineException(String message, Exception e) {
-        super(e);
+        super(message, e);
     }
 }

@@ -32,6 +32,12 @@
         "filename": "data/audio/test.ogg",
         "key": "test.ogg"
       }
+    ],
+    "scripts": [
+      {
+        "filename": "data/scripts/test.js",
+        "key": "test"
+      }
     ]
   }
 }
