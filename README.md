@@ -16,10 +16,10 @@ View the wiki [here](https://github.com/retrogamer500/no-idea-engine/wiki) for m
 * Customizable loading screens and state transitions
 * Game resource management via JSON, ability to define resource groups to load or unload between scenes
 * Store resources in directories, inside ZIP files, or within the JAR
+* Sandboxed Javascript scripting with ability to extend Java entities
 
 ### Future Features:
 * Improved 3D support
-* Lua scripting + easy mod support
 * Bullet Physics and Box2D physics support
 * Improved arbitrary 2D primitive rendering beyond lines, boxes, and circles
 
