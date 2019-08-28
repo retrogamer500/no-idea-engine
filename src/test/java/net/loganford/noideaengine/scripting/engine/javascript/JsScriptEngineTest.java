@@ -3,15 +3,13 @@ package net.loganford.noideaengine.scripting.engine.javascript;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.scripting.Function;
 import net.loganford.noideaengine.scripting.Script;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import org.graalvm.polyglot.Value;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class JsScriptEngineTest {
@@ -24,23 +22,16 @@ public class JsScriptEngineTest {
                 super.beginState(game);
 
                 Script script = game.getScriptManager().get("test");
-                Map<String, Object> output = new HashMap<>();
-                script.execute(output);
+                script.execute(); //Need to execute script in order to obtain contents
+                Function getClassFunction = script.getFunction("getClass");
+                Class<?> clazz = getClassFunction.evalObject(Class.class);
 
                 try {
-                    if (output.get("getClass") != null) {
-                        Object object = output.get("getClass");
-                        if (object instanceof Value) {
-                            Value value = (Value) object;
-                            Class clazz = value.execute().as(Class.class);
-                            Constructor constructor = clazz.getConstructor();
-
-                            for(int i = 0; i < 1000; i++) {
-                                Object instance = constructor.newInstance();
-                                if (instance instanceof Entity) {
-                                    add((Entity) instance);
-                                }
-                            }
+                    Constructor constructor = clazz.getConstructor();
+                    for(int i = 0; i < 1000; i++) {
+                        Object instance = constructor.newInstance();
+                        if (instance instanceof Entity) {
+                            add((Entity) instance);
                         }
                     }
                 }

@@ -1,41 +1,81 @@
 package net.loganford.noideaengine.scripting.engine.javascript;
 
+import lombok.extern.log4j.Log4j2;
+import net.loganford.noideaengine.scripting.Function;
 import net.loganford.noideaengine.scripting.Script;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotException;
+import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 
-import java.util.Map;
+@Log4j2
+public class JsScript extends Script implements UnsafeMemory {
 
-public class JsScript extends Script {
+    private Context context;
+    private Source source;
 
-    private JsScriptEngine engine;
-    private String code;
-    private Map<String, Object> output;
-
-    public JsScript(JsScriptEngine engine, String code) {
-        this.engine = engine;
-        this.code = code;
+    public JsScript(Context context, String source) {
+        this.context = context;
+        this.source = Source.create(JsScriptEngine.LANGUAGE_ID, source);
     }
 
     @Override
-    public void execute(Map<String, Object> context, Map<String, Object> output) {
-        if(context != null) {
-            for (Map.Entry<String, Object> entry : context.entrySet()) {
-                engine.getContext().getBindings(JsScriptEngine.LANGUAGE_ID).putMember(entry.getKey(), entry.getValue());
-            }
+    public void execute() {
+        context.eval(source);
+    }
+
+    @Override
+    public float getFloat(String key) {
+        Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
+        if(value != null && value.isNumber() && value.fitsInInt()) {
+            return value.asFloat();
+        }
+        return 0;
+    }
+
+    @Override
+    public float getInt(String key) {
+        Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
+        if(value != null && value.isNumber() && value.fitsInInt()) {
+            return value.asInt();
+        }
+        return 0;
+    }
+
+    @Override
+    public String getString(String key) {
+        Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
+        if(value != null && value.isString()) {
+            return value.asString();
+        }
+        return "";
+    }
+
+    @Override
+    public <C> C getObject(String key, Class<C> clazz) {
+        Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
+        try {
+            return value.as(clazz);
+        }
+        catch(ClassCastException | PolyglotException e) {
+            log.info("Cannot cast key " + key + " as " + clazz.toString() + ".");
         }
 
-        engine.getContext().eval(JsScriptEngine.LANGUAGE_ID, code);
+        return null;
+    }
 
-        if(output != null) {
-            for (String key : engine.getContext().getBindings(JsScriptEngine.LANGUAGE_ID).getMemberKeys()) {
-                Value member = engine.getContext().getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
-                if(member.canExecute()) {
-                    output.put(key, member);
-                }
-                else {
-                    output.put(key, member.as(Object.class));
-                }
-            }
+    @Override
+    public Function getFunction(String key) {
+        Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
+        if(value.canExecute()) {
+            return new JsFunction(value);
         }
+        return null;
+    }
+
+    @Override
+    public void freeMemory() {
+        context.close(true);
     }
 }
