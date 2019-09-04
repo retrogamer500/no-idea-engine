@@ -3,98 +3,104 @@ package net.loganford.noideaengine.state.entity;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class EntityStore implements Iterable<Entity> {
-    private ArrayList<Entity> entities;
+public abstract class EntityStore<T> implements Iterable<T> {
+    private ArrayList<T> items;
+    private ArrayList<T> itemsToResort;
     private EntityTypeCache typeCache;
-    private ArrayList<Entity> entitiesToResort;
+
+
 
     public EntityStore() {
-        entities = new ArrayList<>();
+        items = new ArrayList<>();
+        itemsToResort = new ArrayList<>();
         typeCache = new EntityTypeCache();
-        entitiesToResort = new ArrayList<>();
     }
 
     public int add(Entity entity) {
-        int index = Collections.binarySearch(entities, entity, (o1, o2) -> Float.compare(o2.getDepth(), o1.getDepth()));
+        T item = wrap(entity);
+        int index = Collections.binarySearch(items, item, (o1, o2) -> Float.compare(unwrap(o2).getDepth(), unwrap(o1).getDepth()));
         if(index < 0) {
             index = -(index + 1);
         }
-        entities.add(index, entity);
+        items.add(index, item);
         typeCache.add(entity);
         return index;
     }
 
     public void remove(Entity entity) {
-        for(int i = entities.size() - 1; i >= 0; i--) {
-            if(entities.get(i).equals(entity)) {
-                entities.remove(i);
+        for(int i = items.size() - 1; i >= 0; i--) {
+            if(unwrap(items.get(i)).equals(entity)) {
+                items.remove(i);
                 typeCache.remove(entity);
             }
         }
     }
 
     public void resort() {
-        for(int i = entities.size() - 1; i >= 0; i--) {
-            Entity entity = entities.get(i);
-            if(entity.isDepthChanged()) {
-                entities.remove(i);
-                entity.setDepthChanged(false);
-                entitiesToResort.add(entity);
+        for(int i = items.size() - 1; i >= 0; i--) {
+            T item = items.get(i);
+            if(unwrap(item).isDepthChanged()) {
+                items.remove(i);
+                unwrap(item).setDepthChanged(false);
+                itemsToResort.add(item);
             }
         }
 
-        for(Entity entity : entitiesToResort) {
-            int index = Collections.binarySearch(entities, entity, (o1, o2) -> Float.compare(o2.getDepth(), o1.getDepth()));
+        for(T item : itemsToResort) {
+            int index = Collections.binarySearch(items, item, (o1, o2) -> Float.compare(unwrap(o2).getDepth(), unwrap(o1).getDepth()));
             if(index < 0) {
                 index = -(index + 1);
             }
-            entities.add(index, entity);
+            items.add(index, item);
         }
-        entitiesToResort.clear();
+        itemsToResort.clear();
     }
 
     public void removeDestroyed() {
-        for(int i = entities.size() - 1; i >= 0; i--) {
-            Entity entity = entities.get(i);
-            if(entity.isDestroyed()) {
-                entities.remove(i);
-                typeCache.remove(entity);
+        for(int i = items.size() - 1; i >= 0; i--) {
+            T item = items.get(i);
+            if(unwrap(item).isDestroyed()) {
+                items.remove(i);
+                typeCache.remove(unwrap(item));
             }
         }
     }
 
     public <C extends Entity> List<C> byClass(Class<C> clazz) {
-        return typeCache.get(clazz);
+        //return typeCache.get(clazz);
+        return null;
     }
 
     public int size() {
-        return entities.size();
+        return items.size();
     }
 
-    public Entity get(int index) {
-        return entities.get(index);
-    }
-
-    @Override
-    public Iterator<Entity> iterator() {
-        return entities.iterator();
+    public T get(int index) {
+        return items.get(index);
     }
 
     @Override
-    public void forEach(Consumer<? super Entity> action) {
-        entities.forEach(action);
+    public Iterator<T> iterator() {
+        return items.iterator();
     }
 
     @Override
-    public Spliterator<Entity> spliterator() {
-        return entities.spliterator();
+    public void forEach(Consumer<? super T> action) {
+        items.forEach(action);
     }
 
+    @Override
+    public Spliterator<T> spliterator() {
+        return items.spliterator();
+    }
 
-    /**
-     * Internal class which provides a quick map between Class and entities
-     */
-    private class EntityTypeCache {
+    protected abstract Entity unwrap(T item);
+    protected abstract T wrap(Entity entity);
+
+
+
+
+    private class EntityTypeCache<T> {
         private Map<Class<? extends Entity>, Set<? extends Entity>> map;
 
         private EntityTypeCache() {
@@ -131,5 +137,4 @@ public class EntityStore implements Iterable<Entity> {
             return entityList;
         }
     }
-
 }

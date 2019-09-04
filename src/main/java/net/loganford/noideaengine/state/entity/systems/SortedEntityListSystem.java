@@ -4,7 +4,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.EntityStore;
+import net.loganford.noideaengine.state.entity.EntityComponentStore;
 import net.loganford.noideaengine.state.entity.signals.DepthChangedSignal;
 import net.loganford.noideaengine.utils.messaging.Signal;
 
@@ -12,11 +12,11 @@ public abstract class SortedEntityListSystem extends EntitySystem {
 
     private boolean resort = false;
 
-    private EntityStore entities;
+    private EntityComponentStore entities;
 
     public SortedEntityListSystem() {
         super();
-        entities = new EntityStore();
+        entities = new EntityComponentStore(getComponentList());
     }
 
     @Override
@@ -46,14 +46,14 @@ public abstract class SortedEntityListSystem extends EntitySystem {
         resort = false;
     }
 
-    abstract void stepEntities(EntityStore entities, Game game, Scene scene, float delta);
+    abstract void stepEntities(EntityComponentStore entities, Game game, Scene scene, float delta);
 
     @Override
     public void render(Game game, Scene scene, Renderer renderer) {
         renderEntities(entities, game, scene, renderer);
     }
 
-    abstract void renderEntities(EntityStore entities, Game game, Scene scene, Renderer renderer);
+    abstract void renderEntities(EntityComponentStore entities, Game game, Scene scene, Renderer renderer);
 
     @Override
     public void receive(Signal<Entity> signal, Entity entity) {

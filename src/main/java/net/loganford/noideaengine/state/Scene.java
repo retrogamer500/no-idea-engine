@@ -30,7 +30,7 @@ public class Scene<G extends Game> extends GameState<G> {
 
     @Getter private boolean sceneBegun = false;
     //List of entities in the scene
-    @Getter(onMethod = @__({@Scriptable})) private EntityStore entities;
+    @Getter(onMethod = @__({@Scriptable})) private SimpleEntityStore entities;
     //ECS Engine
     @Getter private EntitySystemEngine entitySystemEngine;
     //Cache of collision system. Move to Entity in the future?
@@ -72,7 +72,7 @@ public class Scene<G extends Game> extends GameState<G> {
     public void beginState(G game) {
         super.beginState(game);
         this.game = game;
-        entities = new EntityStore();
+        entities = new SimpleEntityStore();
         entitySystemEngine = new EntitySystemEngine(game, this);
         loadSystems();
     }
