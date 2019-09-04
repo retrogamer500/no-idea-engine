@@ -2,8 +2,9 @@ package net.loganford.noideaengine.audio;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.resources.Resource;
+import net.loganford.noideaengine.scripting.Scriptable;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.lwjgl.openal.AL11;
 
 @Log4j2
@@ -20,18 +21,22 @@ public class Audio extends Resource implements UnsafeMemory {
         this.sampleLength = sampleLength;
     }
 
+    @Scriptable
     public Playback play() {
         return play(1f);
     }
 
+    @Scriptable
     public Playback play(float gain) {
         return play(gain, false);
     }
 
+    @Scriptable
     public Playback loop() {
         return loop(1f);
     }
 
+    @Scriptable
     public Playback loop(float gain) {
         return play(gain, true);
     }

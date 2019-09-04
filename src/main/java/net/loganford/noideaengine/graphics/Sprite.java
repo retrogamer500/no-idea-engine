@@ -3,6 +3,7 @@ package net.loganford.noideaengine.graphics;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.resources.PrototypeResource;
+import net.loganford.noideaengine.scripting.Scriptable;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class Sprite extends PrototypeResource {
         this.offsetY = offsetY;
     }
 
+    @Scriptable
     public void render(Renderer renderer, float x, float y) {
         //Renders the current sub-image
         Frame frame = frames.get(currentFrame);
@@ -70,10 +72,12 @@ public class Sprite extends PrototypeResource {
         frame.getImage().render(renderer, x + offsetX, y + offsetY);
     }
 
+    @Scriptable
     public float getWidth() {
         return frames.get(0).getImage().getWidth();
     }
 
+    @Scriptable
     public float getHeight() {
         return frames.get(0).getImage().getHeight();
     }

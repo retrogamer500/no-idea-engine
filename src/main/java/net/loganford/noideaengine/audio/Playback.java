@@ -2,6 +2,7 @@ package net.loganford.noideaengine.audio;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.noideaengine.scripting.Scriptable;
 import org.lwjgl.openal.AL11;
 
 @Log4j2
@@ -28,10 +29,12 @@ public class Playback {
         System.currentTimeMillis();
     }
 
+    @Scriptable
     public boolean isPlaying() {
         return !stopped && (System.currentTimeMillis() <= startTime + durationMillis);
     }
 
+    @Scriptable
     public void stop() {
         AL11.alSourceStop(sourceId);
         stopped = true;
