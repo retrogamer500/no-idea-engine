@@ -1,13 +1,11 @@
 'use strict'
 function getClass() {
-    return JavaTools.extend(Java.type('net.loganford.noideaengine.state.entity.Entity'), {
+    return Java.extend(Java.type('net.loganford.noideaengine.scripting.engine.javascript.JsScriptEngineTest$ScriptedEntity'), {
         i:1,
-        step: function(game, scene, delta) {
-            this.i+=delta;
-            if(this.i > 1000) {
-                this.i-=1000;
-                print(this.i);
-            }
+        onCreate: function(game, scene) {
+            Java.superCall();
+            this.setPos(500 * Math.random(), 500 * Math.random());
+            this.setSprite(game.getSpriteManager().get("test_sprite"));
         }
     });
 }

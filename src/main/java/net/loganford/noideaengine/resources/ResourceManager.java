@@ -1,8 +1,10 @@
 package net.loganford.noideaengine.resources;
 
 import net.loganford.noideaengine.GameEngineException;
-import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.resources.loading.LoadingContext;
+import net.loganford.noideaengine.scripting.Scriptable;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+
 import java.util.*;
 
 public class ResourceManager<T extends Resource> {
@@ -21,6 +23,7 @@ public class ResourceManager<T extends Resource> {
         }
     }
 
+    @Scriptable
     @SuppressWarnings("unchecked")
     public T get(String key) {
         T resource = resources.get(key);
@@ -40,6 +43,7 @@ public class ResourceManager<T extends Resource> {
         return resource;
     }
 
+    @Scriptable
     public boolean exists(String key) {
         return resources.containsKey(key);
     }

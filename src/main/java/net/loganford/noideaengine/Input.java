@@ -2,6 +2,7 @@ package net.loganford.noideaengine;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.noideaengine.scripting.Scriptable;
 import org.lwjgl.glfw.GLFW;
 
 @Log4j2
@@ -226,34 +227,42 @@ public class Input {
         mouseScrollYBuffer += scrollY;
     }
 
+    @Scriptable
     public boolean mousePressed(int button) {
         return enabled && mouseButtonsPressed[button];
     }
 
+    @Scriptable
     public boolean mouseReleased(int button) {
         return enabled && mouseButtonsReleased[button];
     }
 
+    @Scriptable
     public boolean mouseDown(int button) {
         return enabled && mouseButtonsDown[button];
     }
 
+    @Scriptable
     public boolean keyPressed(int key) {
         return enabled && keysPressed[key];
     }
 
+    @Scriptable
     public boolean keyReleased(int key) {
         return enabled && keysReleased[key];
     }
 
+    @Scriptable
     public boolean keyDown(int key) {
         return enabled && keysDown[key];
     }
 
+    @Scriptable
     public void enable() {
         enabled = true;
     }
 
+    @Scriptable
     public void disable() {
         enabled = false;
     }

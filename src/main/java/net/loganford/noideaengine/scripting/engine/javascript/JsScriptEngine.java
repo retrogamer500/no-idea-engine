@@ -14,6 +14,8 @@ public class JsScriptEngine extends ScriptEngine {
 
     private Context getNewContext() {
         HostAccess hostAccess = HostAccess.newBuilder()
+                //Automatically convert javascript doubles to float to simplify method overloading
+                .targetTypeMapping(Double.class, Float.class, null, Double::floatValue)
                 .allowAccessAnnotatedBy(Scriptable.class)
                 .allowImplementationsAnnotatedBy(Scriptable.class)
                 .allowArrayAccess(true)
@@ -23,18 +25,10 @@ public class JsScriptEngine extends ScriptEngine {
 
         Context context = Context.newBuilder()
                 .allowHostAccess(hostAccess)
-                .allowHostClassLookup((s)-> {
-                    try {
-                        return Class.forName(s).isAnnotationPresent(Scriptable.class);
-                    } catch (ClassNotFoundException e) {
-                        log.warn("Tried to look up non-existent class: " + s + ".");
-                        return false;
-                    }
-                })
                 .build();
 
         JavaTools javaTools = new JavaTools(context);
-        context.getBindings("js").putMember("JavaTools", javaTools);
+        context.getBindings("js").putMember("Java", javaTools);
         context.initialize(LANGUAGE_ID);
 
         return context;

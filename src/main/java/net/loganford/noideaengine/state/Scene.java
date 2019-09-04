@@ -7,6 +7,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
@@ -29,16 +30,17 @@ public class Scene<G extends Game> extends GameState<G> {
 
     @Getter private boolean sceneBegun = false;
     //List of entities in the scene
-    @Getter private EntityStore entities;
+    @Getter(onMethod = @__({@Scriptable})) private EntityStore entities;
     //ECS Engine
     @Getter private EntitySystemEngine entitySystemEngine;
     //Cache of collision system. Move to Entity in the future?
-    @Getter CollisionSystem collisionSystem;
+    @Getter(onMethod = @__({@Scriptable})) CollisionSystem collisionSystem;
 
     /**
      * Adds an entity to this scene.
      * @param entity the entity to add
      */
+    @Scriptable
     @SuppressWarnings("unchecked")
     public void add(Entity entity) {
         log.debug("Adding entity: " + entity.getClass().getName() + " Entity count: " + entities.size());
@@ -230,6 +232,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param y position in world space
      * @return the nearest entity to a location
      */
+    @Scriptable
     public <C extends Entity> C nearest(Class<C> clazz, float x, float y) {
         return nearest(clazz, x, y, 0f);
     }
@@ -242,6 +245,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param z position in world space
      * @return the nearest entity to a location
      */
+    @Scriptable
     public <C extends Entity> C nearest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float minDisSqr = Float.MAX_VALUE;
@@ -265,6 +269,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param y position in world space
      * @return the furthest entity to a location
      */
+    @Scriptable
     public <C extends Entity> C furthest(Class<C> clazz, float x, float y) {
         return furthest(clazz, x, y, 0);
     }
@@ -277,6 +282,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param z position in world space
      * @return the furthest entity to a location
      */
+    @Scriptable
     public <C extends Entity> C furthest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float maxDisSqr = Float.MAX_VALUE;
@@ -301,6 +307,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param count the number of entities to find
      * @return a list of nearby entities
      */
+    @Scriptable
     public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
         return nearest(clazz, x, y, 0, count);
     }
@@ -315,6 +322,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param count the number of entities to find
      * @return a list of nearby entities
      */
+    @Scriptable
     public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, float z, int count) {
         List<EntityDistancePair<C>> pairs = new ArrayList<>(count);
 
@@ -349,6 +357,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param clazz Entity or a subclass
      * @return the number of entities in the scene that are, or are a subclass of, the parameter
      */
+    @Scriptable
     public <C extends Entity> int count(Class<C> clazz) {
         return entities.byClass(clazz).size();
     }

@@ -48,6 +48,11 @@ public class JavaTools {
 
     @Scriptable
     public Class extend(Class<?> clazz, Value value) {
+
+        if(!clazz.isAnnotationPresent(Scriptable.class)) {
+            throw new JavaToolsException("Cannot extend class without @Scriptable annotation");
+        }
+
         Map<Field, Object> defaultFields = new HashMap<>();
         Map<String, Object> defaultFieldStrings = new HashMap<>();
 
@@ -97,6 +102,11 @@ public class JavaTools {
         }
 
         return callable.call();
+    }
+
+    @Scriptable
+    public Class type(String name) throws ClassNotFoundException {
+        return Class.forName(name);
     }
 
     private DynamicType.Builder handleMethod(DynamicType.Builder builder, Class clazz, String key, Value member, Context context) {
@@ -151,7 +161,7 @@ public class JavaTools {
         return false;
     }
 
-    protected int getFunctionParameterCount(Value value) {
+    private int getFunctionParameterCount(Value value) {
         int paramCount = 0;
         if(value.canExecute() && value.toString().startsWith("function(")) {
             String source = value.toString();

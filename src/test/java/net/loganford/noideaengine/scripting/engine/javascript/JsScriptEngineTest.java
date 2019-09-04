@@ -5,6 +5,7 @@ import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Function;
 import net.loganford.noideaengine.scripting.Script;
+import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class JsScriptEngineTest {
 
                 try {
                     Constructor constructor = clazz.getConstructor();
-                    for(int i = 0; i < 1000; i++) {
+                    for(int i = 0; i < 100; i++) {
                         Object instance = constructor.newInstance();
                         if (instance instanceof Entity) {
                             add((Entity) instance);
@@ -53,5 +54,25 @@ public class JsScriptEngineTest {
 
         Game game = new Game(scene);
         game.run();
+    }
+
+    @Scriptable
+    public static class ScriptedEntity extends Entity {
+        @Scriptable
+        public ScriptedEntity() {
+
+        }
+
+        @Scriptable
+        @Override
+        public void onCreate(Game game, Scene scene) {
+            super.onCreate(game, scene);
+        }
+
+        @Scriptable
+        @Override
+        public void step(Game game, Scene scene, float delta) {
+            super.step(game, scene, delta);
+        }
     }
 }

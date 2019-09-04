@@ -15,6 +15,7 @@ import net.loganford.noideaengine.resources.ResourceManager;
 import net.loganford.noideaengine.resources.loading.*;
 import net.loganford.noideaengine.scripting.Script;
 import net.loganford.noideaengine.scripting.ScriptEngine;
+import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.scripting.engine.javascript.JsScriptEngine;
 import net.loganford.noideaengine.state.GameState;
 import net.loganford.noideaengine.state.entity.Entity;
@@ -47,7 +48,7 @@ public class Game {
     public static final long SLEEP_BUFFER_MS = 2;
 
     @Getter private Window window;
-    @Getter private Input input;
+    @Getter(onMethod = @__({@Scriptable})) private Input input;
     @Getter private Renderer renderer;
 
     private boolean running = true;
@@ -84,14 +85,14 @@ public class Game {
     @Getter @Setter private ScriptEngine scriptEngine = new JsScriptEngine();
 
     //Resource managers
-    @Getter private ResourceManager<Image> imageManager = new ResourceManager<>();
-    @Getter private ResourceManager<Texture> textureManager = new ResourceManager<>();
-    @Getter private ResourceManager<ShaderProgram> shaderManager = new ResourceManager<>();
-    @Getter private ResourceManager<Model> modelManager = new ResourceManager<>();
-    @Getter private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
-    @Getter private ResourceManager<Font> fontManager = new ResourceManager<>();
-    @Getter private ResourceManager<Audio> audioManager = new ResourceManager<>();
-    @Getter private ResourceManager<Script> scriptManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Image> imageManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Texture> textureManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<ShaderProgram> shaderManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Model> modelManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Font> fontManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Audio> audioManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Script> scriptManager = new ResourceManager<>();
 
     //Measure fps and performance of engine
     private FramerateMonitor framerateMonitor;
