@@ -10,7 +10,9 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.entity.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
+import net.loganford.noideaengine.state.entity.systems.InheritSystems;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
+import net.loganford.noideaengine.state.entity.systems.UnregisterSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
@@ -378,14 +380,7 @@ public class Scene<G extends Game> extends GameState<G> {
      */
     private void loadSystems() {
         Class clazz = getClass();
-        List<Class<? extends EntitySystem>> systemClazzList = new ArrayList<>();
-        while(clazz != null) {
-            for (Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
-                Class<? extends EntitySystem> systemClazz = ((RegisterSystem)annotation).value();
-                systemClazzList.add(systemClazz);
-            }
-            clazz = clazz.getSuperclass();
-        }
+        List<Class<? extends EntitySystem>> systemClazzList = getSystemsForClass(getClass());
 
         for(Class<? extends EntitySystem> systemClazz : systemClazzList) {
             try {
@@ -402,5 +397,27 @@ public class Scene<G extends Game> extends GameState<G> {
                 throw new GameEngineException("Unable to setup entity components", e);
             }
         }
+    }
+
+    private List<Class<? extends EntitySystem>> getSystemsForClass(Class clazz) {
+        List<Class<? extends EntitySystem>> systemClazzList = new ArrayList<>();
+        if(clazz != null) {
+
+            Annotation inherit = clazz.getAnnotation(InheritSystems.class);
+            if(inherit == null || ((InheritSystems) inherit).value()) {
+                systemClazzList.addAll(getSystemsForClass(clazz.getSuperclass()));
+            }
+
+            for(Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
+                Class<? extends EntitySystem> systemClass = ((RegisterSystem)annotation).value();
+                systemClazzList.add(systemClass);
+            }
+
+            for(Annotation annotation : clazz.getAnnotationsByType(UnregisterSystem.class)) {
+                Class<? extends EntitySystem> systemClass = ((UnregisterSystem)annotation).value();
+                systemClazzList.remove(systemClass);
+            }
+        }
+        return systemClazzList;
     }
 }
