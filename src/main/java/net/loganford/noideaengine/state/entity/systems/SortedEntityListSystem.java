@@ -5,6 +5,7 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.EntityComponentStore;
+import net.loganford.noideaengine.state.entity.components.Component;
 import net.loganford.noideaengine.state.entity.signals.DepthChangedSignal;
 import net.loganford.noideaengine.utils.messaging.Signal;
 
@@ -47,6 +48,19 @@ public abstract class SortedEntityListSystem extends EntitySystem {
     }
 
     abstract void stepEntities(EntityComponentStore entities, Game game, Scene scene, float delta);
+
+    public int getComponentLocation(Class<? extends Component> component) {
+        int index = -1;
+
+        for(int i = 0; i < getComponentList().size(); i++) {
+            Class<? extends Component> registeredComponent = getComponentList().get(i);
+            if(registeredComponent.isAssignableFrom(registeredComponent)) {
+                index = i;
+            }
+        }
+
+        return index;
+    }
 
     @Override
     public void render(Game game, Scene scene, Renderer renderer) {
