@@ -1,9 +1,12 @@
 package net.loganford.noideaengine.scripting;
 
+import lombok.Getter;
 import net.loganford.noideaengine.resources.Resource;
 
 
 public abstract class Script extends Resource {
+    @Getter
+    protected boolean executed = false;
 
     public abstract void execute();
     public abstract float getFloat(String key);

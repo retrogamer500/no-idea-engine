@@ -23,10 +23,15 @@ public class JsScript extends Script implements UnsafeMemory {
     @Override
     public void execute() {
         context.eval(source);
+        executed = true;
     }
 
     @Override
     public float getFloat(String key) {
+        if(!executed) {
+            execute();
+        }
+
         Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
         if(value != null && value.isNumber() && value.fitsInInt()) {
             return value.asFloat();
@@ -36,6 +41,10 @@ public class JsScript extends Script implements UnsafeMemory {
 
     @Override
     public float getInt(String key) {
+        if(!executed) {
+            execute();
+        }
+
         Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
         if(value != null && value.isNumber() && value.fitsInInt()) {
             return value.asInt();
@@ -45,6 +54,10 @@ public class JsScript extends Script implements UnsafeMemory {
 
     @Override
     public String getString(String key) {
+        if(!executed) {
+            execute();
+        }
+
         Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
         if(value != null && value.isString()) {
             return value.asString();
@@ -54,6 +67,10 @@ public class JsScript extends Script implements UnsafeMemory {
 
     @Override
     public <C> C getObject(String key, Class<C> clazz) {
+        if(!executed) {
+            execute();
+        }
+
         Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
         try {
             return value.as(clazz);
@@ -67,6 +84,10 @@ public class JsScript extends Script implements UnsafeMemory {
 
     @Override
     public Function getFunction(String key) {
+        if(!executed) {
+            execute();
+        }
+
         Value value = context.getBindings(JsScriptEngine.LANGUAGE_ID).getMember(key);
         if(value.canExecute()) {
             return new JsFunction(value);

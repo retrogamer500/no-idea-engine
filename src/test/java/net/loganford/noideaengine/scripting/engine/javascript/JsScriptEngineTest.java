@@ -23,7 +23,6 @@ public class JsScriptEngineTest {
                 super.beginState(game);
 
                 Script script = game.getScriptManager().get("test");
-                script.execute(); //Need to execute script in order to obtain contents
                 Function getClassFunction = script.getFunction("getClass");
                 Class<?> clazz = getClassFunction.evalObject(Class.class);
 
