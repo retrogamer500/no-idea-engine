@@ -67,8 +67,7 @@ public abstract class EntityStore<T> implements Iterable<T> {
     }
 
     public <C extends Entity> List<C> byClass(Class<C> clazz) {
-        //return typeCache.get(clazz);
-        return null;
+        return typeCache.get(clazz);
     }
 
     public int size() {
@@ -100,7 +99,7 @@ public abstract class EntityStore<T> implements Iterable<T> {
 
 
 
-    private class EntityTypeCache<T> {
+    private class EntityTypeCache {
         private Map<Class<? extends Entity>, Set<? extends Entity>> map;
 
         private EntityTypeCache() {
