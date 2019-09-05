@@ -94,7 +94,7 @@ public class JavaTools {
     }
 
     @Scriptable
-    public Object superCall() throws Exception {
+    public Object call() throws Exception {
         Callable<?> callable = superStack.peek();
 
         if(callable == null) {

@@ -36,7 +36,13 @@
     "scripts": [
       {
         "filename": "data/scripts/test.js",
-        "key": "test"
+        "key": "test",
+        "tags": [
+          {
+            "key":"testKey",
+            "value":"testValue"
+          }
+        ]
       }
     ]
   }

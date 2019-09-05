@@ -6,6 +6,7 @@ import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ResourceManager<T extends Resource> {
     private Map<String, T> resources;
@@ -62,6 +63,10 @@ public class ResourceManager<T extends Resource> {
 
     public List<String> getKeys() {
         return new ArrayList<>(resources.keySet());
+    }
+
+    public Stream<T> stream() {
+        return resources.values().stream();
     }
 
     public void unloadGroups(LoadingContext ctx) {
