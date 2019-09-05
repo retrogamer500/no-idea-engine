@@ -40,8 +40,7 @@ public class AudioLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         AudioConfig config = audioToLoad.remove(0);
         Audio audio = load(config);
-        audio.setKey(config.getKey());
-        audio.setLoadingGroup(config.getGroup());
+        populateResource(audio, config);
         game.getAudioManager().put(config.getKey(), audio);
         log.info("Audio loaded: " + config.getFilename());
     }

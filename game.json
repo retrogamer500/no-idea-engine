@@ -41,6 +41,10 @@
           {
             "key":"testKey",
             "value":"testValue"
+          },
+          {
+            "key":"anotherTestKey",
+            "value":"testValue"
           }
         ]
       }

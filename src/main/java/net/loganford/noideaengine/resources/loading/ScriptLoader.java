@@ -34,6 +34,7 @@ public class ScriptLoader extends ResourceLoader {
         ScriptConfig config = scriptsToLoad.remove(0);
         DataSource location = config.getResourceMapper().get((config.getFilename()));
         Script script = game.getScriptEngine().loadScript(location);
+        populateResource(script, config);
         game.getScriptManager().put(config.getKey(), script);
         log.info("Script loaded: " + config.getFilename());
     }

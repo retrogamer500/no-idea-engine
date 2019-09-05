@@ -45,8 +45,7 @@ public class FontLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         FontConfig config = fontsToLoad.remove(0);
         Font font = load(config);
-        font.setKey(config.getKey());
-        font.setLoadingGroup(config.getGroup());
+        populateResource(font, config);
         log.info("Loaded font: " + config.getKey());
         game.getFontManager().put(config.getKey(), font);
     }

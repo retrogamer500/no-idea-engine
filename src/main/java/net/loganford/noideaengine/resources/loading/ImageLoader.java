@@ -38,8 +38,7 @@ public class ImageLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         ImageConfig config = imagesToLoad.remove(0);
         Image image = load(config);
-        image.setKey(config.getKey());
-        image.setLoadingGroup(config.getGroup());
+        populateResource(image, config);
         log.info("Image loaded. Name: " + config.getKey() + " Width: " + image.getWidth() + ". Height: " + image.getHeight() + ".");
         game.getImageManager().put(config.getKey(), image);
     }

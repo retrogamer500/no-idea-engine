@@ -40,8 +40,7 @@ public class ShaderLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         ShaderConfig config = shadersToLoad.remove(0);
         ShaderProgram program = load(config);
-        program.setKey(config.getKey());
-        program.setLoadingGroup(config.getGroup());
+        populateResource(program, config);
         game.getShaderManager().put(config.getKey(), program);
     }
 

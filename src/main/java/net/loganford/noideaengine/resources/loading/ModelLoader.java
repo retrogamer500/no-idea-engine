@@ -50,8 +50,7 @@ public class ModelLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         ModelConfig config = modelsToLoad.remove(0);
         Model model = load(game, config);
-        model.setKey(config.getKey());
-        model.setLoadingGroup(config.getGroup());
+        populateResource(model, config);
         log.info("Model loaded. Name: " + config.getKey() + ".");
         game.getModelManager().put(config.getKey(), model);
     }

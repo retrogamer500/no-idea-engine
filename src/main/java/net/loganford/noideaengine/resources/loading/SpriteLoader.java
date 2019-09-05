@@ -34,8 +34,7 @@ public class SpriteLoader extends ResourceLoader {
     public void loadOne(Game game, LoadingContext ctx) {
         SpriteConfig config = spritesToLoad.remove(0);
         Sprite sprite = load(game, config);
-        sprite.setKey(config.getKey());
-        sprite.setLoadingGroup(config.getGroup());
+        populateResource(sprite, config);
         game.getSpriteManager().put(config.getKey(), sprite);
         log.info("Loaded sprite: " + config.getKey());
     }
