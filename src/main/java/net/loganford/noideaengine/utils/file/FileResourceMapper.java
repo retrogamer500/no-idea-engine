@@ -2,6 +2,7 @@ package net.loganford.noideaengine.utils.file;
 
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.utils.glob.Glob;
+import net.loganford.noideaengine.utils.glob.GlobActionInterface;
 
 import java.io.File;
 import java.nio.file.FileVisitResult;

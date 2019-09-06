@@ -7,14 +7,14 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.config.json.LoadableConfig;
-import net.loganford.noideaengine.config.json.SingleFileConfig;
 import net.loganford.noideaengine.utils.file.DataSource;
 import net.loganford.noideaengine.utils.file.ResourceMapper;
+import net.loganford.noideaengine.utils.glob.GlobActionInterface;
 import net.loganford.noideaengine.utils.json.JsonValidator;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 @Log4j2
@@ -55,7 +55,7 @@ public class ConfigurationLoader {
             GameConfig loadedConfig = gson.fromJson(json, configurationClass);
             JsonValidator.validateThenThrow(loadedConfig);
             populateResourceMappers(loadedConfig, resourceMapper);
-            expandGlobs(loadedConfig, resourceMapper);
+            scanAndExpandGlobs(loadedConfig, resourceMapper);
 
             if(overwriteConfig) {
                 this.config = loadedConfig;
@@ -86,55 +86,107 @@ public class ConfigurationLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private void expandGlobs(GameConfig base, ResourceMapper resourceMapper) throws IllegalAccessException {
-        List<Field> fields = getResourceListsOfType(base, SingleFileConfig.class);
-        for(Field field : fields) {
-            List<SingleFileConfig> configList = (List<SingleFileConfig>)field.get(base.getResources());
-            List<SingleFileConfig> newConfigs = new ArrayList<>();
-            Iterator<SingleFileConfig> iterator = configList.iterator();
-            while(iterator.hasNext()) {
-                SingleFileConfig config = iterator.next();
-                if (config.getFilename().startsWith("glob:")) {
-                    newConfigs.addAll(expandGlob(config, resourceMapper));
-                    iterator.remove();
-                }
-            }
-            configList.addAll(newConfigs);
-        }
-    }
-
-    private List<SingleFileConfig> expandGlob(SingleFileConfig singleFileConfig, ResourceMapper resourceMapper) {
-        List<SingleFileConfig> resultList = new ArrayList<>();
-
-        resourceMapper.expandGlob(singleFileConfig.getFilename().substring(5), (resourceKey, captureGroups) -> {
-            try {
-                SingleFileConfig newConfig = singleFileConfig.clone();
-                newConfig.setFilename(resourceKey);
-                resultList.add(newConfig);
-
-                //Iterate through the fields of the single file config
-                Class clazz = newConfig.getClass();
-                while(LoadableConfig.class.isAssignableFrom(clazz)) {
-                    for (Field stringField : clazz.getDeclaredFields()) {
-                        stringField.setAccessible(true);
-                        //And update group references in string fields
-                        if (String.class.isAssignableFrom(stringField.getType()) && !stringField.getName().equals("filename")) {
-                            String string = (String) stringField.get(newConfig);
-                            for (int i = 0; i < captureGroups.size(); i++) {
-                                string = string.replaceAll("\\{" + i + "}", captureGroups.get(i));
+    private void scanAndExpandGlobs(GameConfig base, ResourceMapper resourceMapper) throws IllegalAccessException {
+        //Iterate through resources and find lists
+        List<Field> resourceFields = getAllFields(base.getResources().getClass());
+        for(Field resourceField : resourceFields) {
+            resourceField.setAccessible(true);
+            Object fieldValue = resourceField.get(base.getResources());
+            if(fieldValue instanceof List) {
+                //List found
+                List list = (List) fieldValue;
+                if(list.size() > 0 && list.get(0) instanceof LoadableConfig) {
+                    //Iterate through configs in list
+                    for(int i = list.size() - 1; i >= 0; i--) {
+                        Object object = list.get(i);
+                        if(object instanceof LoadableConfig) {
+                            LoadableConfig loadableConfig = (LoadableConfig) object;
+                            //See if config contains a glob. If it does, expand it and remove current config.
+                            List<LoadableConfig> expansion = tryToExpandConfig(loadableConfig);
+                            if(expansion != null) {
+                                list.addAll(expansion);
+                                list.remove(i);
                             }
-                            stringField.set(newConfig, string);
                         }
                     }
-                    clazz = clazz.getSuperclass();
                 }
             }
-            catch(CloneNotSupportedException | IllegalAccessException e) {
-                throw new GameEngineException("Unable to process game configuration.", e);
-            }
-        });
+        }
 
-        return resultList;
+    }
+
+    private List<LoadableConfig> tryToExpandConfig(LoadableConfig config) throws IllegalAccessException {
+        String glob = null;
+        GlobableField annotation = null;
+        List<Field> fields = getAllFields(config.getClass());
+        Field globField = null;
+        for(Field field: fields) {
+            field.setAccessible(true);
+            annotation = field.getAnnotation(GlobableField.class);
+            if(annotation != null) {
+                Object object = field.get(config);
+                globField = field;
+                if(object instanceof String) {
+                    if(((String)object).startsWith("glob:")) {
+                        glob = (String) object;
+                    }
+                }
+                break;
+            }
+        }
+
+
+        Field finalGlobField = globField;
+        List<LoadableConfig> resultList = new ArrayList<>();
+
+        if(glob != null) {
+            //Glob is not null
+            GlobActionInterface globActionInterface = (resourceKey, captureGroups) -> {
+                try {
+                    LoadableConfig newConfig = config.clone();
+                    finalGlobField.set(newConfig, resourceKey);
+                    resultList.add(newConfig);
+
+                    //Iterate through the fields of the single file config
+                    Class clazz = newConfig.getClass();
+                    while(LoadableConfig.class.isAssignableFrom(clazz)) {
+                        for (Field stringField : clazz.getDeclaredFields()) {
+                            stringField.setAccessible(true);
+                            //And update group references in string fields
+                            if (String.class.isAssignableFrom(stringField.getType()) && !stringField.getName().equals("filename")) {
+                                String string = (String) stringField.get(newConfig);
+                                for (int i = 0; i < captureGroups.size(); i++) {
+                                    string = string.replaceAll("\\{" + i + "}", captureGroups.get(i));
+                                }
+                                stringField.set(newConfig, string);
+                            }
+                        }
+                        clazz = clazz.getSuperclass();
+                    }
+                }
+                catch(CloneNotSupportedException | IllegalAccessException e) {
+                    throw new GameEngineException("Unable to process game configuration.", e);
+                }
+            };
+
+            if(annotation.value() == GlobType.FILE) {
+                config.getResourceMapper().expandGlob(glob.substring(5), globActionInterface);
+            }
+
+            return resultList;
+        }
+
+        return null;
+    }
+
+    private List<Field> getAllFields(Class clazz) {
+        List<Field> returnList = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+
+        if(!Object.class.equals(clazz.getSuperclass())) {
+            returnList.addAll(getAllFields(clazz.getSuperclass()));
+        }
+
+        return returnList;
     }
 
     @SuppressWarnings("unchecked")

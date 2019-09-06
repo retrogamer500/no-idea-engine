@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public abstract class LoadableConfig {
+public abstract class LoadableConfig implements Cloneable {
     private transient ResourceMapper resourceMapper;
     @Required
     private String key;
     private int group = 0;
     private List<Tag> tags = new ArrayList<>();
+
+    public LoadableConfig clone() throws CloneNotSupportedException {
+        return (LoadableConfig) super.clone();
+    }
 }

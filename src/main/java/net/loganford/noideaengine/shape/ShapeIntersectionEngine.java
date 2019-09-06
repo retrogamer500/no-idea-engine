@@ -36,20 +36,6 @@ public class ShapeIntersectionEngine {
         return registration;
     }
 
-    public void doubleHandlerContainerSize() {
-        HandlerContainer[] newHandlerContainer = new HandlerContainer[maxShapes * maxShapes * 4];
-
-        for(int x = 0; x < maxShapes; x++) {
-            for(int y = 0; y < maxShapes; y++) {
-                HandlerContainer oldHandlerContainer = handlerContainers[x + y * maxShapes];
-                newHandlerContainer[x + y * maxShapes * 2] = oldHandlerContainer;
-            }
-        }
-
-        handlerContainers = newHandlerContainer;
-        maxShapes *= 2;
-    }
-
     @SuppressWarnings("unchecked")
     public boolean collides(Shape a, Shape b) {
         HandlerContainer container = handlerContainers[a.getRegistration() + b.getRegistration() * maxShapes];
@@ -77,6 +63,20 @@ public class ShapeIntersectionEngine {
         getHandlerContainer(registrationB, registrationA).intersectionHandler = (new SwappedIntersectionHandler<>(handler));
         getHandlerContainer(registrationA,registrationB).intersectionHandler = (handler);
 
+    }
+    
+    private void doubleHandlerContainerSize() {
+        HandlerContainer[] newHandlerContainer = new HandlerContainer[maxShapes * maxShapes * 4];
+
+        for(int x = 0; x < maxShapes; x++) {
+            for(int y = 0; y < maxShapes; y++) {
+                HandlerContainer oldHandlerContainer = handlerContainers[x + y * maxShapes];
+                newHandlerContainer[x + y * maxShapes * 2] = oldHandlerContainer;
+            }
+        }
+
+        handlerContainers = newHandlerContainer;
+        maxShapes *= 2;
     }
 
     private HandlerContainer getHandlerContainer(int x, int y) {

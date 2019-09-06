@@ -1,8 +1,7 @@
 package net.loganford.noideaengine.utils.file;
 
 import lombok.extern.log4j.Log4j2;
-
-import java.util.List;
+import net.loganford.noideaengine.utils.glob.GlobActionInterface;
 
 /**
  * A resource mapper allows the conversion between a string and a resource. This abstracts away the method of how game
@@ -26,7 +25,5 @@ public abstract class ResourceMapper {
      */
     public void expandGlob(String glob, GlobActionInterface globAction) {}
 
-    public interface GlobActionInterface {
-        void doAction(String resourceKey, List<String> captureGroups);
-    }
+
 }
