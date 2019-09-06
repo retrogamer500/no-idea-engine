@@ -48,6 +48,12 @@
           }
         ]
       }
+    ],
+    "entities": [
+      {
+        "key": "testEntity",
+        "scriptKey": "test"
+      }
     ]
   }
 }

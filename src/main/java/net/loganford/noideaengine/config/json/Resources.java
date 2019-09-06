@@ -13,4 +13,5 @@ public class Resources {
     private List<FontConfig> fonts;
     private List<AudioConfig> audio;
     private List<ScriptConfig> scripts;
+    private List<EntityConfig> entities;
 }
