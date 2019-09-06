@@ -16,10 +16,11 @@ import java.util.Set;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class SpacialPartitionCollisionSystem extends CollisionSystem {
-
     private int cellSize;
     private int bucketCount;
     private List<List<Entity>> buckets;
+
+    //Cached rectangle to use for obtaining bounding boxes of shapes
     private Rect rect = new Rect(0, 0, 0, 0);
 
     public SpacialPartitionCollisionSystem() {
@@ -54,127 +55,65 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @Override
     public boolean collidesWith(Shape shape, Class<? extends Entity> clazz) {
-        if(shape instanceof Line) {
-            return doActionWithLine((Line) shape, (bucket -> {
-                for (int i = 0; i < bucket.size(); i++) {
-                    Entity entity = bucket.get(i);
-                    if (entity.getShape() != shape &&
-                            clazz.isAssignableFrom(entity.getClass()) &&
-                            entity.getShape().collidesWith(shape)) {
-                        return true;
-                    }
-                }
-                return false;
-            }));
-        }
-        else {
-            shape.getBoundingBox(rect);
-            int x1 = (int) (rect.getX() / cellSize);
-            int y1 = (int) (rect.getY() / cellSize);
-            int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
-            int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
+        boolean[] result = {false};
 
-            for (int tx = x1; tx <= x2; tx++) {
-                for (int ty = y1; ty <= y2; ty++) {
-                    int bucketNum = hash2d(tx, ty);
-                    List<Entity> bucket = buckets.get(bucketNum);
-                    for (int i = 0; i < bucket.size(); i++) {
-                        Entity entity = bucket.get(i);
-                        if (entity.getShape() != shape &&
-                                clazz.isAssignableFrom(entity.getClass()) &&
-                                entity.getShape().collidesWith(shape)) {
-                            return true;
-                        }
-                    }
+        performBucketAction(shape, (bucket) -> {
+            for (int i = 0; i < bucket.size(); i++) {
+                Entity entity = bucket.get(i);
+                if (entity.getShape() != shape &&
+                        clazz.isAssignableFrom(entity.getClass()) &&
+                        entity.getShape().collidesWith(shape)) {
+                    result[0] = true;
+                    return BucketActionResult.EXIT_EARLY;
                 }
             }
-        }
-        return false;
+
+            return BucketActionResult.CONTINUE;
+        });
+
+        return result[0];
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <C extends Entity> C getCollision(Shape shape, Class<C> clazz) {
-        if(shape instanceof Line) {
-            Entity[] result = {null};
-            doActionWithLine((Line) shape, (bucket -> {
-                for (int i = 0; i < bucket.size(); i++) {
-                    Entity entity = bucket.get(i);
-                    if (entity.getShape() != shape &&
-                            clazz.isAssignableFrom(entity.getClass()) &&
-                            entity.getShape().collidesWith(shape)) {
-                        result[0] = entity;
-                        return true;
-                    }
-                }
-                return false;
-            }));
-            return (C)result[0];
-        }
-        else {
-            shape.getBoundingBox(rect);
-            int x1 = (int) (rect.getX() / cellSize);
-            int y1 = (int) (rect.getY() / cellSize);
-            int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
-            int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
+        Entity[] result = {null};
 
-            for (int tx = x1; tx <= x2; tx++) {
-                for (int ty = y1; ty <= y2; ty++) {
-                    int bucketNum = hash2d(tx, ty);
-                    List<Entity> bucket = buckets.get(bucketNum);
-                    for (int i = 0; i < bucket.size(); i++) {
-                        Entity entity = bucket.get(i);
-                        if (entity.getShape() != shape &&
-                                clazz.isAssignableFrom(entity.getClass()) &&
-                                entity.getShape().collidesWith(shape)) {
-                            return (C)entity;
-                        }
-                    }
+        performBucketAction(shape, (bucket) -> {
+            for (int i = 0; i < bucket.size(); i++) {
+                Entity entity = bucket.get(i);
+                if (entity.getShape() != shape &&
+                        clazz.isAssignableFrom(entity.getClass()) &&
+                        entity.getShape().collidesWith(shape)) {
+                    result[0] = entity;
+                    return BucketActionResult.EXIT_EARLY;
                 }
             }
-        }
-        return null;
+
+            return BucketActionResult.CONTINUE;
+        });
+
+        return (C) result[0];
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz) {
         Set<C> resultSet = new HashSet<>();
-        if(shape instanceof Line) {
-            doActionWithLine((Line) shape, (bucket -> {
-                for (int i = 0; i < bucket.size(); i++) {
-                    Entity entity = bucket.get(i);
-                    if (entity.getShape() != shape &&
-                            clazz.isAssignableFrom(entity.getClass()) &&
-                            entity.getShape().collidesWith(shape)) {
-                        resultSet.add((C)entity);
-                    }
-                }
-                return false;
-            }));
-        }
-        else {
-            shape.getBoundingBox(rect);
-            int x1 = (int) (rect.getX() / cellSize);
-            int y1 = (int) (rect.getY() / cellSize);
-            int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
-            int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
 
-            for (int tx = x1; tx <= x2; tx++) {
-                for (int ty = y1; ty <= y2; ty++) {
-                    int bucketNum = hash2d(tx, ty);
-                    List<Entity> bucket = buckets.get(bucketNum);
-                    for (int i = 0; i < bucket.size(); i++) {
-                        Entity entity = bucket.get(i);
-                        if (entity.getShape() != shape &&
-                                clazz.isAssignableFrom(entity.getClass()) &&
-                                entity.getShape().collidesWith(shape)) {
-                            resultSet.add((C)entity);
-                        }
-                    }
+        performBucketAction(shape, (bucket) -> {
+            for (int i = 0; i < bucket.size(); i++) {
+                Entity entity = bucket.get(i);
+                if (entity.getShape() != shape &&
+                        clazz.isAssignableFrom(entity.getClass()) &&
+                        entity.getShape().collidesWith(shape)) {
+                    resultSet.add((C)entity);
                 }
             }
-        }
+
+           return BucketActionResult.CONTINUE;
+        });
+
         return new ArrayList<>(resultSet);
     }
 
@@ -192,60 +131,25 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     private void handleEntityAddition(Entity entity) {
         if(entity.getShape() != null) {
-            if(entity.getShape() instanceof  Line) {
-                doActionWithLine((Line) entity.getShape(), (bucket -> {
-                    bucket.add(entity);
-                    return false;
-                }));
-            }
-            else {
-                entity.getShape().getBoundingBox(rect);
-                int x1 = (int) (rect.getX() / cellSize);
-                int y1 = (int) (rect.getY() / cellSize);
-                int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
-                int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
-
-                for (int tx = x1; tx <= x2; tx++) {
-                    for (int ty = y1; ty <= y2; ty++) {
-                        int bucketNum = hash2d(tx, ty);
-                        buckets.get(bucketNum).add(entity);
-                    }
-                }
-            }
+            performBucketAction(entity.getShape(), (bucket) -> {
+                bucket.add(entity);
+                return BucketActionResult.CONTINUE;
+            });
         }
     }
 
     private void handleEntityRemoval(Entity entity) {
         if(entity.getShape() != null) {
-            if(entity.getShape() instanceof Line) {
-                doActionWithLine((Line) entity.getShape(), (bucket -> {
-                    for (int i = bucket.size() - 1; i >= 0; i--) {
-                        if (bucket.get(i).equals(entity)) {
-                            bucket.remove(i);
-                        }
-                    }
-                    return false;
-                }));
-            }
-            else {
-                entity.getShape().getBoundingBox(rect);
-                int x1 = (int) (rect.getX() / cellSize);
-                int y1 = (int) (rect.getY() / cellSize);
-                int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
-                int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
-
-                for (int tx = x1; tx <= x2; tx++) {
-                    for (int ty = y1; ty <= y2; ty++) {
-                        int bucketNum = hash2d(tx, ty);
-                        List<Entity> bucket = buckets.get(bucketNum);
-                        for (int i = bucket.size() - 1; i >= 0; i--) {
-                            if (bucket.get(i).equals(entity)) {
-                                bucket.remove(i);
-                            }
-                        }
+            performBucketAction(entity.getShape(), (bucket) -> {
+                for (int i = bucket.size() - 1; i >= 0; i--) {
+                    if (bucket.get(i).equals(entity)) {
+                        bucket.remove(i);
+                        break;
                     }
                 }
-            }
+
+                return BucketActionResult.CONTINUE;
+            });
         }
     }
 
@@ -253,22 +157,41 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         return Math.abs(((x * 89513) + (y * 15473)) % bucketCount);
     }
 
-    private interface BucketAction {
-        /**
-         * Lambda function
-         * @param bucket
-         * @return - true to exit voxel traversal, false to continue
-         */
-        boolean perform(List<Entity> bucket);
+
+    private void performBucketAction(Shape shape, BucketAction bucketAction) {
+        if(shape instanceof Line) {
+            performBucketActionWithLine((Line) shape, bucketAction);
+        }
+        else {
+            shape.getBoundingBox(rect);
+            performBucketActionWithRect(rect, bucketAction);
+        }
+    }
+
+    private void performBucketActionWithRect(Rect rect, BucketAction bucketAction) {
+        int x1 = (int) (rect.getX() / cellSize);
+        int y1 = (int) (rect.getY() / cellSize);
+        int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
+        int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
+
+        for (int tx = x1; tx <= x2; tx++) {
+            for (int ty = y1; ty <= y2; ty++) {
+                int bucketNum = hash2d(tx, ty);
+                List<Entity> bucket = buckets.get(bucketNum);
+                BucketActionResult result = bucketAction.perform(bucket);
+                if(result == BucketActionResult.EXIT_EARLY) {
+                    return;
+                }
+            }
+        }
     }
 
     /**
      * Algorithm based on 'A Fast Voxel Traversal Algorithm for Ray Tracing' by John Amanatides and Andrew Woo
      * @param line
-     * @param action
-     * @return whether the action has been exited
+     * @param bucketAction
      */
-    private boolean doActionWithLine(Line line, BucketAction action) {
+    private void performBucketActionWithLine(Line line, BucketAction bucketAction) {
         int i = (int) (line.getX1() / cellSize);
         int j = (int) (line.getY1() / cellSize);
 
@@ -292,9 +215,9 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         while(true) {
             int bucketNum = hash2d(i, j);
             List<Entity> bucket = buckets.get(bucketNum);
-            boolean exit = action.perform(bucket);
-            if(exit) {
-                return true;
+            BucketActionResult result = bucketAction.perform(bucket);
+            if(result == BucketActionResult.EXIT_EARLY) {
+                break;
             }
             if(tx<=ty) {
                 if(i==iEnd) {
@@ -311,6 +234,19 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
                 j+=dj;
             }
         }
-        return false;
+    }
+
+    private enum BucketActionResult {
+        EXIT_EARLY,
+        CONTINUE
+    }
+
+    private interface BucketAction {
+        /**
+         * Lambda function to perform on a bucket
+         * @param bucket
+         * @return - BucketActionResult.EXIT_EARLY to stop, or BucketActionResult.CONTINUE to keep performing bucket actions
+         */
+        BucketActionResult perform(List<Entity> bucket);
     }
 }
