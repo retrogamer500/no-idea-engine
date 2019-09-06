@@ -51,8 +51,8 @@
     ],
     "entities": [
       {
-        "key": "testEntity",
-        "scriptKey": "test"
+        "scriptKey": "glob:*",
+        "key": "{1}"
       }
     ]
   }

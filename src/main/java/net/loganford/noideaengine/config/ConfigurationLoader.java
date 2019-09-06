@@ -9,6 +9,7 @@ import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.config.json.LoadableConfig;
 import net.loganford.noideaengine.utils.file.DataSource;
 import net.loganford.noideaengine.utils.file.ResourceMapper;
+import net.loganford.noideaengine.utils.glob.Glob;
 import net.loganford.noideaengine.utils.glob.GlobActionInterface;
 import net.loganford.noideaengine.utils.json.JsonValidator;
 
@@ -16,6 +17,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Log4j2
 public class ConfigurationLoader {
@@ -85,6 +88,12 @@ public class ConfigurationLoader {
         }
     }
 
+    /**
+     * Iterates through the currently loaded configuration file, and tries to find configs with globs in them. Then,
+     * attempts to expand the glob.
+     * @param base
+     * @param resourceMapper
+     */
     @SuppressWarnings("unchecked")
     private void scanAndExpandGlobs(GameConfig base, ResourceMapper resourceMapper) throws IllegalAccessException {
         //Iterate through resources and find lists
@@ -102,7 +111,7 @@ public class ConfigurationLoader {
                         if(object instanceof LoadableConfig) {
                             LoadableConfig loadableConfig = (LoadableConfig) object;
                             //See if config contains a glob. If it does, expand it and remove current config.
-                            List<LoadableConfig> expansion = tryToExpandConfig(loadableConfig);
+                            List<LoadableConfig> expansion = tryToExpandConfig(base, loadableConfig);
                             if(expansion != null) {
                                 list.addAll(expansion);
                                 list.remove(i);
@@ -115,7 +124,15 @@ public class ConfigurationLoader {
 
     }
 
-    private List<LoadableConfig> tryToExpandConfig(LoadableConfig config) throws IllegalAccessException {
+    /**
+     * Searches a config for any glob fields. Fields are globable if they have the @GlobableField annotation, and they
+     * are a string which begins with "glob:". If such a field exists, then returns a list of new configs generated from
+     * that glob. Otherwise, if no globable field exists, returns null.
+     * @param base
+     * @param config
+     * @return
+     */
+    private List<LoadableConfig> tryToExpandConfig(GameConfig base, LoadableConfig config) throws IllegalAccessException {
         String glob = null;
         GlobableField annotation = null;
         List<Field> fields = getAllFields(config.getClass());
@@ -172,11 +189,33 @@ public class ConfigurationLoader {
             if(annotation.value() == GlobType.FILE) {
                 config.getResourceMapper().expandGlob(glob.substring(5), globActionInterface);
             }
+            else if(annotation.value() == GlobType.IMAGE_KEY) {
+                expandKeyGlob(glob.substring(5), globActionInterface, base.getResources().getImages());
+            }
+            else if(annotation.value() == GlobType.SCRIPT_KEY) {
+                expandKeyGlob(glob.substring(5), globActionInterface, base.getResources().getScripts());
+            }
 
             return resultList;
         }
 
         return null;
+    }
+
+    private void expandKeyGlob(String glob, GlobActionInterface globAction, List<? extends LoadableConfig> configsToMatch) {
+        Pattern pattern = Glob.globToRegex(glob);
+        for(LoadableConfig config : configsToMatch) {
+            Matcher matcher = pattern.matcher(config.getKey());
+
+            if(matcher.matches()) {
+                List<String> groups = new ArrayList<>();
+                for(int i = 0; i <= matcher.groupCount(); i++) {
+                    groups.add(matcher.group(i));
+                }
+
+                globAction.doAction(config.getKey(), groups);
+            }
+        }
     }
 
     private List<Field> getAllFields(Class clazz) {

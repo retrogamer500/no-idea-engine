@@ -18,7 +18,7 @@ public class JsScriptEngineTest {
                 super.beginState(game);
 
                 for(int i = 0; i < 100; i++) {
-                    add(game.getEntityManager().get("testEntity").newInstance());
+                    add(game.getEntityManager().get("test").newInstance());
                 }
             }
 
