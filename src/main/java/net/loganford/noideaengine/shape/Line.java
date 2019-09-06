@@ -37,7 +37,7 @@ public class Line extends Shape {
 
     //Line collision handlers
     static {
-        ShapeIntersectionEngine.addIntersectionHandler(Line.class, Line.class, (line1, line2) -> {
+        ShapeIntersectionEngine.getInstance().addIntersectionHandler(Line.class, Line.class, (line1, line2) -> {
             float s1x = line1.getX2() - line1.getX1();
             float s1y = line1.getY2() - line1.getY1();
 

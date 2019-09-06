@@ -4,9 +4,11 @@ import lombok.Getter;
 
 public abstract class Shape {
     @Getter private int registration;
+    private ShapeIntersectionEngine shapeIntersectionEngine;
 
     public Shape() {
-        registration = ShapeIntersectionEngine.registerShape(getClass());
+        shapeIntersectionEngine = ShapeIntersectionEngine.getInstance();
+        registration = shapeIntersectionEngine.registerShape(getClass());
     }
 
     public abstract void setPosition(float x, float y, float z);
@@ -32,6 +34,6 @@ public abstract class Shape {
     }
 
     public boolean collidesWith(Shape other) {
-        return ShapeIntersectionEngine.collides(this, other);
+        return shapeIntersectionEngine.collides(this, other);
     }
 }
