@@ -1,11 +1,17 @@
 package net.loganford.noideaengine.utils.file;
 
 import net.loganford.noideaengine.GameEngineException;
+import net.loganford.noideaengine.utils.glob.Glob;
+import net.loganford.noideaengine.utils.glob.GlobActionInterface;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -35,6 +41,23 @@ public class ZipResourceMapper extends ResourceMapper {
         }
         else {
             throw new GameEngineException("Resource does not exist in zip file: " + resourceKey);
+        }
+    }
+
+    @Override
+    public void expandGlob(String glob, GlobActionInterface globAction) {
+        Pattern pattern = Glob.globToRegex(glob);
+        for(String key : entryMap.keySet()) {
+            Matcher matcher = pattern.matcher(key);
+
+            if(matcher.matches()) {
+                List<String> groups = new ArrayList<>();
+                for(int i = 0; i <= matcher.groupCount(); i++) {
+                    groups.add(matcher.group(i));
+                }
+
+                globAction.doAction(key, groups);
+            }
         }
     }
 }
