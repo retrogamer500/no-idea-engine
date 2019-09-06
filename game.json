@@ -7,7 +7,7 @@
       },
       {
         "filename": "data/images/sprite_sheet.png",
-        "key": "sprite_sheet.png_2",
+        "key": "group_1_test_image",
         "group": 1
       }
     ],
@@ -23,30 +23,20 @@
     "fonts": [
       {
         "size": 32.0,
-        "filename": "data/roboto.ttf",
-        "key": "test_font"
+        "filename": "glob:data/fonts/*.ttf",
+        "key": "{1}"
       }
     ],
     "audio": [
       {
-        "filename": "data/audio/test.ogg",
-        "key": "test.ogg"
+        "filename": "glob:data/audio/*.ogg",
+        "key": "{1}"
       }
     ],
     "scripts": [
       {
-        "filename": "data/scripts/test.js",
-        "key": "test",
-        "tags": [
-          {
-            "key":"testKey",
-            "value":"testValue"
-          },
-          {
-            "key":"anotherTestKey",
-            "value":"testValue"
-          }
-        ]
+        "filename": "glob:data/scripts/*.js",
+        "key": "{1}"
       }
     ],
     "entities": [

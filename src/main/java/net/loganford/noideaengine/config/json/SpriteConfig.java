@@ -2,6 +2,8 @@ package net.loganford.noideaengine.config.json;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.loganford.noideaengine.config.GlobType;
+import net.loganford.noideaengine.config.GlobableField;
 import net.loganford.noideaengine.utils.json.Required;
 
 @Data
@@ -9,6 +11,7 @@ import net.loganford.noideaengine.utils.json.Required;
 public class SpriteConfig extends LoadableConfig {
 
     @Required
+    @GlobableField(GlobType.IMAGE_KEY)
     private String imageKey;
     private Float frameWidth;
     private Float frameHeight;

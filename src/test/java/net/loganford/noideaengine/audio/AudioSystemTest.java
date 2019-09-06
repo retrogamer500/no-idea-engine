@@ -16,7 +16,7 @@ public class AudioSystemTest {
         @Override
         public void beginState(Game game) {
             super.beginState(game);
-            sound = game.getAudioManager().get("test.ogg");
+            sound = game.getAudioManager().get("test");
         }
 
         @Override
