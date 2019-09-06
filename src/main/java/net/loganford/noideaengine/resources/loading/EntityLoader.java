@@ -46,7 +46,7 @@ public class EntityLoader extends ResourceLoader {
     }
 
     @SuppressWarnings("unchecked")
-    public static ScriptedEntity load(Game game, EntityConfig config) {
+    public ScriptedEntity load(Game game, EntityConfig config) {
         Script script = game.getScriptManager().get(config.getScriptKey());
         Function createFunction = script.getFunction(config.getFunction());
         Class entityClass = createFunction.evalObject(Class.class);
