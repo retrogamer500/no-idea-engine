@@ -2,10 +2,12 @@ package net.loganford.noideaengine.resources.loading;
 
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.config.json.EntityConfig;
 import net.loganford.noideaengine.scripting.Function;
 import net.loganford.noideaengine.scripting.Script;
 import net.loganford.noideaengine.scripting.ScriptedEntity;
+import net.loganford.noideaengine.state.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +45,17 @@ public class EntityLoader extends ResourceLoader {
         return entitiesToLoad.size();
     }
 
+    @SuppressWarnings("unchecked")
     public static ScriptedEntity load(Game game, EntityConfig config) {
         Script script = game.getScriptManager().get(config.getScriptKey());
         Function createFunction = script.getFunction(config.getFunction());
         Class entityClass = createFunction.evalObject(Class.class);
-        //noinspection unchecked
-        return new ScriptedEntity(entityClass);
+        if(entityClass != null && Entity.class.isAssignableFrom(entityClass)) {
+            return new ScriptedEntity(entityClass);
+        }
+        else {
+            throw new GameEngineException("Script unable to load entity");
+        }
 
     }
 }
