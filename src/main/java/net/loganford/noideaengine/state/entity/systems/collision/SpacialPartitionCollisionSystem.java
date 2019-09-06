@@ -158,6 +158,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     }
 
 
+    /**
+     * Performs a specific action (a lambda) for every bucket that intersects a certain shape.
+     * @param shape the shape
+     * @param bucketAction the action to perform
+     */
     private void performBucketAction(Shape shape, BucketAction bucketAction) {
         if(shape instanceof Line) {
             performBucketActionWithLine((Line) shape, bucketAction);
@@ -244,7 +249,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private interface BucketAction {
         /**
          * Lambda function to perform on a bucket
-         * @param bucket
+         * @param bucket the current bucket to perform the action with
          * @return - BucketActionResult.EXIT_EARLY to stop, or BucketActionResult.CONTINUE to keep performing bucket actions
          */
         BucketActionResult perform(List<Entity> bucket);

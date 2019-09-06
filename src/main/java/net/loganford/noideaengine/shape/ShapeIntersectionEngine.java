@@ -1,25 +1,23 @@
 package net.loganford.noideaengine.shape;
 
-import net.loganford.noideaengine.GameEngineException;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class ShapeIntersectionEngine {
-    public static final int MAX_SHAPES = 64;
+    private static int maxShapes = 8;
     private static ShapeIntersectionEngine singleton;
 
     private static int numberOfShapes;
     private static Map<Class<? extends Shape>, Integer> shapeIds = new HashMap<>();
-    private static IntersectionHandler[] handlers = new IntersectionHandler[MAX_SHAPES * MAX_SHAPES];
+    private static HandlerContainer[] handlerContainers = new HandlerContainer[maxShapes * maxShapes];
 
     public static int registerShape(Class<? extends Shape> clazz) {
         Integer registration = shapeIds.get(clazz);
         if(registration == null) {
             registration = numberOfShapes++;
 
-            if(registration >= MAX_SHAPES) {
-                throw new GameEngineException("Max number of Shape subclasses has been reached (" + MAX_SHAPES + ")");
+            if(registration >= maxShapes) {
+                doubleHandlerContainerSize();
             }
 
             shapeIds.put(clazz, registration);
@@ -27,16 +25,34 @@ public class ShapeIntersectionEngine {
         return registration;
     }
 
-    @SuppressWarnings("unchecked")
-    public static boolean collides(Shape a, Shape b) {
-        IntersectionHandler handler = handlers[a.getRegistration() + b.getRegistration() * MAX_SHAPES];
-        if(handler == null) {
-            return false;
+    public static void doubleHandlerContainerSize() {
+        HandlerContainer[] newHandlerContainer = new HandlerContainer[maxShapes * maxShapes * 4];
+
+        for(int x = 0; x < maxShapes; x++) {
+            for(int y = 0; y < maxShapes; y++) {
+                HandlerContainer oldHandlerContainer = handlerContainers[x + y * maxShapes];
+                newHandlerContainer[x + y * maxShapes * 2] = oldHandlerContainer;
+            }
         }
-        return handler.intersects(a, b);
+
+        handlerContainers = newHandlerContainer;
+        maxShapes *= 2;
     }
 
-    public static <A extends Shape, B extends Shape> void addHandler(Class<A> clazzA, Class<B> clazzB, IntersectionHandler<A, B> handler) {
+    @SuppressWarnings("unchecked")
+    public static boolean collides(Shape a, Shape b) {
+        HandlerContainer container = handlerContainers[a.getRegistration() + b.getRegistration() * maxShapes];
+        if(container == null || container.intersectionHandler == null) {
+            return false;
+        }
+        return container.intersectionHandler.intersects(a, b);
+    }
+
+    private static class HandlerContainer {
+        private IntersectionHandler intersectionHandler;
+    }
+
+    public static <A extends Shape, B extends Shape> void addIntersectionHandler(Class<A> clazzA, Class<B> clazzB, IntersectionHandler<A, B> handler) {
         Integer registrationA = shapeIds.get(clazzA);
         Integer registrationB = shapeIds.get(clazzB);
 
@@ -47,14 +63,23 @@ public class ShapeIntersectionEngine {
             registrationB = registerShape(clazzB);
         }
 
-        handlers[registrationB + registrationA * MAX_SHAPES] = new SwappedHandler<>(handler);
-        handlers[registrationA + registrationB * MAX_SHAPES] = handler;
+        getHandlerContainer(registrationB, registrationA).intersectionHandler = (new SwappedIntersectionHandler<>(handler));
+        getHandlerContainer(registrationA,registrationB).intersectionHandler = (handler);
 
     }
 
-    private static class SwappedHandler<A extends Shape, B extends Shape> implements IntersectionHandler<A, B> {
+    private static HandlerContainer getHandlerContainer(int x, int y) {
+        HandlerContainer handlerContainer = handlerContainers[x + y * maxShapes];
+        if(handlerContainer == null) {
+            handlerContainer = new HandlerContainer();
+            handlerContainers[x + y * maxShapes] = handlerContainer;
+        }
+        return handlerContainer;
+    }
+
+    private static class SwappedIntersectionHandler<A extends Shape, B extends Shape> implements IntersectionHandler<A, B> {
         private IntersectionHandler<B, A> other;
-        public SwappedHandler(IntersectionHandler<B, A> other) {
+        public SwappedIntersectionHandler(IntersectionHandler<B, A> other) {
             this.other = other;
         }
 
