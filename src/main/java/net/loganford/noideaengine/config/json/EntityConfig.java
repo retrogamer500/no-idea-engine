@@ -9,4 +9,5 @@ import net.loganford.noideaengine.utils.json.Required;
 public class EntityConfig extends LoadableConfig {
     @Required
     private String scriptKey;
+    private String function = "getClass";
 }

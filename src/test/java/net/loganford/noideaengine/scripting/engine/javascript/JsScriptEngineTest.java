@@ -1,16 +1,11 @@
 package net.loganford.noideaengine.scripting.engine.javascript;
 
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.scripting.Function;
-import net.loganford.noideaengine.scripting.Script;
 import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import org.junit.Test;
-
-import java.lang.reflect.Constructor;
 
 
 public class JsScriptEngineTest {
@@ -22,21 +17,8 @@ public class JsScriptEngineTest {
             public void beginState(Game game) {
                 super.beginState(game);
 
-                Script script = game.getScriptManager().get("test");
-                Function getClassFunction = script.getFunction("getClass");
-                Class<?> clazz = getClassFunction.evalObject(Class.class);
-
-                try {
-                    Constructor constructor = clazz.getConstructor();
-                    for(int i = 0; i < 100; i++) {
-                        Object instance = constructor.newInstance();
-                        if (instance instanceof Entity) {
-                            add((Entity) instance);
-                        }
-                    }
-                }
-                catch(Exception e) {
-                    throw new GameEngineException(e);
+                for(int i = 0; i < 100; i++) {
+                    add(game.getEntityManager().get("testEntity").newInstance());
                 }
             }
 

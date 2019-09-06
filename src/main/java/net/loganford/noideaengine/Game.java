@@ -16,6 +16,7 @@ import net.loganford.noideaengine.resources.loading.*;
 import net.loganford.noideaengine.scripting.Script;
 import net.loganford.noideaengine.scripting.ScriptEngine;
 import net.loganford.noideaengine.scripting.Scriptable;
+import net.loganford.noideaengine.scripting.ScriptedEntity;
 import net.loganford.noideaengine.scripting.engine.javascript.JsScriptEngine;
 import net.loganford.noideaengine.state.GameState;
 import net.loganford.noideaengine.state.entity.Entity;
@@ -93,6 +94,7 @@ public class Game {
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Font> fontManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Audio> audioManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Script> scriptManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<ScriptedEntity> entityManager = new ResourceManager<>();
 
     //Measure fps and performance of engine
     private FramerateMonitor framerateMonitor;
@@ -324,6 +326,7 @@ public class Game {
         resourceLoaders.add(new FontLoader(this));
         resourceLoaders.add(new AudioLoader(this));
         resourceLoaders.add(new ScriptLoader(this));
+        resourceLoaders.add(new EntityLoader(this));
         return resourceLoaders;
     }
 
