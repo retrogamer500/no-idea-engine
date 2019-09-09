@@ -23,6 +23,8 @@ public abstract class CollisionSystem extends EntitySystem {
     @Scriptable
     public abstract <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz);
 
+    public abstract <C extends Entity> void getCollisions(List<C> list, Shape shape, Class<C> clazz);
+
     @Override
     public void step(Game game, Scene scene, float delta) {
 

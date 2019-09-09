@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NaiveCollisionSystem extends CollisionSystem {
+    private static List LIST = new ArrayList<>();
     private List<Entity> entities;
 
     public NaiveCollisionSystem() {
@@ -54,14 +55,20 @@ public class NaiveCollisionSystem extends CollisionSystem {
     @SuppressWarnings("unchecked")
     @Override
     public <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz) {
-        List<C> results = new ArrayList<>();
+        LIST.clear();
+        getCollisions(LIST, shape, clazz);
+        return LIST;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <C extends Entity> void getCollisions(List<C> list, Shape shape, Class<C> clazz) {
         for(Entity entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass())) {
                 if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
-                    results.add((C)entity);
+                    list.add((C)entity);
                 }
             }
         }
-        return results;
     }
 }

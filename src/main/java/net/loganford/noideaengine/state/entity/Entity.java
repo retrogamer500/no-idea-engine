@@ -16,6 +16,8 @@ import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
+import org.joml.Vector2fc;
+import org.joml.Vector3fc;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -328,6 +330,38 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
+     * Returns a vector representing the entity in 2D space
+     * @return the vector
+     */
+    public Vector2fc getPos2() {
+        return positionComponent.getPos2();
+    }
+
+    /**
+     * Returns a vector representing the entity in 3D space
+     * @return the vector
+     */
+    public Vector3fc getPos3() {
+        return positionComponent.getPos3();
+    }
+
+    /**
+     * Moves the entity around in 2D space
+     * @param v a vector of the desired position
+     */
+    public void setPos(Vector2fc v) {
+        positionComponent.setPos(v);
+    }
+
+    /**
+     * Moves the entity around in 2D space
+     * @param v a vector of the desired position
+     */
+    public void setPos(Vector3fc v) {
+        positionComponent.setPos(v);
+    }
+
+    /**
      * Sets the position of the entity. This method is slightly faster then setting both x and y independently.
      * @param x the x position
      * @param y the y position
@@ -355,7 +389,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      */
     @Scriptable
     public void move(float x, float y) {
-        positionComponent.setPos((positionComponent.getX() + x), (positionComponent.getY() + y));
+        positionComponent.move(x, y);
     }
 
     /**
@@ -366,7 +400,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      */
     @Scriptable
     public void move(float x, float y, float z) {
-        positionComponent.setPos((positionComponent.getX() + x), (positionComponent.getY() + y), (positionComponent.getZ() + z));
+        positionComponent.move(x, y, z);
     }
 
     /**

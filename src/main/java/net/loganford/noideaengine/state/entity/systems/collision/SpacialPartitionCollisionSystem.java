@@ -16,6 +16,10 @@ import java.util.Set;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class SpacialPartitionCollisionSystem extends CollisionSystem {
+
+    private static Set SET = new HashSet<>();
+    private static List LIST = new ArrayList<>();
+
     private int cellSize;
     private int bucketCount;
     private List<List<Entity>> buckets;
@@ -99,7 +103,16 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     @SuppressWarnings("unchecked")
     @Override
     public <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz) {
-        Set<C> resultSet = new HashSet<>();
+        LIST.clear();
+        getCollisions(LIST, shape, clazz);
+        return LIST;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <C extends Entity> void getCollisions(List<C> list, Shape shape, Class<C> clazz) {
+        SET.clear();
+        Set<C> resultSet = (Set<C>) SET;
 
         performBucketAction(shape, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
@@ -111,10 +124,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
                 }
             }
 
-           return BucketActionResult.CONTINUE;
+            return BucketActionResult.CONTINUE;
         });
 
-        return new ArrayList<>(resultSet);
+        list.clear();
+        list.addAll(resultSet);
     }
 
     @Override
