@@ -42,7 +42,13 @@ public abstract class CollisionSystem extends EntitySystem {
 
     }
 
-    public abstract <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz);
+    public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+        result.clear();
+        result.getPosition().set(shape.getPosition());
+        result.getVelocity().set(velocity);
+    }
+
+    public abstract  <E extends Entity> void sweepImpl(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz);
 
     @SuppressWarnings("unchecked")
     public <E extends Entity> void sweep(SweepResult<E> result, Shape shape, Vector2fc velocity, Class<E> clazz) {

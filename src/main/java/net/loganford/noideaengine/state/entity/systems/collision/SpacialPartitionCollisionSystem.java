@@ -134,8 +134,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
-        result.clear();
+    public <E extends Entity> void sweepImpl(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
         Shape sweepMask = getSweepMask(shape, velocity);
         boolean exitEarly = sweepMask instanceof Line;
 
