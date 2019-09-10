@@ -1,10 +1,13 @@
 package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public abstract class Shape {
     private static SweepResult SWEEP_RESULT = new SweepResult();
+    private static Vector3f V3F = new Vector3f();
+    private static Rect RECT = new Rect(0, 0, 1, 1);
 
     @Getter private int registration;
     private ShapeIntersectionEngine shapeIntersectionEngine;
@@ -19,6 +22,13 @@ public abstract class Shape {
         setPosition(x, y, 0);
     }
 
+    public abstract void getPosition(Vector3f position);
+
+    public Vector3f getPosition() {
+        getPosition(V3F);
+        return V3F;
+    }
+
     /**
      * Sets rect to be a bounding box around the shape.
      * @param rect Rect which will be modified to be a bounding box.
@@ -31,9 +41,8 @@ public abstract class Shape {
      * @return the bounding box
      */
     public Rect getBoundingBox() {
-        Rect rect = new Rect(0f, 0f, 1f, 1f);
-        getBoundingBox(rect);
-        return rect;
+        getBoundingBox(RECT);
+        return RECT;
     }
 
     public boolean collidesWith(Shape other) {

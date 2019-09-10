@@ -57,6 +57,8 @@ public class ShapeIntersectionEngine {
             return;
         }
         container.sweepHandler.sweep(result, a, velocity, b);
+        result.getPosition().set(a.getPosition());
+        result.getVelocity().set(velocity);
     }
 
     public <A extends Shape, B extends Shape> void addIntersectionHandler(Class<A> clazzA, Class<B> clazzB, IntersectionHandler<A, B> handler) {

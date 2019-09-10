@@ -15,6 +15,8 @@ public class SweepResult<E extends Entity> {
     @Getter @Setter private Vector3f normal3 = new Vector3f();
     @Getter(onMethod = @__({@Scriptable})) @Setter private Shape shape = null;
     @Getter(onMethod = @__({@Scriptable})) @Setter private E entity = null;
+    @Getter @Setter private Vector3f position = new Vector3f();
+    @Getter @Setter private Vector3f velocity = new Vector3f();
 
     @Scriptable
     public boolean collides() {
@@ -27,6 +29,8 @@ public class SweepResult<E extends Entity> {
     public void clear() {
         setDistance(1f);
         getNormal3().set(0, 0, 0);
+        getPosition().set(0, 0, 0);
+        getVelocity().set(0, 0, 0);
         setShape(null);
         setEntity(null);
     }
@@ -34,7 +38,9 @@ public class SweepResult<E extends Entity> {
     @SuppressWarnings("unchecked")
     public void set(SweepResult other) {
         this.distance = other.distance;
-        this.normal3 = other.normal3;
+        this.normal3.set(other.normal3);
+        this.position.set(position);
+        this.velocity.set(other.velocity);
         this.shape = other.shape;
         this.entity = (E) other.entity;
     }

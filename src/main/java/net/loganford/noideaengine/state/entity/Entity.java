@@ -18,6 +18,7 @@ import net.loganford.noideaengine.state.entity.signals.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector2fc;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import java.lang.annotation.Annotation;
@@ -27,6 +28,8 @@ import java.util.*;
 @RegisterComponent(BasicPositionComponent.class)
 @RegisterComponent(BasicCollisionComponent.class)
 public class Entity<G extends Game, S extends Scene<G>> {
+    private static Vector3f V3F = new Vector3f();
+
     @Getter @Setter private S scene;
     @Getter @Setter private G game;
     @Getter @Setter private boolean persistent;
@@ -360,6 +363,10 @@ public class Entity<G extends Game, S extends Scene<G>> {
      */
     public void setPos(Vector3fc v) {
         positionComponent.setPos(v);
+    }
+
+    public void setPos(SweepResult result) {
+        setPos(V3F.set(result.getVelocity()).mul(result.getDistance()).add(result.getPosition()));
     }
 
     /**

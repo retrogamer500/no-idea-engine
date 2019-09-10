@@ -3,6 +3,7 @@ package net.loganford.noideaengine.shape;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.utils.math.MathUtils;
+import org.joml.Vector3f;
 
 public class Point extends Shape {
     @Getter @Setter private float x;
@@ -25,6 +26,13 @@ public class Point extends Shape {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    @Override
+    public void getPosition(Vector3f position) {
+        position.x = x;
+        position.y = y;
+        position.z = 0;
     }
 
     @Override

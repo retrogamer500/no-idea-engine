@@ -133,6 +133,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
         result.clear();
         Shape sweepMask = getSweepMask(shape, velocity);
@@ -146,6 +147,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
                         entity.getShape().collidesWith(shape)) {
 
                     SweepResult otherResult = shape.sweep(velocity, entity.getShape());
+                    otherResult.setEntity(entity);
 
                     if(otherResult.getDistance() < result.getDistance()) {
                         result.set(otherResult);

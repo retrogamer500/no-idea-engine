@@ -2,6 +2,7 @@ package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.joml.Vector3f;
 
 public class Rect extends Shape {
     private static Rect RECT = new Rect(0, 0, 1, 1);
@@ -23,6 +24,13 @@ public class Rect extends Shape {
     @Override
     public void setPosition(float x, float y, float z) {
         this.x = x; this.y = y;
+    }
+
+    @Override
+    public void getPosition(Vector3f position) {
+        position.x = x;
+        position.y = y;
+        position.z = 0;
     }
 
     @Override

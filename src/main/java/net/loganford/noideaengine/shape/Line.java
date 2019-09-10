@@ -2,6 +2,7 @@ package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.joml.Vector3f;
 
 public class Line extends Shape {
     @Getter @Setter private float x1;
@@ -25,6 +26,13 @@ public class Line extends Shape {
         x2 += diffX;
         y1 += diffY;
         y2 += diffY;
+    }
+
+    @Override
+    public void getPosition(Vector3f position) {
+        position.x = x1;
+        position.y = y1;
+        position.z = 0;
     }
 
     @Override

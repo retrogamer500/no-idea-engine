@@ -75,12 +75,14 @@ public class NaiveCollisionSystem extends CollisionSystem {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
         result.clear();
 
         for(Entity entity : entities) {
             if (clazz.isAssignableFrom(entity.getClass())) {
                 SweepResult otherResult = shape.sweep(velocity, entity.getShape());
+                otherResult.setEntity(entity);
 
                 if(otherResult.getDistance() < result.getDistance()) {
                     result.set(otherResult);
