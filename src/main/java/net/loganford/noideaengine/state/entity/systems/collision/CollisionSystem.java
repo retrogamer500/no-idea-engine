@@ -46,6 +46,7 @@ public abstract class CollisionSystem extends EntitySystem {
         result.clear();
         result.getPosition().set(shape.getPosition());
         result.getVelocity().set(velocity);
+        sweepImpl(result, shape, velocity, clazz);
     }
 
     public abstract  <E extends Entity> void sweepImpl(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz);
