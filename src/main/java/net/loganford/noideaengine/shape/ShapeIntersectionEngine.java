@@ -1,5 +1,8 @@
 package net.loganford.noideaengine.shape;
 
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,11 +16,11 @@ public class ShapeIntersectionEngine {
 
         return instance;
     }
+    //End singleton boilerplate
 
+    private static Vector3f V3F = new Vector3f();
 
     private int maxShapes = 8;
-    private ShapeIntersectionEngine singleton;
-
     private int numberOfShapes;
     private Map<Class<? extends Shape>, Integer> shapeIds = new HashMap<>();
     private HandlerContainer[] handlerContainers = new HandlerContainer[maxShapes * maxShapes];
@@ -45,8 +48,15 @@ public class ShapeIntersectionEngine {
         return container.intersectionHandler.intersects(a, b);
     }
 
-    private class HandlerContainer {
-        private IntersectionHandler intersectionHandler;
+    @SuppressWarnings("unchecked")
+    public void sweep(SweepResult result, Shape a, Vector3fc velocity, Shape b) {
+        result.clear();
+
+        HandlerContainer container = handlerContainers[a.getRegistration() + b.getRegistration() * maxShapes];
+        if(container == null || container.sweepHandler == null) {
+            return;
+        }
+        container.sweepHandler.sweep(result, a, velocity, b);
     }
 
     public <A extends Shape, B extends Shape> void addIntersectionHandler(Class<A> clazzA, Class<B> clazzB, IntersectionHandler<A, B> handler) {
@@ -62,7 +72,26 @@ public class ShapeIntersectionEngine {
 
         getHandlerContainer(registrationB, registrationA).intersectionHandler = (new SwappedIntersectionHandler<>(handler));
         getHandlerContainer(registrationA,registrationB).intersectionHandler = (handler);
+    }
 
+    public <A extends Shape, B extends Shape> void addSweepHandler(Class<A> clazzA, Class<B> clazzB, SweepHandler<A, B> handler) {
+        Integer registrationA = shapeIds.get(clazzA);
+        Integer registrationB = shapeIds.get(clazzB);
+
+        if(registrationA == null) {
+            registrationA = registerShape(clazzA);
+        }
+        if(registrationB == null) {
+            registrationB = registerShape(clazzB);
+        }
+
+        getHandlerContainer(registrationB, registrationA).sweepHandler = (new SwappedSweepHandler<>(handler));
+        getHandlerContainer(registrationA,registrationB).sweepHandler = (handler);
+    }
+
+    private class HandlerContainer {
+        private IntersectionHandler intersectionHandler;
+        private SweepHandler sweepHandler;
     }
     
     private void doubleHandlerContainerSize() {
@@ -97,6 +126,23 @@ public class ShapeIntersectionEngine {
         @Override
         public boolean intersects(A a, B b) {
             return other.intersects(b, a);
+        }
+    }
+
+    private class SwappedSweepHandler<A extends Shape, B extends Shape> implements SweepHandler<A, B> {
+        private SweepHandler<B, A> other;
+
+        public SwappedSweepHandler(SweepHandler<B, A> other) {
+            this.other = other;
+        }
+
+        @Override
+        public void sweep(SweepResult result, A a, Vector3fc velocity, B b) {
+            other.sweep(result, b, V3F.set(velocity).mul(-1), a);
+            result.setNormal3(V3F.set(result.getNormal3()).mul(-1));
+            if(result.getShape() != null) {
+                result.setShape(a);
+            }
         }
     }
 }

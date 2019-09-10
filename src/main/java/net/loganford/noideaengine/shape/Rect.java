@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class Rect extends Shape {
+    private static Rect RECT = new Rect(0, 0, 1, 1);
+    private static Point POINT = new Point(0, 0);
 
     @Getter @Setter private float x;
     @Getter @Setter private float y;
@@ -122,6 +124,62 @@ public class Rect extends Shape {
             }
 
             return true;
+        });
+
+        SweepHandler<Point, Rect> pointRectSweepHandler = (result, point, velocity, rect) -> {
+            result.clear();
+
+            float deltaX = velocity.x();
+            float deltaY = velocity.y();
+            float scaleX = 1f / deltaX;
+            float scaleY = 1f / deltaY;
+            float signX = Math.signum(scaleX);
+            float signY = Math.signum(scaleY);
+            float halfX = .5f * rect.getWidth();
+            float halfY = .5f * rect.getHeight();
+            float posX = rect.getX() + halfX;
+            float posY = rect.getY() + halfY;
+
+            float nearTimeX = (posX - signX * halfX - point.getX()) * scaleX;
+            float nearTimeY = (posY - signY * halfY - point.getY()) * scaleY;
+            float farTimeX = (posX + signX * halfX - point.getX()) * scaleX;
+            float farTimeY = (posY + signY * halfY - point.getY()) * scaleY;
+
+            if (nearTimeX > farTimeY || nearTimeY > farTimeX) {
+                return;
+            }
+
+            float nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
+            float farTime = farTimeX < farTimeY ? farTimeX : farTimeY;
+
+            if (nearTime >= 1 || farTime <= 0) {
+                return;
+            }
+
+            result.setDistance(Math.max(0f, Math.min(1f, nearTime)));
+            result.setShape(rect);
+            if(nearTimeX > nearTimeY) {
+                result.getNormal3().x = -signX;
+                result.getNormal3().y = 0;
+            }
+            else {
+                result.getNormal3().x = 0;
+                result.getNormal3().y = -signY;
+            }
+            //result.getPos().x = point.getX() + result.getDistance() * velocity.x();
+            //result.getPos().y = point.getY() + result.getDistance() * velocity.y();
+        };
+
+        ShapeIntersectionEngine.getInstance().addSweepHandler(Point.class, Rect.class, pointRectSweepHandler);
+
+        ShapeIntersectionEngine.getInstance().addSweepHandler(Rect.class, Rect.class, (result, rect1, velocity, rect2) -> {
+            POINT.setX(rect1.getX() + rect1.getWidth()/2f);
+            POINT.setY(rect1.getY() + rect1.getHeight()/2f);
+            RECT.setX(rect2.getX() - rect1.getWidth()/2f);
+            RECT.setY(rect2.getY() - rect1.getHeight()/2f);
+            RECT.setWidth(rect2.getWidth() + rect1.getWidth());
+            RECT.setHeight(rect2.getHeight() + rect1.getHeight());
+            pointRectSweepHandler.sweep(result, POINT, velocity, RECT);
         });
     }
 }

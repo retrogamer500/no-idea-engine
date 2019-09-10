@@ -1,7 +1,9 @@
 package net.loganford.noideaengine.state.entity.systems.collision;
 
 import net.loganford.noideaengine.shape.Shape;
+import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.entity.Entity;
+import org.joml.Vector3fc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,21 @@ public class NaiveCollisionSystem extends CollisionSystem {
             if(clazz.isAssignableFrom(entity.getClass())) {
                 if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
                     list.add((C)entity);
+                }
+            }
+        }
+    }
+
+    @Override
+    public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+        result.clear();
+
+        for(Entity entity : entities) {
+            if (clazz.isAssignableFrom(entity.getClass())) {
+                SweepResult otherResult = shape.sweep(velocity, entity.getShape());
+
+                if(otherResult.getDistance() < result.getDistance()) {
+                    result.set(otherResult);
                 }
             }
         }

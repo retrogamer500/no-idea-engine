@@ -11,6 +11,7 @@ import net.loganford.noideaengine.graphics.Sprite;
 import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape;
+import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
@@ -624,6 +625,40 @@ public class Entity<G extends Game, S extends Scene<G>> {
     @Scriptable
     public boolean placeFree(Class<? extends Entity> clazz, float x, float y, float z) {
         return !placeMeeting(clazz, x, y, z);
+    }
+
+    public <E extends Entity> void sweep(SweepResult result, Vector3fc velocity, Class<E> clazz) {
+        getScene().getCollisionSystem().sweep(result, this.getShape(), velocity, clazz);
+    }
+
+    public <E extends Entity> void sweep(SweepResult<E> result, Vector2fc velocity, Class<E> clazz) {
+        getScene().getCollisionSystem().sweep(result, this.getShape(), velocity, clazz);
+    }
+
+    public <E extends Entity> void sweep(SweepResult<E> result, float vx, float vy, Class<E> clazz) {
+        getScene().getCollisionSystem().sweep(result, this.getShape(), vx, vy, clazz);
+    }
+
+    public <E extends Entity> void sweep(SweepResult<E> result, float vx, float vy, float vz, Class<E> clazz) {
+        getScene().getCollisionSystem().sweep(result, this.getShape(), vx, vy, vz, clazz);
+    }
+
+    public <E extends Entity> SweepResult<E> sweep(Vector3fc velocity, Class<E> clazz) {
+        return getScene().getCollisionSystem().sweep(this.getShape(), velocity, clazz);
+    }
+
+    public <E extends Entity> SweepResult<E> sweep(Vector2fc velocity, Class<E> clazz) {
+        return getScene().getCollisionSystem().sweep(this.getShape(), velocity, clazz);
+    }
+
+    @Scriptable
+    public <E extends Entity> SweepResult<E> sweep(float vx, float vy, Class<E> clazz) {
+        return getScene().getCollisionSystem().sweep(this.getShape(), vx, vy, clazz);
+    }
+
+    @Scriptable
+    public <E extends Entity> SweepResult<E> sweep(float vx, float vy, float vz, Class<E> clazz) {
+        return getScene().getCollisionSystem().sweep(this.getShape(), vx, vy, vy, clazz);
     }
 
     /**

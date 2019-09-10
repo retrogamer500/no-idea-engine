@@ -1,13 +1,12 @@
 package net.loganford.noideaengine.state.entity.systems.collision;
 
-import net.loganford.noideaengine.shape.Line;
-import net.loganford.noideaengine.shape.Rect;
-import net.loganford.noideaengine.shape.Shape;
+import net.loganford.noideaengine.shape.*;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.signals.AfterMotionSignal;
 import net.loganford.noideaengine.state.entity.signals.BeforeMotionSignal;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.messaging.Signal;
+import org.joml.Vector3fc;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,6 +18,8 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     private static Set SET = new HashSet<>();
     private static List LIST = new ArrayList<>();
+    private static Line LINE = new Line(0, 0, 0, 0);
+    private static Rect RECT = new Rect(0, 0, 1, 1);
 
     private int cellSize;
     private int bucketCount;
@@ -129,6 +130,62 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         list.clear();
         list.addAll(resultSet);
+    }
+
+    @Override
+    public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+        result.clear();
+        Shape sweepMask = getSweepMask(shape, velocity);
+        boolean exitEarly = sweepMask instanceof Line;
+
+        performBucketAction(sweepMask, (bucket) -> {
+            for (int i = 0; i < bucket.size(); i++) {
+                Entity entity = bucket.get(i);
+                if (entity.getShape() != shape &&
+                        clazz.isAssignableFrom(entity.getClass()) &&
+                        entity.getShape().collidesWith(shape)) {
+
+                    SweepResult otherResult = shape.sweep(velocity, entity.getShape());
+
+                    if(otherResult.getDistance() < result.getDistance()) {
+                        result.set(otherResult);
+                    }
+                }
+            }
+
+            if(exitEarly) {
+                return BucketActionResult.EXIT_EARLY;
+            }
+            return BucketActionResult.CONTINUE;
+        });
+
+        result.clear();
+    }
+
+    private Shape getSweepMask(Shape shape, Vector3fc velocity) {
+        if(shape instanceof Point) {
+            Point point = (Point) shape;
+            LINE.setX1(point.getX());
+            LINE.setY1(point.getY());
+            LINE.setX2(point.getX() + velocity.x());
+            LINE.setY2(point.getY() + velocity.y());
+            return LINE;
+        }
+        else {
+            shape.getBoundingBox(RECT);
+
+            if(velocity.x() < 0) {
+                RECT.setX(RECT.getX() + velocity.x());
+            }
+            RECT.setWidth(RECT.getWidth() + Math.abs(velocity.x()));
+
+            if(velocity.y() < 0) {
+                RECT.setY(RECT.getY() + velocity.y());
+            }
+            RECT.setHeight(RECT.getHeight() + Math.abs(velocity.y()));
+
+            return RECT;
+        }
     }
 
     @Override

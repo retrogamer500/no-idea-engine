@@ -1,8 +1,11 @@
 package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
+import org.joml.Vector3fc;
 
 public abstract class Shape {
+    private static SweepResult SWEEP_RESULT = new SweepResult();
+
     @Getter private int registration;
     private ShapeIntersectionEngine shapeIntersectionEngine;
 
@@ -35,5 +38,15 @@ public abstract class Shape {
 
     public boolean collidesWith(Shape other) {
         return shapeIntersectionEngine.collides(this, other);
+    }
+
+    public void sweep(SweepResult result, Vector3fc velocity, Shape b) {
+        shapeIntersectionEngine.sweep(result, this, velocity, b);
+    }
+
+    public SweepResult sweep(Vector3fc velocity, Shape b) {
+        SWEEP_RESULT.clear();
+        sweep(SWEEP_RESULT, velocity, b);
+        return SWEEP_RESULT;
     }
 }
