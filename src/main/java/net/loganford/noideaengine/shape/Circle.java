@@ -18,9 +18,9 @@ public class Circle extends Shape {
     }
 
     @Override
-    public void setPosition(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
+    public void setPosition(Vector3f position) {
+        this.x = position.x;
+        this.y = position.y;
     }
 
     @Override

@@ -1,12 +1,9 @@
 package net.loganford.noideaengine.state.entity.components;
 
-import org.joml.Vector2f;
-import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public abstract class AbstractPositionComponent extends Component {
-    private static Vector2f V2F = new Vector2f();
     private static Vector3f V3F = new Vector3f();
 
     public abstract void setX(float x);
@@ -28,15 +25,8 @@ public abstract class AbstractPositionComponent extends Component {
         setPos(getX() + x, getY() + y, getZ() + z);
     }
 
-    public Vector2fc getPos2() {
-        return V2F.set(getX(), getY());
-    }
-    public Vector3fc getPos3() {
+    public Vector3fc getPos() {
         return V3F.set(getX(), getY(), getZ());
-    }
-
-    public void setPos(Vector2fc v) {
-        setPos(v.x(), v.y());
     }
 
     public void setPos(Vector3fc v) {

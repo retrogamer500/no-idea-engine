@@ -22,8 +22,9 @@ public class Rect extends Shape {
     }
 
     @Override
-    public void setPosition(float x, float y, float z) {
-        this.x = x; this.y = y;
+    public void setPosition(Vector3f position) {
+        this.x = position.x;
+        this.y = position.y;
     }
 
     @Override
@@ -167,12 +168,12 @@ public class Rect extends Shape {
             result.setDistance(Math.max(0f, Math.min(1f, nearTime)));
             result.setShape(rect);
             if(nearTimeX > nearTimeY) {
-                result.getNormal3().x = -signX;
-                result.getNormal3().y = 0;
+                result.getNormal().x = -signX;
+                result.getNormal().y = 0;
             }
             else {
-                result.getNormal3().x = 0;
-                result.getNormal3().y = -signY;
+                result.getNormal().x = 0;
+                result.getNormal().y = -signY;
             }
             //result.getPos().x = point.getX() + result.getDistance() * velocity.x();
             //result.getPos().y = point.getY() + result.getDistance() * velocity.y();

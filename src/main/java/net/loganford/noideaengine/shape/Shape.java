@@ -17,17 +17,27 @@ public abstract class Shape {
         registration = shapeIntersectionEngine.registerShape(getClass());
     }
 
-    public abstract void setPosition(float x, float y, float z);
-    public void setPosition(float x, float y) {
-        setPosition(x, y, 0);
-    }
-
-    public abstract void getPosition(Vector3f position);
-
     public Vector3f getPosition() {
         getPosition(V3F);
         return V3F;
     }
+
+    public abstract void getPosition(Vector3f position);
+    public abstract void setPosition(Vector3f position);
+
+
+    public void setPosition(float x, float y, float z) {
+        V3F.set(x, y, z);
+        setPosition(V3F);
+    }
+
+    public void setPosition(float x, float y) {
+        setPosition(x, y, 0);
+    }
+
+
+
+
 
     /**
      * Sets rect to be a bounding box around the shape.

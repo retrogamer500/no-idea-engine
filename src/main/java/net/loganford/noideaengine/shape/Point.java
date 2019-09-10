@@ -22,10 +22,10 @@ public class Point extends Shape {
     }
 
     @Override
-    public void setPosition(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public void setPosition(Vector3f position) {
+        this.x = position.x;
+        this.y = position.y;
+        this.z = position.z;
     }
 
     @Override

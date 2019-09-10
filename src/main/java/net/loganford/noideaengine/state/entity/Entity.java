@@ -17,7 +17,6 @@ import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
-import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -334,39 +333,27 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * Returns a vector representing the entity in 2D space
+     * Returns a vector representing the entity in space
      * @return the vector
      */
-    public Vector2fc getPos2() {
-        return positionComponent.getPos2();
+    public Vector3fc getPos() {
+        return positionComponent.getPos();
     }
 
     /**
-     * Returns a vector representing the entity in 3D space
-     * @return the vector
-     */
-    public Vector3fc getPos3() {
-        return positionComponent.getPos3();
-    }
-
-    /**
-     * Moves the entity around in 2D space
-     * @param v a vector of the desired position
-     */
-    public void setPos(Vector2fc v) {
-        positionComponent.setPos(v);
-    }
-
-    /**
-     * Moves the entity around in 2D space
+     * Moves the entity around in space
      * @param v a vector of the desired position
      */
     public void setPos(Vector3fc v) {
         positionComponent.setPos(v);
     }
 
+    /**
+     * Sets the position to the result of a sweep test
+     * @param result the sweep test result
+     */
     public void setPos(SweepResult result) {
-        setPos(V3F.set(result.getVelocity()).mul(result.getDistance()).add(result.getPosition()));
+        setPos(V3F.set(result.getVelocity()).mul(result.getDistance()).add(result.getPosition()).sub(getShapeOffsetX(), getShapeOffsetY(), getShapeOffsetZ()));
     }
 
     /**
@@ -409,6 +396,14 @@ public class Entity<G extends Game, S extends Scene<G>> {
     @Scriptable
     public void move(float x, float y, float z) {
         positionComponent.move(x, y, z);
+    }
+
+    /**
+     * Moves the entity by a relative amount.
+     * @param v amount to move the entity
+     */
+    public void move(Vector3fc v) {
+        move(v.x(), v.y(), v.z());
     }
 
     /**
@@ -530,6 +525,16 @@ public class Entity<G extends Game, S extends Scene<G>> {
     /**
      * Checks for collisions with entities at a hypothetical location.
      * @param clazz class of entities to search for collisions against
+     * @param v position to check for collisions
+     * @return one entity of the specific class which collides with this entity, or null if none exists
+     */
+    public <C extends Entity> C getCollisionAt(Class<C> clazz, Vector3fc v) {
+        return getCollisionAt(clazz, v.x(), v.y(), v.z());
+    }
+
+    /**
+     * Checks for collisions with entities at a hypothetical location.
+     * @param clazz class of entities to search for collisions against
      * @param x x position to check for collisions
      * @param y y position to check for collisions
      * @param z z position to check for collisions
@@ -563,6 +568,16 @@ public class Entity<G extends Game, S extends Scene<G>> {
     @Scriptable
     public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, float x, float y) {
         return getCollisionsAt(clazz, x, y, 0);
+    }
+
+    /**
+     * Checks for collisions with entities at a hypothetical location.
+     * @param clazz class of entities to search for collisions against
+     * @param v position to check for collisions
+     * @return a list of all entities which collide with the entity
+     */
+    public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, Vector3fc v) {
+        return getCollisionsAt(clazz, v.x(), v.y(), v.z());
     }
 
     /**
@@ -606,6 +621,26 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
+     *  Checks for a potential collision assuming that this entity is moved to a certain position.
+     * @param clazz class of entities to search for collisions against
+     * @param v position to check for collisions
+     * @return whether a collision occurs at the specified location
+     */
+    public boolean placeMeeting(Class<? extends Entity> clazz, Vector3fc v) {
+        return placeMeeting(clazz, v.x(), v.y(), v.z());
+    }
+
+    /**
+     * The opposite of the placeMeeting method-- checks if a certain position is free from collisions with a certain entity.
+     * @param clazz class of entities to search for collisions against
+     * @param v position to check for collisions
+     * @return whether a certain position is free from collisions.
+     */
+    public boolean placeFree(Class<? extends Entity> clazz, Vector3fc v) {
+        return placeFree(clazz, v.x(), v.y(), v.z());
+    }
+
+    /**
      * Checks for a potential collision assuming that this entity is moved to a certain position.
      * @param clazz class of entities to search for collisions against
      * @param x x position to check for collisions
@@ -634,35 +669,69 @@ public class Entity<G extends Game, S extends Scene<G>> {
         return !placeMeeting(clazz, x, y, z);
     }
 
+    /**
+     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * @param result the result of the sweep test
+     * @param velocity vector to sweep along
+     * @param clazz type of entity to collide against
+     */
     public <E extends Entity> void sweep(SweepResult result, Vector3fc velocity, Class<E> clazz) {
         getScene().getCollisionSystem().sweep(result, this.getShape(), velocity, clazz);
     }
 
-    public <E extends Entity> void sweep(SweepResult<E> result, Vector2fc velocity, Class<E> clazz) {
-        getScene().getCollisionSystem().sweep(result, this.getShape(), velocity, clazz);
-    }
-
+    /**
+     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * @param result the result of the sweep test
+     * @param vx x component of vector to sweep along
+     * @param vy y component of vector to sweep along
+     * @param clazz type of entity to collide against
+     */
     public <E extends Entity> void sweep(SweepResult<E> result, float vx, float vy, Class<E> clazz) {
         getScene().getCollisionSystem().sweep(result, this.getShape(), vx, vy, clazz);
     }
 
+    /**
+     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * @param result the result of the sweep test
+     * @param vx x component of vector to sweep along
+     * @param vy y component of vector to sweep along
+     * @param vz z component of vector to sweep along
+     * @param clazz type of entity to collide against
+     */
     public <E extends Entity> void sweep(SweepResult<E> result, float vx, float vy, float vz, Class<E> clazz) {
         getScene().getCollisionSystem().sweep(result, this.getShape(), vx, vy, vz, clazz);
     }
 
+    /**
+     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * @param velocity vector to sweep along
+     * @param clazz type of entity to collide against
+     * @return the result of the sweep test
+     */
     public <E extends Entity> SweepResult<E> sweep(Vector3fc velocity, Class<E> clazz) {
         return getScene().getCollisionSystem().sweep(this.getShape(), velocity, clazz);
     }
 
-    public <E extends Entity> SweepResult<E> sweep(Vector2fc velocity, Class<E> clazz) {
-        return getScene().getCollisionSystem().sweep(this.getShape(), velocity, clazz);
-    }
-
+    /**
+     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * @param vx x component of vector to sweep along
+     * @param vy y component of vector to sweep along
+     * @param clazz type of entity to collide against
+     * @return the result of the sweep test
+     */
     @Scriptable
     public <E extends Entity> SweepResult<E> sweep(float vx, float vy, Class<E> clazz) {
         return getScene().getCollisionSystem().sweep(this.getShape(), vx, vy, clazz);
     }
 
+    /**
+     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * @param vx x component of vector to sweep along
+     * @param vy y component of vector to sweep along
+     * @param vz z component of vector to sweep along
+     * @param clazz type of entity to collide against
+     * @return the result of the sweep test
+     */
     @Scriptable
     public <E extends Entity> SweepResult<E> sweep(float vx, float vy, float vz, Class<E> clazz) {
         return getScene().getCollisionSystem().sweep(this.getShape(), vx, vy, vy, clazz);

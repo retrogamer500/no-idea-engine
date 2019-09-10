@@ -141,7 +141,7 @@ public class ShapeIntersectionEngine {
         @Override
         public void sweep(SweepResult result, A a, Vector3fc velocity, B b) {
             other.sweep(result, b, V3F.set(velocity).mul(-1), a);
-            result.setNormal3(V3F.set(result.getNormal3()).mul(-1));
+            result.getNormal().mul(-1);
             if(result.getShape() != null) {
                 result.setShape(a);
             }

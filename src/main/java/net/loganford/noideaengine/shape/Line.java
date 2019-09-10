@@ -19,9 +19,9 @@ public class Line extends Shape {
     }
 
     @Override
-    public void setPosition(float x, float y, float z) {
-        float diffX = x - x1;
-        float diffY = y - y1;
+    public void setPosition(Vector3f position) {
+        float diffX = position.x - x1;
+        float diffY = position.y - y1;
         x1 += diffX;
         x2 += diffX;
         y1 += diffY;
