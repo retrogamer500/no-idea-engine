@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.entity.Entity;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class SweepResult<E extends Entity> {
-    private static Vector2f V2F = new Vector2f();
+    private static Vector3f V3F = new Vector3f();
 
     @Getter(onMethod = @__({@Scriptable})) @Setter private float distance = 1f;
     @Getter @Setter private Vector3f normal = new Vector3f();
@@ -39,5 +39,18 @@ public class SweepResult<E extends Entity> {
         this.velocity.set(other.velocity);
         this.shape = other.shape;
         this.entity = (E) other.entity;
+    }
+
+    /**
+     * Returns a vector which represents the reflection of the velocity by the normal.
+     * @return the reflection if a collision took place, otherwise, just the velocity
+     */
+    public Vector3fc reflection() {
+        if(collides()) {
+            float dotted = 2 * V3F.set(velocity).dot(normal);
+            V3F.set(velocity).sub(normal.mul(dotted));
+            return V3F;
+        }
+        return velocity;
     }
 }
