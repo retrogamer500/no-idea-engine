@@ -42,12 +42,14 @@ public class SweepResult<E extends Entity> {
 
     /**
      * Reflects a given vector by the resultant normal
+     * @param vector the vector to reflect
      */
     public void reflect(Vector3f vector) {
         if(collides()) {
             float dotted = 2 * V3F.set(velocity).dot(normal);
             V3F.set(velocity).sub(normal.mul(dotted)).normalize();
             V3F.mul(vector.length());
+            vector.set(V3F);
         }
     }
 }
