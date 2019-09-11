@@ -5,7 +5,6 @@ import lombok.Setter;
 import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.entity.Entity;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 
 public class SweepResult<E extends Entity> {
     private static Vector3f V3F = new Vector3f();
@@ -42,15 +41,13 @@ public class SweepResult<E extends Entity> {
     }
 
     /**
-     * Returns a vector which represents the reflection of the velocity by the normal.
-     * @return the reflection if a collision took place, otherwise, just the velocity
+     * Reflects a given vector by the resultant normal
      */
-    public Vector3fc reflection() {
+    public void reflect(Vector3f vector) {
         if(collides()) {
             float dotted = 2 * V3F.set(velocity).dot(normal);
-            V3F.set(velocity).sub(normal.mul(dotted));
-            return V3F;
+            V3F.set(velocity).sub(normal.mul(dotted)).normalize();
+            V3F.mul(vector.length());
         }
-        return velocity;
     }
 }
