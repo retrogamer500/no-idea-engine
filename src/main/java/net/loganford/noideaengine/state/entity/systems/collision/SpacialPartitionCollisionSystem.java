@@ -20,13 +20,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private static List LIST = new ArrayList<>();
     private static Line LINE = new Line(0, 0, 0, 0);
     private static Rect RECT = new Rect(0, 0, 1, 1);
+    private static Rect RECT_2 = new Rect(0, 0, 0, 0);
 
     private int cellSize;
     private int bucketCount;
     private List<List<Entity>> buckets;
-
-    //Cached rectangle to use for obtaining bounding boxes of shapes
-    private Rect rect = new Rect(0, 0, 0, 0);
 
     public SpacialPartitionCollisionSystem() {
         this(32, 1024);
@@ -241,8 +239,8 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
             performBucketActionWithLine((Line) shape, bucketAction);
         }
         else {
-            shape.getBoundingBox(rect);
-            performBucketActionWithRect(rect, bucketAction);
+            shape.getBoundingBox(RECT_2);
+            performBucketActionWithRect(RECT_2, bucketAction);
         }
     }
 
