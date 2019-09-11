@@ -134,7 +134,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends Entity> void sweepImpl(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+    public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+        result.clear();
+        result.getPosition().set(shape.getPosition());
+        result.getVelocity().set(velocity);
+
         Shape sweepMask = getSweepMask(shape, velocity);
         boolean exitEarly = sweepMask instanceof Line;
 
@@ -142,8 +146,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
             for (int i = 0; i < bucket.size(); i++) {
                 Entity entity = bucket.get(i);
                 if (entity.getShape() != shape &&
-                        clazz.isAssignableFrom(entity.getClass()) &&
-                        entity.getShape().collidesWith(shape)) {
+                        clazz.isAssignableFrom(entity.getClass())) {
 
                     SweepResult otherResult = shape.sweep(velocity, entity.getShape());
                     otherResult.setEntity(entity);

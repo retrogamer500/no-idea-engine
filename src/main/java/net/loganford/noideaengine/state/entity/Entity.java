@@ -349,14 +349,6 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * Sets the position to the result of a sweep test
-     * @param result the sweep test result
-     */
-    public void setPos(SweepResult result) {
-        setPos(V3F.set(result.getVelocity()).mul(result.getDistance()).add(result.getPosition()).sub(getShapeOffsetX(), getShapeOffsetY(), getShapeOffsetZ()));
-    }
-
-    /**
      * Sets the position of the entity. This method is slightly faster then setting both x and y independently.
      * @param x the x position
      * @param y the y position
@@ -410,6 +402,15 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * Retrieves the current collision mask of the entity.
      * @return the current collision mask
      */
+
+    /**
+     * Sets the position to the result of a sweep test
+     * @param result the sweep test result
+     */
+    public void move(SweepResult result) {
+        move(V3F.set(result.getVelocity()).mul(Math.max(0, result.getDistance() - MathUtils.EPSILON)));
+    }
+
     @Scriptable
     public Shape getShape() {
         return collisionComponent.getShape();
