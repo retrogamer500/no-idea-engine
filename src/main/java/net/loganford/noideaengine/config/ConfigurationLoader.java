@@ -125,7 +125,7 @@ public class ConfigurationLoader {
     }
 
     /**
-     * Searches a config for any glob fields. Fields are globable if they have the @GlobableField annotation, and they
+     * Searches a config for any glob fields. Fields are globable if they have the @GlobField annotation, and they
      * are a string which begins with "glob:". If such a field exists, then returns a list of new configs generated from
      * that glob. Otherwise, if no globable field exists, returns null.
      * @param base
@@ -134,12 +134,12 @@ public class ConfigurationLoader {
      */
     private List<LoadableConfig> tryToExpandConfig(GameConfig base, LoadableConfig config) throws IllegalAccessException {
         String glob = null;
-        GlobableField annotation = null;
+        GlobField annotation = null;
         List<Field> fields = getAllFields(config.getClass());
         Field globField = null;
         for(Field field: fields) {
             field.setAccessible(true);
-            annotation = field.getAnnotation(GlobableField.class);
+            annotation = field.getAnnotation(GlobField.class);
             if(annotation != null) {
                 Object object = field.get(config);
                 globField = field;
