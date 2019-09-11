@@ -407,6 +407,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * Sets the position to the result of a sweep test
      * @param result the sweep test result
      */
+    @Scriptable
     public void move(SweepResult result) {
         move(V3F.set(result.getVelocity()).mul(Math.max(0, result.getDistance() - MathUtils.EPSILON)));
     }
