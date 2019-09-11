@@ -159,8 +159,6 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
             }
             return BucketActionResult.CONTINUE;
         });
-
-        result.clear();
     }
 
     private Shape getSweepMask(Shape shape, Vector3fc velocity) {
