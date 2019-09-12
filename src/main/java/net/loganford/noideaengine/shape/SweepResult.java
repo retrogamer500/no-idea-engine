@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 
 public class SweepResult<E extends Entity> {
     private static Vector3f V3F = new Vector3f();
+    private static Vector3f V3F_2 = new Vector3f();
 
     @Getter(onMethod = @__({@Scriptable})) @Setter private float distance = 1f;
     @Getter @Setter private Vector3f normal = new Vector3f();
@@ -44,12 +45,34 @@ public class SweepResult<E extends Entity> {
      * Reflects a given vector by the resultant normal
      * @param vector the vector to reflect
      */
+    @Scriptable
     public void reflect(Vector3f vector) {
         if(collides()) {
-            float dotted = 2 * V3F.set(velocity).dot(normal);
-            V3F.set(velocity).sub(normal.mul(dotted)).normalize();
+            float dotted = 2 * V3F.set(vector).dot(normal);
+            V3F.set(vector).sub(normal.mul(dotted)).normalize();
             V3F.mul(vector.length());
             vector.set(V3F);
         }
+    }
+
+    /**
+     * Sets vector to slide against the normal
+     * @param vector the vector
+     */
+    @Scriptable
+    public void slide(Vector3f vector) {
+        if(collides()) {
+            float dotted = Math.abs(V3F.set(normal).dot(vector));
+            vector.set(V3F.set(normal).mul(dotted).add(vector));
+        }
+    }
+
+    /**
+     * Sets vector to be the remaining movement distance
+     * @param vector the vector
+     */
+    @Scriptable
+    public void remainder(Vector3f vector) {
+        vector.set(velocity.mul(1 - distance));
     }
 }
