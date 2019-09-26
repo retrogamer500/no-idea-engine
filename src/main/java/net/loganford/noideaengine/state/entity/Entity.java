@@ -28,6 +28,10 @@ import java.util.*;
 @RegisterComponent(BasicCollisionComponent.class)
 public class Entity<G extends Game, S extends Scene<G>> {
     private static Vector3f V3F = new Vector3f();
+    private static Vector3f V3F_2 = new Vector3f();
+    private static Vector3f V3F_3 = new Vector3f();
+    private static Vector3f V3F_4 = new Vector3f();
+    private static Vector3f V3F_5 = new Vector3f();
 
     @Getter @Setter private S scene;
     @Getter @Setter private G game;
@@ -410,6 +414,57 @@ public class Entity<G extends Game, S extends Scene<G>> {
     @Scriptable
     public void move(SweepResult result) {
         move(V3F.set(result.getVelocity()).mul(Math.max(0, result.getDistance() - MathUtils.EPSILON)));
+    }
+
+    /**
+     * Moves the entity in the desired direction, while resolving collisions in a user-defined way. The velocity
+     * parameter will be updated after calling this method to the resultant velocity after any collision.
+     * @param velocity the desired velocity for one second of movement
+     * @param delta the delta time value
+     * @param behavior how to behave during collisions, either MovementBehavior.SLIDE or MovementBehavior.BOUNCE
+     * @param wall class which blocks the entity's movement
+     */
+    public void move(Vector3f velocity, float delta, MovementBehavior behavior, Class<? extends Entity> wall) {
+        float speedPerSecond = velocity.length();
+
+        if(speedPerSecond == 0) {
+            return;
+        }
+
+        Vector3f nextPosition = V3F.set(velocity).mul(delta/1000f);
+        float speedPerFrame = nextPosition.length();
+
+        SweepResult result;
+        for(int i = 0; i < 8; i++) {
+            result = sweep(nextPosition, wall);
+            move(result);
+            result.remainder(nextPosition);
+
+            if(behavior == MovementBehavior.SLIDE) {
+                result.slide(nextPosition);
+            }
+            else if(behavior == MovementBehavior.BOUNCE) {
+                result.reflect(nextPosition);
+            }
+
+            float frameRemainder = nextPosition.length();
+
+            if(result.collides()) {
+                if(nextPosition.lengthSquared() == 0) {
+                    //Collision is at 90 degree angle, so do stop moving
+                    velocity.set(0, 0, 0);
+                }
+                else {
+                    //Collision is at an angle, so deflect velocity
+                    float speedRemainder = speedPerSecond * (frameRemainder / speedPerFrame);
+                    velocity.set(nextPosition).normalize().mul(speedRemainder);
+                }
+            }
+
+            if(nextPosition.lengthSquared() == 0) {
+                break;
+            }
+        }
     }
 
     @Scriptable

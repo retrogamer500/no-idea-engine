@@ -17,6 +17,7 @@ import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+import org.joml.Vector3fc;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -63,6 +64,42 @@ public class Scene<G extends Game> extends GameState<G> {
         else {
             throw new GameEngineException("Tried to add entity to scene with improper generics: " + entity.getClass().getName());
         }
+    }
+
+    /**
+     * Adds an entity to this scene.
+     * @param entity the entity to add
+     * @param x the position of the entity
+     * @param y the position of the entity
+     */
+    @Scriptable
+    public void add(Entity entity, float x, float y) {
+        entity.setPos(x, y);
+        add(entity);
+    }
+
+    /**
+     * Adds an entity to this scene.
+     * @param entity the entity to add
+     * @param x the position of the entity
+     * @param y the position of the entity
+     * @param z the position of the entity
+     */
+    @Scriptable
+    public void add(Entity entity, float x, float y, float z) {
+        entity.setPos(x, y, z);
+        add(entity);
+    }
+
+    /**
+     * Adds an entity to this scene.
+     * @param entity the entity to add
+     * @param position the position of the entity
+     */
+    @Scriptable
+    public void add(Entity entity, Vector3fc position) {
+        entity.setPos(position);
+        add(entity);
     }
 
     /**
