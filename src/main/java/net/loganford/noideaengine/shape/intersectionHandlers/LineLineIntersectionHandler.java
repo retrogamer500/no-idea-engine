@@ -1,10 +1,10 @@
 package net.loganford.noideaengine.shape.intersectionHandlers;
 
-import net.loganford.noideaengine.shape.Line;
+import net.loganford.noideaengine.shape.Line2D;
 
-public class LineLineIntersectionHandler implements IntersectionHandler<Line, Line> {
+public class LineLineIntersectionHandler implements IntersectionHandler<Line2D, Line2D> {
     @Override
-    public boolean intersects(Line line1, Line line2) {
+    public boolean intersects(Line2D line1, Line2D line2) {
         float s1x = line1.getX2() - line1.getX1();
         float s1y = line1.getY2() - line1.getY1();
 

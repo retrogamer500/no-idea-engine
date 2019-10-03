@@ -20,6 +20,10 @@ public class Point extends Shape {
         this.z = z;
     }
 
+    public Point(Vector3f position) {
+        this(position.x, position.y, position.z);
+    }
+
     @Override
     public void setPosition(Vector3f position) {
         this.x = position.x;

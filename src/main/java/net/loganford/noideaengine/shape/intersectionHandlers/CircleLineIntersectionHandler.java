@@ -1,11 +1,11 @@
 package net.loganford.noideaengine.shape.intersectionHandlers;
 
 import net.loganford.noideaengine.shape.Circle;
-import net.loganford.noideaengine.shape.Line;
+import net.loganford.noideaengine.shape.Line2D;
 
-public class CircleLineIntersectionHandler implements IntersectionHandler<Circle, Line> {
+public class CircleLineIntersectionHandler implements IntersectionHandler<Circle, Line2D> {
     @Override
-    public boolean intersects(Circle circle, Line line) {
+    public boolean intersects(Circle circle, Line2D line) {
         float a = line.getX2()-line.getX1();
         float b = line.getY2()-line.getY1();
         float c = circle.getX() - line.getX1();

@@ -22,10 +22,6 @@ public abstract class Shape {
         return V3F;
     }
 
-    public abstract void getPosition(Vector3f position);
-    public abstract void setPosition(Vector3f position);
-
-
     public void setPosition(float x, float y, float z) {
         V3F.set(x, y, z);
         setPosition(V3F);
@@ -35,9 +31,8 @@ public abstract class Shape {
         setPosition(x, y, 0);
     }
 
-
-
-
+    public abstract void getPosition(Vector3f position);
+    public abstract void setPosition(Vector3f position);
 
     /**
      * Sets rect to be a bounding box around the shape.
