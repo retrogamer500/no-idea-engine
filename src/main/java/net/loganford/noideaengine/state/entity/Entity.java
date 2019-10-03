@@ -403,11 +403,6 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * Retrieves the current collision mask of the entity.
-     * @return the current collision mask
-     */
-
-    /**
      * Sets the position to the result of a sweep test
      * @param result the sweep test result
      */
@@ -421,7 +416,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * parameter will be updated after calling this method to the resultant velocity after any collision.
      * @param velocity the desired velocity for one second of movement
      * @param delta the delta time value
-     * @param behavior how to behave during collisions, either MovementBehavior.SLIDE or MovementBehavior.BOUNCE
+     * @param behavior how to behave during collisions, usually MovementBehavior.SLIDE
      * @param wall class which blocks the entity's movement
      */
     public void move(Vector3f velocity, float delta, MovementBehavior behavior, Class<? extends Entity> wall) {
@@ -446,6 +441,9 @@ public class Entity<G extends Game, S extends Scene<G>> {
             else if(behavior == MovementBehavior.BOUNCE) {
                 result.reflect(nextPosition);
             }
+            else if(behavior == MovementBehavior.STOP) {
+                nextPosition.set(0, 0, 0);
+            }
 
             float frameRemainder = nextPosition.length();
 
@@ -467,6 +465,10 @@ public class Entity<G extends Game, S extends Scene<G>> {
         }
     }
 
+    /**
+     * Retrieves the current collision mask of the entity.
+     * @return the current collision mask
+     */
     @Scriptable
     public Shape getShape() {
         return collisionComponent.getShape();

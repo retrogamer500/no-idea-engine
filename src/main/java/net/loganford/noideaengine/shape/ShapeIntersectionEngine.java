@@ -1,5 +1,9 @@
 package net.loganford.noideaengine.shape;
 
+import net.loganford.noideaengine.shape.intersectionHandlers.*;
+import net.loganford.noideaengine.shape.sweepHandlers.PointRectSweepHandler;
+import net.loganford.noideaengine.shape.sweepHandlers.RectRectSweepHandler;
+import net.loganford.noideaengine.shape.sweepHandlers.SweepHandler;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -24,6 +28,23 @@ public class ShapeIntersectionEngine {
     private int numberOfShapes;
     private Map<Class<? extends Shape>, Integer> shapeIds = new HashMap<>();
     private HandlerContainer[] handlerContainers = new HandlerContainer[maxShapes * maxShapes];
+
+    public ShapeIntersectionEngine() {
+        //Set up initial intersection handlers
+        addIntersectionHandler(Circle.class, Circle.class, new CircleCircleIntersectionHandler());
+        addIntersectionHandler(Circle.class, Line.class, new CircleLineIntersectionHandler());
+        addIntersectionHandler(Line.class, Line.class, new LineLineIntersectionHandler());
+        addIntersectionHandler(Point.class, Point.class, new PointPointIntersectionHandler());
+        addIntersectionHandler(Point.class, Circle.class, new PointCircleIntersectionHandler());
+        addIntersectionHandler(Rect.class, Circle.class, new RectCircleIntersectionHandler());
+        addIntersectionHandler(Rect.class, Line.class, new RectLineIntersectionHandler());
+        addIntersectionHandler(Rect.class, Point.class, new RectPointIntersectionHandler());
+        addIntersectionHandler(Rect.class, Rect.class, new RectRectIntersectionHandler());
+
+        //Set up initial sweep handlers
+        addSweepHandler(Point.class, Rect.class, new PointRectSweepHandler());
+        addSweepHandler(Rect.class, Rect.class, new RectRectSweepHandler());
+    }
 
     public int registerShape(Class<? extends Shape> clazz) {
         Integer registration = shapeIds.get(clazz);
