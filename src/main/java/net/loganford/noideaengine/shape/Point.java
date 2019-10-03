@@ -5,9 +5,7 @@ import lombok.Setter;
 import org.joml.Vector3f;
 
 public class Point extends Shape {
-    @Getter @Setter private float x;
-    @Getter @Setter private float y;
-    @Getter @Setter private float z;
+    @Getter @Setter private Vector3f position = new Vector3f();
 
     public Point(float x, float y) {
         this(x, y, 0);
@@ -15,9 +13,8 @@ public class Point extends Shape {
 
     public Point(float x, float y, float z) {
         super();
-        this.x = x;
-        this.y = y;
-        this.z = z;
+
+        position.set(x, y, z);
     }
 
     public Point(Vector3f position) {
@@ -26,23 +23,27 @@ public class Point extends Shape {
 
     @Override
     public void setPosition(Vector3f position) {
-        this.x = position.x;
-        this.y = position.y;
-        this.z = position.z;
+        this.position.set(position);
     }
 
     @Override
     public void getPosition(Vector3f position) {
-        position.x = x;
-        position.y = y;
-        position.z = 0;
+        position.set(this.position);
     }
 
     @Override
     public void getBoundingBox(Rect rect) {
-        rect.setX(x);
-        rect.setY(y);
+        rect.setX(getX());
+        rect.setY(getY());
         rect.setWidth(0);
         rect.setHeight(0);
     }
+
+    public float getX() {return position.x;}
+    public float getY() {return position.y;}
+    public float getZ() {return position.z;}
+
+    public void setX(float x) {position.x = x;}
+    public void setY(float y) {position.y = y;}
+    public void setZ(float z) {position.z = z;}
 }
