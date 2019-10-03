@@ -18,7 +18,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     private static Set SET = new HashSet<>();
     private static List LIST = new ArrayList<>();
-    private static Line2D LINE_2D = new Line2D(0, 0, 0, 0);
+    private static Line LINE = new Line(0, 0, 0, 0);
     private static Rect RECT = new Rect(0, 0, 1, 1);
     private static Rect RECT_2 = new Rect(0, 0, 0, 0);
 
@@ -138,7 +138,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         result.getVelocity().set(velocity);
 
         Shape sweepMask = getSweepMask(shape, velocity);
-        boolean exitEarly = sweepMask instanceof Line2D;
+        boolean exitEarly = sweepMask instanceof Line;
 
         performBucketAction(sweepMask, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
@@ -165,11 +165,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private Shape getSweepMask(Shape shape, Vector3fc velocity) {
         if(shape instanceof Point) {
             Point point = (Point) shape;
-            LINE_2D.setX1(point.getX());
-            LINE_2D.setY1(point.getY());
-            LINE_2D.setX2(point.getX() + velocity.x());
-            LINE_2D.setY2(point.getY() + velocity.y());
-            return LINE_2D;
+            LINE.setX1(point.getX());
+            LINE.setY1(point.getY());
+            LINE.setX2(point.getX() + velocity.x());
+            LINE.setY2(point.getY() + velocity.y());
+            return LINE;
         }
         else {
             shape.getBoundingBox(RECT);
@@ -235,8 +235,8 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
      * @param bucketAction the action to perform
      */
     private void performBucketAction(Shape shape, BucketAction bucketAction) {
-        if(shape instanceof Line2D) {
-            performBucketActionWithLine((Line2D) shape, bucketAction);
+        if(shape instanceof Line) {
+            performBucketActionWithLine((Line) shape, bucketAction);
         }
         else {
             shape.getBoundingBox(RECT_2);
@@ -267,7 +267,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
      * @param line
      * @param bucketAction
      */
-    private void performBucketActionWithLine(Line2D line, BucketAction bucketAction) {
+    private void performBucketActionWithLine(Line line, BucketAction bucketAction) {
         int i = (int) (line.getX1() / cellSize);
         int j = (int) (line.getY1() / cellSize);
 

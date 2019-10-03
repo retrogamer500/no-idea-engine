@@ -1,11 +1,11 @@
 package net.loganford.noideaengine.shape.intersectionHandlers;
 
-import net.loganford.noideaengine.shape.Line2D;
+import net.loganford.noideaengine.shape.Line;
 import net.loganford.noideaengine.shape.Rect;
 
-public class RectLineIntersectionHandler implements IntersectionHandler<Rect, Line2D> {
+public class RectLineIntersectionHandler implements IntersectionHandler<Rect, Line> {
     @Override
-    public boolean intersects(Rect rect, Line2D line) {
+    public boolean intersects(Rect rect, Line line) {
         float deltaX = line.getX2() - line.getX1();
         float deltaY = line.getY2() - line.getY1();
         float scaleX = 1f / deltaX;

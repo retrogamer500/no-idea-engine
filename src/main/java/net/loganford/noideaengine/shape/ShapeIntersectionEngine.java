@@ -32,12 +32,12 @@ public class ShapeIntersectionEngine {
     public ShapeIntersectionEngine() {
         //Set up initial intersection handlers
         addIntersectionHandler(Circle.class, Circle.class, new CircleCircleIntersectionHandler());
-        addIntersectionHandler(Circle.class, Line2D.class, new CircleLineIntersectionHandler());
-        addIntersectionHandler(Line2D.class, Line2D.class, new LineLineIntersectionHandler());
+        addIntersectionHandler(Circle.class, Line.class, new CircleLineIntersectionHandler());
+        addIntersectionHandler(Line.class, Line.class, new LineLineIntersectionHandler());
         addIntersectionHandler(Point.class, Point.class, new PointPointIntersectionHandler());
         addIntersectionHandler(Point.class, Circle.class, new PointCircleIntersectionHandler());
         addIntersectionHandler(Rect.class, Circle.class, new RectCircleIntersectionHandler());
-        addIntersectionHandler(Rect.class, Line2D.class, new RectLineIntersectionHandler());
+        addIntersectionHandler(Rect.class, Line.class, new RectLineIntersectionHandler());
         addIntersectionHandler(Rect.class, Point.class, new RectPointIntersectionHandler());
         addIntersectionHandler(Rect.class, Rect.class, new RectRectIntersectionHandler());
 
