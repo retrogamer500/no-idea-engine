@@ -30,7 +30,7 @@ public class AudioLoader extends ResourceLoader {
     public void init(Game game, LoadingContext ctx) {
         game.getAudioManager().unloadGroups(ctx);
         audioToLoad = new ArrayList<>();
-        if(game.getConfig().getResources().getImages() != null) {
+        if(game.getConfig().getResources().getAudio() != null) {
             audioToLoad.addAll(game.getConfig().getResources().getAudio()
                     .stream().filter(r -> ctx.getLoadingGroups().contains(r.getGroup())).collect(Collectors.toList()));
         }
