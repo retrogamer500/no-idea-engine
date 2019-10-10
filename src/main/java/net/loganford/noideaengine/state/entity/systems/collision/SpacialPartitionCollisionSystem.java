@@ -317,18 +317,36 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
                 break;
             }
             if(tx<=ty) {
-                if(i==iEnd) {
-                    break;
+                if(tx < tz) {
+                    if (i == iEnd) {
+                        break;
+                    }
+                    tx += deltaX;
+                    i += di;
                 }
-                tx+=deltaX;
-                i+=di;
+                else {
+                    if (k == kEnd) {
+                        break;
+                    }
+                    tz += deltaZ;
+                    k += dk;
+                }
             }
             else {
-                if(j==jEnd) {
-                    break;
+                if(ty < tz) {
+                    if (j == jEnd) {
+                        break;
+                    }
+                    ty += deltaY;
+                    j += dj;
                 }
-                ty+=deltaY;
-                j+=dj;
+                else {
+                    if (k == kEnd) {
+                        break;
+                    }
+                    tz += deltaZ;
+                    k += dk;
+                }
             }
         }
     }
