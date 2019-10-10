@@ -7,7 +7,7 @@ import org.joml.Vector3fc;
 public abstract class Shape {
     private static SweepResult SWEEP_RESULT = new SweepResult();
     private static Vector3f V3F = new Vector3f();
-    private static Rect RECT = new Rect(0, 0, 1, 1);
+    private static Cuboid CUBE = new Cuboid(0, 0, 0, 1, 1, 1);
 
     @Getter private int registration;
     private ShapeIntersectionEngine shapeIntersectionEngine;
@@ -35,19 +35,18 @@ public abstract class Shape {
     public abstract void setPosition(Vector3f position);
 
     /**
-     * Sets rect to be a bounding box around the shape.
-     * @param rect Rect which will be modified to be a bounding box.
+     * Sets cuboid to be a bounding box around the shape.
+     * @param cube Cuboid which will be modified to be a bounding box.
      */
-    public abstract void getBoundingBox(Rect rect);
+    public abstract void getBoundingBox(Cuboid cube);
 
     /**
-     * Gets the bounding box for this shape. Since this allocates a new object, it is recommended that you call
-     * getBoundingBox(Rect rect) instead.
+     * Gets the bounding box for this shape. The return value is shared across all calls.
      * @return the bounding box
      */
-    public Rect getBoundingBox() {
-        getBoundingBox(RECT);
-        return RECT;
+    public Cuboid getBoundingBox() {
+        getBoundingBox(CUBE);
+        return CUBE;
     }
 
     public boolean collidesWith(Shape other) {

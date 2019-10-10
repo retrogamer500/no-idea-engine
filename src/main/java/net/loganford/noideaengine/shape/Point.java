@@ -32,11 +32,13 @@ public class Point extends Shape {
     }
 
     @Override
-    public void getBoundingBox(Rect rect) {
-        rect.setX(getX());
-        rect.setY(getY());
-        rect.setWidth(0);
-        rect.setHeight(0);
+    public void getBoundingBox(Cuboid cube) {
+        cube.setX(getX());
+        cube.setY(getY());
+        cube.setZ(getZ());
+        cube.setWidth(0);
+        cube.setHeight(0);
+        cube.setDepth(0);
     }
 
     public float getX() {return position.x;}

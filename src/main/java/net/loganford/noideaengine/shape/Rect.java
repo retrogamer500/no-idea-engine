@@ -33,10 +33,12 @@ public class Rect extends Shape {
     }
 
     @Override
-    public void getBoundingBox(Rect rect) {
-        rect.setX(x);
-        rect.setY(y);
-        rect.setWidth(width);
-        rect.setHeight(height);
+    public void getBoundingBox(Cuboid cube) {
+        cube.setX(x);
+        cube.setY(y);
+        cube.setZ(0);
+        cube.setWidth(width);
+        cube.setHeight(height);
+        cube.setDepth(0);
     }
 }

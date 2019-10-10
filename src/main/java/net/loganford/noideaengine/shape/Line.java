@@ -44,11 +44,13 @@ public class Line extends Shape {
     }
 
     @Override
-    public void getBoundingBox(Rect rect) {
-        rect.setX(Math.min(getX1(), getX2()));
-        rect.setY(Math.min(getY1(), getY2()));
-        rect.setWidth(Math.abs(getX1() - getX2()));
-        rect.setHeight(Math.abs(getY1() - getY2()));
+    public void getBoundingBox(Cuboid cube) {
+        cube.setX(Math.min(getX1(), getX2()));
+        cube.setY(Math.min(getY1(), getY2()));
+        cube.setZ(Math.min(getZ1(), getZ2()));
+        cube.setWidth(Math.abs(getX1() - getX2()));
+        cube.setHeight(Math.abs(getY1() - getY2()));
+        cube.setDepth(Math.abs(getZ1() - getZ2()));
     }
 
     public float getX1() {return beginning.x;}

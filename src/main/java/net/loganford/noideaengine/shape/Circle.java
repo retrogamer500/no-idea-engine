@@ -30,10 +30,12 @@ public class Circle extends Shape {
     }
 
     @Override
-    public void getBoundingBox(Rect rect) {
-        rect.setX(x - radius);
-        rect.setY(y - radius);
-        rect.setWidth(2 * radius);
-        rect.setHeight(2 * radius);
+    public void getBoundingBox(Cuboid cube) {
+        cube.setX(x - radius);
+        cube.setY(y - radius);
+        cube.setZ(0);
+        cube.setWidth(2 * radius);
+        cube.setHeight(2 * radius);
+        cube.setDepth(0);
     }
 }

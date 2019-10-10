@@ -21,6 +21,8 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private static Line LINE = new Line(0, 0, 0, 0);
     private static Rect RECT = new Rect(0, 0, 1, 1);
     private static Rect RECT_2 = new Rect(0, 0, 0, 0);
+    private static Cuboid CUBE = new Cuboid(0, 0, 0, 1, 1, 1);
+    private static Cuboid CUBE_2 = new Cuboid(0, 0, 0, 1, 1, 1);
 
     private int cellSize;
     private int bucketCount;
@@ -167,24 +169,31 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
             Point point = (Point) shape;
             LINE.setX1(point.getX());
             LINE.setY1(point.getY());
+            LINE.setZ1(point.getZ());
             LINE.setX2(point.getX() + velocity.x());
             LINE.setY2(point.getY() + velocity.y());
+            LINE.setZ2(point.getZ() + velocity.z());
             return LINE;
         }
         else {
-            shape.getBoundingBox(RECT);
+            shape.getBoundingBox(CUBE);
 
             if(velocity.x() < 0) {
-                RECT.setX(RECT.getX() + velocity.x());
+                CUBE.setX(CUBE.getX() + velocity.x());
             }
-            RECT.setWidth(RECT.getWidth() + Math.abs(velocity.x()));
+            CUBE.setWidth(CUBE.getWidth() + Math.abs(velocity.x()));
 
             if(velocity.y() < 0) {
-                RECT.setY(RECT.getY() + velocity.y());
+                CUBE.setY(CUBE.getY() + velocity.y());
             }
-            RECT.setHeight(RECT.getHeight() + Math.abs(velocity.y()));
+            CUBE.setHeight(CUBE.getHeight() + Math.abs(velocity.y()));
 
-            return RECT;
+            if(velocity.z() < 0) {
+                CUBE.setZ(CUBE.getZ() + velocity.z());
+            }
+            CUBE.setDepth(CUBE.getDepth() + Math.abs(velocity.y()));
+
+            return CUBE;
         }
     }
 
@@ -224,8 +233,8 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         }
     }
 
-    private int hash2d(int x, int y) {
-        return Math.abs(((x * 89513) + (y * 15473)) % bucketCount);
+    private int hash3d(int x, int y, int z) {
+        return Math.abs(((x * 89513) + (y * 15473) + (z * 39829)) % bucketCount);
     }
 
 
@@ -239,24 +248,28 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
             performBucketActionWithLine((Line) shape, bucketAction);
         }
         else {
-            shape.getBoundingBox(RECT_2);
-            performBucketActionWithRect(RECT_2, bucketAction);
+            shape.getBoundingBox(CUBE_2);
+            performBucketActionWithRect(CUBE_2, bucketAction);
         }
     }
 
-    private void performBucketActionWithRect(Rect rect, BucketAction bucketAction) {
-        int x1 = (int) (rect.getX() / cellSize);
-        int y1 = (int) (rect.getY() / cellSize);
-        int x2 = (int) ((rect.getX() + rect.getWidth()) / cellSize);
-        int y2 = (int) ((rect.getY() + rect.getHeight()) / cellSize);
+    private void performBucketActionWithRect(Cuboid cube, BucketAction bucketAction) {
+        int x1 = (int) (cube.getX() / cellSize);
+        int y1 = (int) (cube.getY() / cellSize);
+        int z1 = (int) (cube.getZ() / cellSize);
+        int x2 = (int) ((cube.getX() + cube.getWidth()) / cellSize);
+        int y2 = (int) ((cube.getY() + cube.getHeight()) / cellSize);
+        int z2 = (int) ((cube.getZ() + cube.getDepth()) / cellSize);
 
         for (int tx = x1; tx <= x2; tx++) {
             for (int ty = y1; ty <= y2; ty++) {
-                int bucketNum = hash2d(tx, ty);
-                List<Entity> bucket = buckets.get(bucketNum);
-                BucketActionResult result = bucketAction.perform(bucket);
-                if(result == BucketActionResult.EXIT_EARLY) {
-                    return;
+                for (int tz = z1; tz <= z2; tz++) {
+                    int bucketNum = hash3d(tx, ty, tz);
+                    List<Entity> bucket = buckets.get(bucketNum);
+                    BucketActionResult result = bucketAction.perform(bucket);
+                    if (result == BucketActionResult.EXIT_EARLY) {
+                        return;
+                    }
                 }
             }
         }
@@ -270,12 +283,15 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private void performBucketActionWithLine(Line line, BucketAction bucketAction) {
         int i = (int) (line.getX1() / cellSize);
         int j = (int) (line.getY1() / cellSize);
+        int k = (int) (line.getZ1() / cellSize);
 
         int iEnd = (int) (line.getX2() / cellSize);
         int jEnd = (int) (line.getY2() / cellSize);
+        int kEnd = (int) (line.getZ2() / cellSize);
 
         int di = MathUtils.sign(line.getX2() - line.getX1());
         int dj = MathUtils.sign(line.getY2() - line.getY1());
+        int dk = MathUtils.sign(line.getZ2() - line.getZ1());
 
         float minx = cellSize * ((int) (line.getX1() / cellSize));
         float maxx = minx + cellSize;
@@ -285,11 +301,16 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         float maxy = miny + cellSize;
         float ty = ((line.getY1() > line.getY2()) ? (line.getY1() - miny) : (maxy - line.getY1())) / Math.abs(line.getY2() - line.getY1());
 
+        float minz = cellSize * ((int) (line.getZ1() / cellSize));
+        float maxz = minz + cellSize;
+        float tz = ((line.getZ1() > line.getZ2()) ? (line.getZ1() - minz) : (maxz - line.getZ1())) / Math.abs(line.getZ2() - line.getZ1());
+
         float deltaX = ((float) cellSize) / Math.abs(line.getX2() - line.getX1());
         float deltaY = ((float) cellSize) / Math.abs(line.getY2() - line.getY1());
+        float deltaZ = ((float) cellSize) / Math.abs(line.getZ2() - line.getZ1());
 
         while(true) {
-            int bucketNum = hash2d(i, j);
+            int bucketNum = hash3d(i, j, k);
             List<Entity> bucket = buckets.get(bucketNum);
             BucketActionResult result = bucketAction.perform(bucket);
             if(result == BucketActionResult.EXIT_EARLY) {
