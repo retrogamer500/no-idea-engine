@@ -5,7 +5,7 @@ import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import org.joml.Vector3f;
 
-public class Camera extends ScreenTransformation {
+public class Camera extends AbstractViewProjection {
     @Getter @Setter private Vector3f position;
     @Getter @Setter private Vector3f focus;
     @Getter @Setter private Vector3f up;

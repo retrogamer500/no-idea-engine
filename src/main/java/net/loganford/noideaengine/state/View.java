@@ -9,7 +9,7 @@ import org.joml.Vector4f;
 /**
  * A view represents a 2D projection and it is used for rendering 2D graphics.
  */
-public class View extends ScreenTransformation {
+public class View extends AbstractViewProjection {
     private static Vector4f V4 = new Vector4f();
     private static Matrix4f M4 = new Matrix4f();
 

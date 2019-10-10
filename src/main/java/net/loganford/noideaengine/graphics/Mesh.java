@@ -4,10 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
-import net.loganford.noideaengine.state.ScreenTransformation;
+import net.loganford.noideaengine.state.AbstractViewProjection;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL33;
@@ -90,15 +91,21 @@ public class Mesh implements UnsafeMemory {
 		render(renderer, renderer.getCamera(), modelMatrix);
 	}
 
-	public void render(Renderer renderer, ScreenTransformation screenTransformation, Matrix4f modelMatrix) {
+	public void render(Renderer renderer, Matrix4fc matrix) {
+		modelMatrix.set(matrix);
+		GL33.glEnable(GL33.GL_DEPTH_TEST);
+		render(renderer, renderer.getCamera(), modelMatrix);
+	}
+
+	private void render(Renderer renderer, AbstractViewProjection viewProjection, Matrix4f modelMatrix) {
 		renderer.getTextureBatch().flush(renderer);
 
 		//Populate uniforms
 		ShaderProgram shader = renderer.getShader();
 		shader.setUniform(ShaderUniform.COLOR, ShaderProgram.DEFAULT_COLOR);
 		shader.setUniform(ShaderUniform.MODEL, modelMatrix);
-		shader.setUniform(ShaderUniform.VIEW, screenTransformation.getViewMatrix());
-		shader.setUniform(ShaderUniform.PROJECTION, screenTransformation.getProjectionMatrix());
+		shader.setUniform(ShaderUniform.VIEW, viewProjection.getViewMatrix());
+		shader.setUniform(ShaderUniform.PROJECTION, viewProjection.getProjectionMatrix());
 
 		if(material != null) {
 			shader.setUniform(ShaderUniform.TEX_DIFFUSE, material.getDiffuse());

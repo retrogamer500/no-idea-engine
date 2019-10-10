@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.state.entity.components;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -16,6 +17,8 @@ public abstract class AbstractPositionComponent extends Component {
 
     public abstract void setPos(float x, float y);
     public abstract void setPos(float x, float y, float z);
+
+    public abstract Matrix4f getMatrix();
 
     public void move(float x, float y) {
         setPos(getX() + x, getY() + y);

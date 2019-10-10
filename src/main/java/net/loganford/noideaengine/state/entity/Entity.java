@@ -17,6 +17,7 @@ import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -337,7 +338,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * Returns a vector representing the entity in space
+     * Returns a vector representing the entity in space.
      * @return the vector
      */
     public Vector3fc getPos() {
@@ -345,7 +346,15 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * Moves the entity around in space
+     * Returns a matrix representing this entity in space.
+     * @return the matrix
+     */
+    public Matrix4f getPosMatrix() {
+        return positionComponent.getMatrix();
+    }
+
+    /**
+     * Moves the entity around in space.
      * @param v a vector of the desired position
      */
     public void setPos(Vector3fc v) {

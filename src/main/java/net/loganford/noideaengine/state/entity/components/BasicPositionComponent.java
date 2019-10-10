@@ -1,6 +1,9 @@
 package net.loganford.noideaengine.state.entity.components;
 
+import org.joml.Matrix4f;
+
 public class BasicPositionComponent extends AbstractPositionComponent {
+    private static Matrix4f MAT = new Matrix4f();
     private float x;
     private float y;
     private float z;
@@ -73,5 +76,10 @@ public class BasicPositionComponent extends AbstractPositionComponent {
         if(getEntity().getShape() != null) {
             getEntity().getShape().setPosition(x + getEntity().getShapeOffsetX(), y + getEntity().getShapeOffsetY());
         }
+    }
+
+    @Override
+    public Matrix4f getMatrix() {
+        return MAT.identity().translate(x, y, z);
     }
 }

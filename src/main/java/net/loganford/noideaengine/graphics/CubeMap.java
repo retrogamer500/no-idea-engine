@@ -42,7 +42,7 @@ public class CubeMap implements UnsafeMemory {
         }
     }
 
-    public void render(Game game, GameState gameState, ScreenTransformation viewProjection, Renderer renderer) {
+    public void render(Game game, GameState gameState, AbstractViewProjection viewProjection, Renderer renderer) {
 
         GL33.glEnable(GL33.GL_DEPTH_TEST);
         GL33.glDepthMask(false);

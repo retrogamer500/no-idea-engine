@@ -2,6 +2,7 @@ package net.loganford.noideaengine.graphics;
 
 import net.loganford.noideaengine.resources.Resource;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
+import org.joml.Matrix4fc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,12 @@ public class Model extends Resource implements UnsafeMemory {
     public void freeMemory() {
         for(Mesh mesh: meshes) {
             mesh.freeMemory();
+        }
+    }
+
+    public void render(Renderer renderer, Matrix4fc matrix) {
+        for(Mesh mesh: meshes) {
+            mesh.render(renderer, matrix);
         }
     }
 

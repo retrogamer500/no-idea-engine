@@ -7,22 +7,22 @@ import net.loganford.noideaengine.Game;
 import org.joml.Matrix4fStack;
 
 /**
- * A ScreenTransformation represents a transformation used in order to transform points from the world to points
+ * A AbstractViewProjection represents a transformation used in order to transform points from the world to points
  * on the screen. This is the superclass for both the View and the Camera class.
  */
 @Log4j2
-public abstract class ScreenTransformation {
+public abstract class AbstractViewProjection {
     @Getter @Setter protected Matrix4fStack projectionMatrix = new Matrix4fStack(4);
     @Getter @Setter protected Matrix4fStack viewMatrix = new Matrix4fStack(4);
     @Getter @Setter protected Game game;
     @Getter @Setter protected GameState gameState;
 
     /**
-     * Creates a ScreenTransformation for a certain game and state
+     * Creates a AbstractViewProjection for a certain game and state
      * @param game the game
      * @param gameState the state
      */
-    public ScreenTransformation(Game game, GameState gameState) {
+    public AbstractViewProjection(Game game, GameState gameState) {
         this.game = game;
         this.gameState = gameState;
     }
