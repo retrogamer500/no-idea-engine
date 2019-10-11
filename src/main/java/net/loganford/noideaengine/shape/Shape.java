@@ -32,7 +32,7 @@ public abstract class Shape {
     }
 
     public abstract void getPosition(Vector3f position);
-    public abstract void setPosition(Vector3f position);
+    public abstract void setPosition(Vector3fc position);
 
     /**
      * Sets cuboid to be a bounding box around the shape.

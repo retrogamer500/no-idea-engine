@@ -3,6 +3,7 @@ package net.loganford.noideaengine.shape;
 import lombok.Getter;
 import lombok.Setter;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class Circle extends Shape {
     @Getter @Setter private float x;
@@ -17,9 +18,9 @@ public class Circle extends Shape {
     }
 
     @Override
-    public void setPosition(Vector3f position) {
-        this.x = position.x;
-        this.y = position.y;
+    public void setPosition(Vector3fc position) {
+        this.x = position.x();
+        this.y = position.y();
     }
 
     @Override

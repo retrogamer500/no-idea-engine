@@ -3,12 +3,14 @@ package net.loganford.noideaengine.shape;
 import lombok.Getter;
 import lombok.Setter;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class Cuboid extends Shape {
-    @Getter @Setter private Vector3f pos = new Vector3f();
+
+    private Vector3f pos = new Vector3f();
     @Getter @Setter private Vector3f size = new Vector3f();
 
-    public Cuboid(Vector3f position, Vector3f size) {
+    public Cuboid(Vector3fc position, Vector3fc size) {
         super();
         this.pos.set(position);
         this.size.set(size);
@@ -27,7 +29,7 @@ public class Cuboid extends Shape {
     }
 
     @Override
-    public void setPosition(Vector3f position) {
+    public void setPosition(Vector3fc position) {
         this.pos.set(position);
     }
 
