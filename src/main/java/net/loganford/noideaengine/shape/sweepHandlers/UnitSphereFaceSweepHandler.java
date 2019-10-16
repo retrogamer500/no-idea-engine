@@ -23,6 +23,10 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
 
     private static SweepResult SWEEP_RESULT = new SweepResult();
 
+    private static SweepHandler POINT_FACE = new PointFaceSweepHandler();
+    private static SweepHandler POINT_SPHERE = new PointUnitSphereSweepHandler();
+    private static SweepHandler POINT_CYLINDER = new PointCylinderSweepHandler();
+
     @Override
     public void sweep(SweepResult result, UnitSphere unitSphere, Vector3fc velocity, Face face) {
         result.clear();
@@ -63,6 +67,14 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
         cylinder2.setV1(face.getV0());
 
         Shape[] shapes = {extrudedFace1, extrudedFace2, point0, point1, point2, cylinder0, cylinder1, cylinder2};
+        SweepHandler[] handlers = {POINT_FACE, POINT_FACE, POINT_SPHERE, POINT_SPHERE, POINT_SPHERE, POINT_CYLINDER, POINT_CYLINDER};
+
+        for(int i = 0; i < shapes.length; i++) {
+            Shape shape = shapes[i];
+            SweepHandler handler = handlers[i];
+
+            handler.sweep(SWEEP_RESULT, unitSphere, velocity, shape);
+        }
 
         for(Shape shape: shapes) {
             shape.sweep(SWEEP_RESULT, velocity, shape);
