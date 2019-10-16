@@ -78,15 +78,11 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
             SweepHandler handler = handlers[i];
 
             handler.sweep(SWEEP_RESULT, POINT, velocity, shape);
-        }
-
-        for(Shape shape: shapes) {
-            shape.sweep(SWEEP_RESULT, velocity, shape);
 
             if(SWEEP_RESULT.getDistance() < result.getDistance()) {
                 result.set(SWEEP_RESULT);
-                result.getPosition().set(unitSphere.getPosition());
-                result.getVelocity().set(velocity);
+                //result.getPosition().set(unitSphere.getPosition());
+                //result.getVelocity().set(velocity);
             }
         }
     }
