@@ -1,9 +1,7 @@
 package net.loganford.noideaengine.shape;
 
 import net.loganford.noideaengine.shape.intersectionHandlers.*;
-import net.loganford.noideaengine.shape.sweepHandlers.PointRectSweepHandler;
-import net.loganford.noideaengine.shape.sweepHandlers.RectRectSweepHandler;
-import net.loganford.noideaengine.shape.sweepHandlers.SweepHandler;
+import net.loganford.noideaengine.shape.sweepHandlers.*;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -45,6 +43,8 @@ public class ShapeIntersectionEngine {
         //Set up initial sweep handlers
         addSweepHandler(Point.class, Rect.class, new PointRectSweepHandler());
         addSweepHandler(Rect.class, Rect.class, new RectRectSweepHandler());
+        addSweepHandler(Point.class, Face.class, new PointFaceSweepHandler());
+        addSweepHandler(Point.class, UnitSphere.class, new PointUnitSphereSweepHandler());
     }
 
     public int registerShape(Class<? extends Shape> clazz) {

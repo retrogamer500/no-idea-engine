@@ -11,6 +11,10 @@ public class UnitSphere extends Shape {
         this.pos.set(pos);
     }
 
+    public UnitSphere(float x, float y, float z) {
+        this.pos.set(x, y, z);
+    }
+
     @Override
     public void getPosition(Vector3f position) {
         position.set(pos);
