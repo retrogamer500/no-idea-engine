@@ -211,25 +211,51 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     private void handleEntityAddition(Entity entity) {
         if(entity.getShape() != null) {
-            performBucketAction(entity.getShape(), (bucket) -> {
-                bucket.add(entity.getShape());
-                return BucketActionResult.CONTINUE;
-            });
+            if(entity.getShape() instanceof AbstractCompoundShape) {
+                for(Shape shape : ((AbstractCompoundShape) entity.getShape()).getShapes()) {
+                    performBucketAction(shape, (bucket) -> {
+                        bucket.add(shape);
+                        return BucketActionResult.CONTINUE;
+                    });
+                }
+            }
+            else {
+                performBucketAction(entity.getShape(), (bucket) -> {
+                    bucket.add(entity.getShape());
+                    return BucketActionResult.CONTINUE;
+                });
+            }
         }
     }
 
     private void handleEntityRemoval(Entity entity) {
         if(entity.getShape() != null) {
-            performBucketAction(entity.getShape(), (bucket) -> {
-                for (int i = bucket.size() - 1; i >= 0; i--) {
-                    if (bucket.get(i).equals(entity)) {
-                        bucket.remove(i);
-                        break;
-                    }
-                }
+            if(entity.getShape() instanceof AbstractCompoundShape) {
+                for(Shape shape : ((AbstractCompoundShape) entity.getShape()).getShapes()) {
+                    performBucketAction(shape, (bucket) -> {
+                        for (int i = bucket.size() - 1; i >= 0; i--) {
+                            if (bucket.get(i).equals(shape)) {
+                                bucket.remove(i);
+                                break;
+                            }
+                        }
 
-                return BucketActionResult.CONTINUE;
-            });
+                        return BucketActionResult.CONTINUE;
+                    });
+                }
+            }
+            else {
+                performBucketAction(entity.getShape(), (bucket) -> {
+                    for (int i = bucket.size() - 1; i >= 0; i--) {
+                        if (bucket.get(i).equals(entity.getShape())) {
+                            bucket.remove(i);
+                            break;
+                        }
+                    }
+
+                    return BucketActionResult.CONTINUE;
+                });
+            }
         }
     }
 
