@@ -23,6 +23,7 @@ public class PointEllipsoidSweepHandler implements SweepHandler<Point, Ellipsoid
 
         if(result.getShape() != null) {
             result.setShape(ellipsoid);
+            result.getVelocity().mul(ellipsoid.getRadius());
             result.getNormal().mul(ellipsoid.getRadius()).normalize();
         }
     }
