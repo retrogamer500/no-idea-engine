@@ -40,5 +40,21 @@ public abstract class AbstractCompoundShape extends Shape {
         }
     }
 
+    @Override
+    public boolean collidesWith(Shape other) {
+        List<? extends Shape> shapes = getShapes();
+        for(int i = 0; i < shapes.size(); i++) {
+            if(shapes.get(i).collidesWith(other)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void sweep(SweepResult result, Vector3fc velocity, Shape b) {
+        //Todo: implement
+    }
+
     public abstract List<? extends Shape> getShapes();
 }
