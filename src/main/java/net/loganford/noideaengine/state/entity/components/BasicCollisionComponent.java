@@ -21,7 +21,13 @@ public class BasicCollisionComponent extends Component implements Listener<Entit
 
     public void setShape(Shape shape) {
         getEntity().getBeforeMotionSignal().dispatch(getEntity());
+        if(this.shape != null) {
+            shape.setOwningEntity(null);
+        }
         this.shape = shape;
+        if(this.shape != null) {
+            shape.setOwningEntity(getEntity());
+        }
         getEntity().getAfterMotionSignal().dispatch(getEntity());
     }
 

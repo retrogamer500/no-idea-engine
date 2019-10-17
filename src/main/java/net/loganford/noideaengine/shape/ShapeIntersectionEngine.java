@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.shape;
 
+import net.loganford.noideaengine.graphics.Face;
 import net.loganford.noideaengine.shape.intersectionHandlers.*;
 import net.loganford.noideaengine.shape.sweepHandlers.*;
 import org.joml.Vector3f;

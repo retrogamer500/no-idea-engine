@@ -1,12 +1,11 @@
 package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public class Point extends Shape {
-    @Getter @Setter private Vector3f position = new Vector3f();
+    @Getter private Vector3f position = new Vector3f();
 
     public Point(float x, float y) {
         this(x, y, 0);

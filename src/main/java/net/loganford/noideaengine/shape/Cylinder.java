@@ -10,8 +10,8 @@ public class Cylinder extends Shape {
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_1 = new Vector3f();
 
-    @Setter @Getter private Vector3f v0;
-    @Setter @Getter private Vector3f v1;
+    @Setter @Getter private Vector3f v0 = new Vector3f();
+    @Setter @Getter private Vector3f v1 = new Vector3f();
 
     public Cylinder(Vector3f v0, Vector3f v1) {
         this.v0.set(v0);

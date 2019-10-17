@@ -17,10 +17,14 @@ public class Face extends Shape {
 	@Getter @Setter private Vector2f[] uvs = new Vector2f[3];
 	@Getter @Setter private Vector3f[] colors = new Vector3f[3];
 
+	public Face() {
+
+    }
+
 	public Face(Vector3f v0, Vector3f v1, Vector3f v2) {
-	    positions[0].set(v0);
-	    positions[1].set(v1);
-	    positions[2].set(v2);
+	    positions[0] = new Vector3f(v0);
+	    positions[1] = new Vector3f(v1);
+	    positions[2] = new Vector3f(v2);
     }
 
 	@Override

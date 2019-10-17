@@ -5,7 +5,7 @@ import org.joml.Vector3fc;
 
 public class UnitSphere extends Shape {
 
-    private Vector3f pos;
+    private Vector3f pos = new Vector3f();
 
     public UnitSphere(Vector3fc pos) {
         this.pos.set(pos);

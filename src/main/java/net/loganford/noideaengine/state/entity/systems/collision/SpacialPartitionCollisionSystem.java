@@ -26,7 +26,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     private int cellSize;
     private int bucketCount;
-    private List<List<Entity>> buckets;
+    private List<List<Shape>> buckets;
 
     public SpacialPartitionCollisionSystem() {
         this(32, 1024);
@@ -64,7 +64,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(shape, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i);
+                Entity entity = bucket.get(i).getOwningEntity();
                 if (entity.getShape() != shape &&
                         clazz.isAssignableFrom(entity.getClass()) &&
                         entity.getShape().collidesWith(shape)) {
@@ -86,7 +86,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(shape, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i);
+                Entity entity = bucket.get(i).getOwningEntity();
                 if (entity.getShape() != shape &&
                         clazz.isAssignableFrom(entity.getClass()) &&
                         entity.getShape().collidesWith(shape)) {
@@ -117,7 +117,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(shape, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i);
+                Entity entity = bucket.get(i).getOwningEntity();
                 if (entity.getShape() != shape &&
                         clazz.isAssignableFrom(entity.getClass()) &&
                         entity.getShape().collidesWith(shape)) {
@@ -144,7 +144,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(sweepMask, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i);
+                Entity entity = bucket.get(i).getOwningEntity();
                 if (entity.getShape() != shape &&
                         clazz.isAssignableFrom(entity.getClass())) {
 
@@ -212,7 +212,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private void handleEntityAddition(Entity entity) {
         if(entity.getShape() != null) {
             performBucketAction(entity.getShape(), (bucket) -> {
-                bucket.add(entity);
+                bucket.add(entity.getShape());
                 return BucketActionResult.CONTINUE;
             });
         }
@@ -265,7 +265,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
             for (int ty = y1; ty <= y2; ty++) {
                 for (int tz = z1; tz <= z2; tz++) {
                     int bucketNum = hash3d(tx, ty, tz);
-                    List<Entity> bucket = buckets.get(bucketNum);
+                    List<Shape> bucket = buckets.get(bucketNum);
                     BucketActionResult result = bucketAction.perform(bucket);
                     if (result == BucketActionResult.EXIT_EARLY) {
                         return;
@@ -311,7 +311,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         while(true) {
             int bucketNum = hash3d(i, j, k);
-            List<Entity> bucket = buckets.get(bucketNum);
+            List<Shape> bucket = buckets.get(bucketNum);
             BucketActionResult result = bucketAction.perform(bucket);
             if(result == BucketActionResult.EXIT_EARLY) {
                 break;
@@ -362,6 +362,6 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
          * @param bucket the current bucket to perform the action with
          * @return - BucketActionResult.EXIT_EARLY to stop, or BucketActionResult.CONTINUE to keep performing bucket actions
          */
-        BucketActionResult perform(List<Entity> bucket);
+        BucketActionResult perform(List<Shape> bucket);
     }
 }

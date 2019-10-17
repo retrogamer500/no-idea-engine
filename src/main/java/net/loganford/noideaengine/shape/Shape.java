@@ -1,6 +1,8 @@
 package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
+import lombok.Setter;
+import net.loganford.noideaengine.state.entity.Entity;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -8,6 +10,7 @@ public abstract class Shape {
     private static SweepResult SWEEP_RESULT = new SweepResult();
     private static Vector3f V3F = new Vector3f();
     private static Cuboid CUBE = new Cuboid(0, 0, 0, 1, 1, 1);
+    @Getter @Setter private Entity owningEntity;
 
     @Getter private int registration;
     private ShapeIntersectionEngine shapeIntersectionEngine;
