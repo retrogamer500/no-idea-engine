@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.shape.sweepHandlers;
 
+import net.loganford.noideaengine.graphics.Face;
 import net.loganford.noideaengine.shape.*;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -81,7 +82,7 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
 
             if(SWEEP_RESULT.getDistance() < result.getDistance()) {
                 result.set(SWEEP_RESULT);
-                //result.getPosition().set(unitSphere.getPosition());
+                //result.getPositions().set(unitSphere.getPositions());
                 //result.getVelocity().set(velocity);
             }
         }

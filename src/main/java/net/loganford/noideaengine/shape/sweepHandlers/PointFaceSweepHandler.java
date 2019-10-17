@@ -1,6 +1,6 @@
 package net.loganford.noideaengine.shape.sweepHandlers;
 
-import net.loganford.noideaengine.shape.Face;
+import net.loganford.noideaengine.graphics.Face;
 import net.loganford.noideaengine.shape.Point;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.utils.math.MathUtils;

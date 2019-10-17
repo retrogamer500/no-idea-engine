@@ -169,21 +169,21 @@ public class ModelLoader extends ResourceLoader {
                 facePoints[0] = points.get(aiFace.mIndices().get(0));
                 facePoints[1] = points.get(aiFace.mIndices().get(1));
                 facePoints[2] = points.get(aiFace.mIndices().get(2));
-                face.setPosition(facePoints);
+                face.setPositions(facePoints);
 
                 //Normal
                 Vector3f[] faceNormals = new Vector3f[3];
                 faceNormals[0] = normals.get(aiFace.mIndices().get(0));
                 faceNormals[1] = normals.get(aiFace.mIndices().get(1));
                 faceNormals[2] = normals.get(aiFace.mIndices().get(2));
-                face.setNormal(faceNormals);
+                face.setNormals(faceNormals);
 
                 //UV Coords
                 Vector2f[] faceUvs = new Vector2f[3];
                 faceUvs[0] = uvCoords.get(aiFace.mIndices().get(0));
                 faceUvs[1] = uvCoords.get(aiFace.mIndices().get(1));
                 faceUvs[2] = uvCoords.get(aiFace.mIndices().get(2));
-                face.setUv(faceUvs);
+                face.setUvs(faceUvs);
 
                 //Todo: colors, other attributes
 
@@ -212,22 +212,22 @@ public class ModelLoader extends ResourceLoader {
             Face face = new Face();
 
             for (int j = 0; j < 3; j++) {
-                face.getPosition()[j] = new Vector3f(vertices[9 * i + 3 * j], vertices[9 * i + 3 * j + 1],
+                face.getPositions()[j] = new Vector3f(vertices[9 * i + 3 * j], vertices[9 * i + 3 * j + 1],
                         vertices[9 * i + 3 * j + 2]);
-                face.getNormal()[j] = new Vector3f(normals[9 * i + 3 * j], normals[9 * i + 3 * j + 1],
+                face.getNormals()[j] = new Vector3f(normals[9 * i + 3 * j], normals[9 * i + 3 * j + 1],
                         normals[9 * i + 3 * j + 2]);
-                face.getUv()[j] = new Vector2f(uv[6 * i + 2 * j], uv[6 * i + 2 * j + 1]);
+                face.getUvs()[j] = new Vector2f(uv[6 * i + 2 * j], uv[6 * i + 2 * j + 1]);
             }
 
-            mesh.getPoints().add(face.getPosition()[0]);
-            mesh.getPoints().add(face.getPosition()[1]);
-            mesh.getPoints().add(face.getPosition()[2]);
-            mesh.getNormals().add(face.getNormal()[0]);
-            mesh.getNormals().add(face.getNormal()[1]);
-            mesh.getNormals().add(face.getNormal()[2]);
-            mesh.getUvCoordinates().add(face.getUv()[0]);
-            mesh.getUvCoordinates().add(face.getUv()[1]);
-            mesh.getUvCoordinates().add(face.getUv()[2]);
+            mesh.getPoints().add(face.getPositions()[0]);
+            mesh.getPoints().add(face.getPositions()[1]);
+            mesh.getPoints().add(face.getPositions()[2]);
+            mesh.getNormals().add(face.getNormals()[0]);
+            mesh.getNormals().add(face.getNormals()[1]);
+            mesh.getNormals().add(face.getNormals()[2]);
+            mesh.getUvCoordinates().add(face.getUvs()[0]);
+            mesh.getUvCoordinates().add(face.getUvs()[1]);
+            mesh.getUvCoordinates().add(face.getUvs()[2]);
 
             mesh.getFaces().add(face);
         }

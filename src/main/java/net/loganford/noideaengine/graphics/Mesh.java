@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
+import net.loganford.noideaengine.shape.AbstractCompoundShape;
+import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.AbstractViewProjection;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
@@ -16,7 +18,7 @@ import org.lwjgl.opengl.GL33;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mesh implements UnsafeMemory {
+public class Mesh extends AbstractCompoundShape implements UnsafeMemory {
 
 	@Getter private int vertexCount = -1;
 	@Getter private VertexArrayObject vao;
@@ -49,7 +51,7 @@ public class Mesh implements UnsafeMemory {
 		VertexArrayObject.VertexBufferObject colorVbo = vao.addVertexBufferObject(4, vertexCount);
 
 		for (Face face : getFaces()) {
-			for (Vector3f vector : face.getPosition()) {
+			for (Vector3f vector : face.getPositions()) {
 				positionVbo.put(vector);
 
 				//Populate color
@@ -58,10 +60,10 @@ public class Mesh implements UnsafeMemory {
 				colorVbo.put(1f);
 				colorVbo.put(1f);
 			}
-			for (Vector3f vector : face.getNormal()) {
+			for (Vector3f vector : face.getNormals()) {
 				normalVbo.put(vector);
 			}
-			for (Vector2f vector : face.getUv()) {
+			for (Vector2f vector : face.getUvs()) {
 				uvVbo.put(vector);
 			}
 		}
@@ -128,4 +130,27 @@ public class Mesh implements UnsafeMemory {
 		vao.freeMemory();
 		UnsafeMemoryTracker.untrack(this);
 	}
+
+    @Override
+    public List<? extends Shape> getShapes() {
+        return faces;
+    }
+
+    public Shape getShape() {
+        return new MeshShape(this);
+    }
+
+    private static class MeshShape extends AbstractCompoundShape {
+        private Mesh mesh;
+
+        public MeshShape(Mesh mesh) {
+            this.mesh = mesh;
+        }
+
+
+        @Override
+        public List<? extends Shape> getShapes() {
+            return mesh.faces;
+        }
+    }
 }

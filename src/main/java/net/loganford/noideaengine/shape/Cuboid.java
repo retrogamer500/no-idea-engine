@@ -90,4 +90,24 @@ public class Cuboid extends Shape {
     public void setDepth(float depth) {
         size.z = depth;
     }
+
+    public void set(Cuboid other) {
+        setX(other.getX());
+        setY(other.getY());
+        setZ(other.getZ());
+
+        setWidth(other.getWidth());
+        setHeight(other.getHeight());
+        setDepth(other.getDepth());
+    }
+
+    public void expand(Cuboid other) {
+        setX(Math.min(getX(), other.getX()));
+        setY(Math.min(getY(), other.getY()));
+        setZ(Math.min(getZ(), other.getZ()));
+
+        setWidth(Math.max(getX() + getWidth(), other.getX() + other.getWidth()) - getX());
+        setHeight(Math.max(getY() + getHeight(), other.getY() + other.getHeight()) - getY());
+        setDepth(Math.max(getZ() + getDepth(), other.getZ() + other.getDepth()) - getZ());
+    }
 }

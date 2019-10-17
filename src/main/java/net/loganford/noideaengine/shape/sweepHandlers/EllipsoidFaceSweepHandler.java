@@ -1,6 +1,9 @@
 package net.loganford.noideaengine.shape.sweepHandlers;
 
-import net.loganford.noideaengine.shape.*;
+import net.loganford.noideaengine.graphics.Face;
+import net.loganford.noideaengine.shape.Ellipsoid;
+import net.loganford.noideaengine.shape.SweepResult;
+import net.loganford.noideaengine.shape.UnitSphere;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 

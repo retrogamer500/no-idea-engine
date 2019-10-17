@@ -1,6 +1,9 @@
 package net.loganford.noideaengine.graphics;
 
+import lombok.Getter;
 import net.loganford.noideaengine.resources.Resource;
+import net.loganford.noideaengine.shape.AbstractCompoundShape;
+import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Matrix4fc;
 
@@ -9,16 +12,12 @@ import java.util.List;
 
 public class Model extends Resource implements UnsafeMemory {
 
-    private List<Mesh> meshes = new ArrayList<>();
+    @Getter private List<Mesh> meshes = new ArrayList<>();
 
     public void init() {
         for(Mesh mesh: meshes) {
             mesh.init(false);
         }
-    }
-
-    public List<Mesh> getMeshes() {
-        return meshes;
     }
 
     @Override
@@ -52,5 +51,29 @@ public class Model extends Resource implements UnsafeMemory {
             count+= mesh.getVertexCount();
         }
         return count;
+    }
+
+    public Shape getShape() {
+        return new ModelShape(this);
+    }
+
+    private static class ModelShape extends AbstractCompoundShape {
+        private Model model;
+
+        public ModelShape(Model model) {
+            this.model = model;
+        }
+
+
+        @Override
+        public List<? extends Shape> getShapes() {
+            List<Face> shapeList = new ArrayList<>();
+
+            for(Mesh mesh : model.getMeshes()) {
+                shapeList.addAll(mesh.getFaces());
+            }
+
+            return shapeList;
+        }
     }
 }
