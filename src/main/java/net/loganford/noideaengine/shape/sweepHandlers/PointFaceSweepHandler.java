@@ -22,7 +22,7 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
         Vector3f edge1 = V3F.set(face.getV1()).sub(face.getV0());
         Vector3f edge2 = V3F_1.set(face.getV2()).sub(face.getV0());
 
-        Vector3f h = V3F_2.set(velocity).cross(face.getV0());
+        Vector3f h = V3F_2.set(velocity).cross(edge2);
         float det = edge1.dot(h);
 
         if(det > -MathUtils.EPSILON && det < MathUtils.EPSILON) {
