@@ -3,32 +3,36 @@ package net.loganford.noideaengine.shape;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-import java.util.List;
+import java.util.Iterator;
 
-public abstract class AbstractCompoundShape extends Shape {
+public abstract class AbstractCompoundShape extends Shape implements Iterable<Shape> {
 
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_1 = new Vector3f();
 
     @Override
     public void getPosition(Vector3f position) {
-        getShapes().get(0).getPosition(position);
+        iterator().next().getPosition(position);
     }
 
     @Override
     public void setPosition(Vector3fc position) {
-        List<? extends Shape> shapes = getShapes();
-        Vector3f difference = V3F.set(shapes.get(0).getPosition()).sub(position);
-        for(int i = 0; i < shapes.size(); i++) {
-            Shape shape = shapes.get(i);
+        Vector3f difference = null;
+        int i = 0;
+        for(Shape shape : this) {
+            if(i == 0) {
+                difference = V3F.set(shape.getPosition()).sub(position);
+            }
+
             shape.setPosition(V3F_1.set(shape.getPosition()).add(difference));
+            i++;
         }
     }
 
     @Override
     public void getBoundingBox(Cuboid cube) {
         int i = 0;
-        for(Shape shape : getShapes()) {
+        for(Shape shape : this) {
             if(i == 0) {
                 cube.set(shape.getBoundingBox());
             }
@@ -42,9 +46,8 @@ public abstract class AbstractCompoundShape extends Shape {
 
     @Override
     public boolean collidesWith(Shape other) {
-        List<? extends Shape> shapes = getShapes();
-        for(int i = 0; i < shapes.size(); i++) {
-            if(shapes.get(i).collidesWith(other)) {
+        for(Shape shape : this) {
+            if(shape.collidesWith(other)) {
                 return true;
             }
         }
@@ -56,5 +59,6 @@ public abstract class AbstractCompoundShape extends Shape {
         //Todo: implement
     }
 
-    public abstract List<? extends Shape> getShapes();
+    @Override
+    public abstract Iterator<Shape> iterator();
 }

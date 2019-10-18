@@ -16,9 +16,10 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL33;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class Mesh extends AbstractCompoundShape implements UnsafeMemory {
+public class Mesh implements UnsafeMemory {
 
 	@Getter private int vertexCount = -1;
 	@Getter private VertexArrayObject vao;
@@ -131,16 +132,11 @@ public class Mesh extends AbstractCompoundShape implements UnsafeMemory {
 		UnsafeMemoryTracker.untrack(this);
 	}
 
-    @Override
-    public List<? extends Shape> getShapes() {
-        return faces;
-    }
-
-    public Shape getShape() {
+    public MeshShape getShape() {
         return new MeshShape(this);
     }
 
-    private static class MeshShape extends AbstractCompoundShape {
+	public static class MeshShape extends AbstractCompoundShape {
         private Mesh mesh;
 
         public MeshShape(Mesh mesh) {
@@ -148,9 +144,10 @@ public class Mesh extends AbstractCompoundShape implements UnsafeMemory {
         }
 
 
-        @Override
-        public List<? extends Shape> getShapes() {
-            return mesh.faces;
-        }
-    }
+		@SuppressWarnings("unchecked")
+		@Override
+		public Iterator<Shape> iterator() {
+			return (Iterator) mesh.faces.iterator();
+		}
+	}
 }

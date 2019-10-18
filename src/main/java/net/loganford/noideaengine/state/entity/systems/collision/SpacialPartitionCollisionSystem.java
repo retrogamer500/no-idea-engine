@@ -212,7 +212,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private void handleEntityAddition(Entity entity) {
         if(entity.getShape() != null) {
             if(entity.getShape() instanceof AbstractCompoundShape) {
-                for(Shape shape : ((AbstractCompoundShape) entity.getShape()).getShapes()) {
+                for(Shape shape : ((AbstractCompoundShape) entity.getShape())) {
                     performBucketAction(shape, (bucket) -> {
                         bucket.add(shape);
                         return BucketActionResult.CONTINUE;
@@ -231,7 +231,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private void handleEntityRemoval(Entity entity) {
         if(entity.getShape() != null) {
             if(entity.getShape() instanceof AbstractCompoundShape) {
-                for(Shape shape : ((AbstractCompoundShape) entity.getShape()).getShapes()) {
+                for(Shape shape : ((AbstractCompoundShape) entity.getShape())) {
                     performBucketAction(shape, (bucket) -> {
                         for (int i = bucket.size() - 1; i >= 0; i--) {
                             if (bucket.get(i).equals(shape)) {

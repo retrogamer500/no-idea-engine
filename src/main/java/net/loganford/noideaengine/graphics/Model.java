@@ -8,7 +8,9 @@ import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Matrix4fc;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Model extends Resource implements UnsafeMemory {
 
@@ -53,27 +55,40 @@ public class Model extends Resource implements UnsafeMemory {
         return count;
     }
 
-    public Shape getShape() {
+    public ModelShape getShape() {
         return new ModelShape(this);
     }
 
-    private static class ModelShape extends AbstractCompoundShape {
+    public static class ModelShape extends AbstractCompoundShape {
         private Model model;
 
         public ModelShape(Model model) {
             this.model = model;
         }
 
-
         @Override
-        public List<? extends Shape> getShapes() {
-            List<Face> shapeList = new ArrayList<>();
+        public Iterator<Shape> iterator() {
+            return new Iterator<Shape>() {
+                List<Iterator<Shape>> iteratorList = model.meshes.stream().map((mesh) -> mesh.getShape().iterator()).collect(Collectors.toList());
 
-            for(Mesh mesh : model.getMeshes()) {
-                shapeList.addAll(mesh.getFaces());
-            }
+                @Override
+                public boolean hasNext() {
+                    while(iteratorList.size() > 0 && !iteratorList.get(0).hasNext()) {
+                        iteratorList.remove(0);
+                    }
 
-            return shapeList;
+                    return iteratorList.size() > 0;
+                }
+
+                @Override
+                public Shape next() {
+                    while(iteratorList.size() > 0 && !iteratorList.get(0).hasNext()) {
+                        iteratorList.remove(0);
+                    }
+
+                    return iteratorList.get(0).next();
+                }
+            };
         }
     }
 }
