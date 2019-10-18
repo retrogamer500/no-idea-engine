@@ -435,40 +435,40 @@ public class Entity<G extends Game, S extends Scene<G>> {
             return;
         }
 
-        Vector3f nextPosition = V3F.set(velocity).mul(delta/1000f);
-        float speedPerFrame = nextPosition.length();
+        Vector3f nextVelocity = V3F.set(velocity).mul(delta/1000f);
+        float speedPerFrame = nextVelocity.length();
 
         SweepResult result;
         for(int i = 0; i < 8; i++) {
-            result = sweep(nextPosition, wall);
+            result = sweep(nextVelocity, wall);
             move(result);
-            result.remainder(nextPosition);
+            result.remainder(nextVelocity);
 
             if(behavior == MovementBehavior.SLIDE) {
-                result.slide(nextPosition);
+                result.slide(nextVelocity);
             }
             else if(behavior == MovementBehavior.BOUNCE) {
-                result.reflect(nextPosition);
+                result.reflect(nextVelocity);
             }
             else if(behavior == MovementBehavior.STOP) {
-                nextPosition.set(0, 0, 0);
+                nextVelocity.set(0, 0, 0);
             }
 
-            float frameRemainder = nextPosition.length();
+            float frameRemainder = nextVelocity.length();
 
             if(result.collides()) {
-                if(nextPosition.lengthSquared() == 0) {
+                if(nextVelocity.lengthSquared() == 0) {
                     //Collision is at 90 degree angle, so do stop moving
                     velocity.set(0, 0, 0);
                 }
                 else {
                     //Collision is at an angle, so deflect velocity
                     float speedRemainder = speedPerSecond * (frameRemainder / speedPerFrame);
-                    velocity.set(nextPosition).normalize().mul(speedRemainder);
+                    velocity.set(nextVelocity).normalize().mul(speedRemainder);
                 }
             }
 
-            if(nextPosition.lengthSquared() == 0) {
+            if(nextVelocity.lengthSquared() == 0) {
                 break;
             }
         }
