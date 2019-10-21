@@ -34,7 +34,11 @@ public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphe
             return;
         }
 
+        Vector3f intersectionPoint = V3F_1.set(velocity).mul(t).add(point.getPosition());
+        Vector3f normal = intersectionPoint.sub(unitSphere.getPosition());
+
         result.setDistance(t);
+        result.getNormal().set(normal);
         result.setShape(unitSphere);
     }
 }

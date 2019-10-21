@@ -52,6 +52,7 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
 
         //Intersection takes place
         result.setDistance(t);
+        result.getNormal().set(edge2.cross(edge1).normalize());
         result.setShape(face);
     }
 }

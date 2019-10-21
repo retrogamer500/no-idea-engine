@@ -19,6 +19,9 @@ public class EllipsoidFaceSweepHandler implements SweepHandler<Ellipsoid, Face> 
     public void sweep(SweepResult result, Ellipsoid ellipsoid, Vector3fc velocity, Face face) {
         V3F.set(velocity).div(ellipsoid.getRadius());
         UNIT_SPHERE.setPosition(ellipsoid.getPosition());
+        FACE.setV0(face.getV0());
+        FACE.setV1(face.getV1());
+        FACE.setV2(face.getV2());
         FACE.getV0().div(ellipsoid.getRadius());
         FACE.getV1().div(ellipsoid.getRadius());
         FACE.getV2().div(ellipsoid.getRadius());
