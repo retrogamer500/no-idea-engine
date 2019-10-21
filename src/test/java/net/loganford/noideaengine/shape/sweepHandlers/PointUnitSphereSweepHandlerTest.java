@@ -53,7 +53,7 @@ public class PointUnitSphereSweepHandlerTest {
     @Test
     public void testSweep4() throws Exception {
         SweepHandler<Ellipsoid, Face> sweepHandler = new EllipsoidFaceSweepHandler();
-        Ellipsoid ellipsoid = new Ellipsoid(new Vector3f(-.5f, 5, -2f), new Vector3f(1, 1, 1));
+        Ellipsoid ellipsoid = new Ellipsoid(new Vector3f(-.5f, 5, -3f), new Vector3f(2, 2, 2));
         Face face = new Face(new Vector3f(0, 0, 0), new Vector3f(0, 10, 0), new Vector3f(10, 0, 0));
         Vector3f velocity = new Vector3f(0, 0, 3f);
         SweepResult result = new SweepResult();
