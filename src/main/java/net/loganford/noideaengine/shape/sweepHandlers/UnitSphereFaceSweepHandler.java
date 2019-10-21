@@ -12,7 +12,6 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
     private static Vector3f V3F_3 = new Vector3f();
 
     private static Face FACE = new Face(new Vector3f(), new Vector3f(), new Vector3f());
-    private static Face FACE_2 = new Face(new Vector3f(), new Vector3f(), new Vector3f());
 
     private static UnitSphere UNIT_SPHERE_1 = new UnitSphere(new Vector3f());
     private static UnitSphere UNIT_SPHERE_2 = new UnitSphere(new Vector3f());
@@ -40,17 +39,21 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
         Vector3f edge1 = V3F_1.set(face.getV2()).sub(face.getV0());
         Vector3f normal = V3F_2.set(edge1).cross(edge0).normalize();
 
-        //Front side
-        Face extrudedFace1 = FACE;
-        extrudedFace1.setV0(V3F_3.set(face.getV0()).add(normal));
-        extrudedFace1.setV1(V3F_3.set(face.getV1()).add(normal));
-        extrudedFace1.setV2(V3F_3.set(face.getV2()).add(normal));
+        float side = velocity.dot(normal);
 
-        //Back side, change winding order
-        Face extrudedFace2 = FACE_2;
-        extrudedFace2.setV0(V3F_3.set(face.getV0()).sub(normal));
-        extrudedFace2.setV1(V3F_3.set(face.getV2()).sub(normal));
-        extrudedFace2.setV2(V3F_3.set(face.getV1()).sub(normal));
+        Face extrudedFace = FACE;
+        if(side < 0) {
+            //Front side
+            extrudedFace.setV0(V3F_3.set(face.getV0()).add(normal));
+            extrudedFace.setV1(V3F_3.set(face.getV1()).add(normal));
+            extrudedFace.setV2(V3F_3.set(face.getV2()).add(normal));
+        }
+        else {
+            //Back side
+            extrudedFace.setV0(V3F_3.set(face.getV0()).sub(normal));
+            extrudedFace.setV1(V3F_3.set(face.getV2()).sub(normal));
+            extrudedFace.setV2(V3F_3.set(face.getV1()).sub(normal));
+        }
 
         UnitSphere sphere0 = UNIT_SPHERE_1;
         sphere0.setPosition(face.getV0());
@@ -73,11 +76,11 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
         cylinder2.setV0(face.getV2());
         cylinder2.setV1(face.getV0());
 
-        Shape[] shapes = {extrudedFace1, extrudedFace2, sphere0, sphere1, sphere2, cylinder0, cylinder1, cylinder2};
-        SweepHandler[] handlers = {POINT_FACE, POINT_FACE, POINT_SPHERE, POINT_SPHERE, POINT_SPHERE, POINT_CYLINDER, POINT_CYLINDER, POINT_CYLINDER};
+        Shape[] shapes = {extrudedFace, sphere0, sphere1, sphere2, cylinder0, cylinder1, cylinder2};
+        SweepHandler[] handlers = {POINT_FACE, POINT_SPHERE, POINT_SPHERE, POINT_SPHERE, POINT_CYLINDER, POINT_CYLINDER, POINT_CYLINDER};
 
         for(int i = 0; i < shapes.length; i++) {
-            if(i == 2) {
+            if(i == 1) {
                 if(result.collides()) {
                     return;
                 }
