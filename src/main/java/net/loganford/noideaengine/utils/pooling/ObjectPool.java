@@ -1,15 +1,18 @@
 package net.loganford.noideaengine.utils.pooling;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.loganford.noideaengine.GameEngineException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectPool<O extends Poolable> {
+    @Getter @Setter private int maxSize = 1024;
     private List<O> objects = new ArrayList<>();
     private Class<O> clazz;
 
-    protected ObjectPool(Class<O> clazz) {
+    public ObjectPool(Class<O> clazz) {
         this.clazz = clazz;
     }
 
@@ -28,7 +31,9 @@ public class ObjectPool<O extends Poolable> {
     }
 
     public void put(O object) {
-        object.reset();
-        objects.add(object);
+        if(objects.size() < maxSize || maxSize == -1) {
+            object.reset();
+            objects.add(object);
+        }
     }
 }
