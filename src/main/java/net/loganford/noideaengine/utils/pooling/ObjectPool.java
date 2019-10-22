@@ -9,7 +9,7 @@ public class ObjectPool<O extends Poolable> {
     private List<O> objects = new ArrayList<>();
     private Class<O> clazz;
 
-    public ObjectPool(Class<O> clazz) {
+    protected ObjectPool(Class<O> clazz) {
         this.clazz = clazz;
     }
 
