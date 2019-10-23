@@ -402,7 +402,6 @@ public class Scene<G extends Game> extends GameState<G> {
      * Loads and creates all the systems in the scene based off of the annotations.
      */
     private void loadSystems() {
-        Class clazz = getClass();
         List<Pair<Class<? extends EntitySystem>, String[]>> systemClazzList = getSystemsForClass(getClass());
 
         for(Pair<Class<? extends EntitySystem>, String[]> systemAnnotation : systemClazzList) {
