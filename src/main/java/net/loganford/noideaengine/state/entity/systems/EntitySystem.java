@@ -35,6 +35,10 @@ public abstract class EntitySystem implements Listener<Entity> {
         }
     }
 
+    public void initSystem(Game game, Scene scene) {
+
+    }
+
     public void addEntity(Entity entity) {
         entity.getComponentRemovedSignal().subscribe(this);
         entity.getDestructionSignal().subscribe(this);

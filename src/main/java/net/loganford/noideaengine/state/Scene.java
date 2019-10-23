@@ -9,12 +9,11 @@ import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.entity.*;
-import net.loganford.noideaengine.state.entity.systems.EntitySystem;
-import net.loganford.noideaengine.state.entity.systems.InheritSystems;
-import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
-import net.loganford.noideaengine.state.entity.systems.UnregisterSystem;
+import net.loganford.noideaengine.state.entity.systems.*;
 import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
+import net.loganford.noideaengine.state.signals.EntityAddedIndexSignal;
+import net.loganford.noideaengine.state.signals.EntityAddedSignal;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Vector3fc;
@@ -27,6 +26,7 @@ import java.util.List;
 
 @Log4j2
 @RegisterSystem(SpacialPartitionCollisionSystem.class)
+@RegisterSystem(StepRenderSystem.class)
 public class Scene<G extends Game> extends GameState<G> {
     private G game;
     private int currentEntity = 0;
@@ -38,6 +38,9 @@ public class Scene<G extends Game> extends GameState<G> {
     @Getter private EntitySystemEngine entitySystemEngine;
     //Cache of collision system. Move to Entity in the future?
     @Getter(onMethod = @__({@Scriptable})) CollisionSystem collisionSystem;
+
+    @Getter private EntityAddedSignal entityAddedSignal = new EntityAddedSignal();
+    @Getter private EntityAddedIndexSignal entityAddedIndexSignal = new EntityAddedIndexSignal();
 
     /**
      * Adds an entity to this scene.
@@ -53,6 +56,10 @@ public class Scene<G extends Game> extends GameState<G> {
             entity.setDepthChanged(false);
 
             int index = entities.add(entity);
+
+            entityAddedSignal.dispatch(entity);
+            entityAddedIndexSignal.dispatch(index);
+
             if(index <= currentEntity) {
                 currentEntity++;
             }
@@ -167,28 +174,8 @@ public class Scene<G extends Game> extends GameState<G> {
         //Resort entities which have had their depth changed
         entities.resort();
 
-        //Step entities
-        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            Entity entity = entities.get(currentEntity);
-            if(!entity.isDestroyed()) {
-                entity.beforeStep(game, this, delta);
-            }
-        }
-
+        //Step systems
         entitySystemEngine.step(delta);
-
-        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            Entity entity = entities.get(currentEntity);
-            if(!entity.isDestroyed()) {
-                entity.step(game, this, delta);
-            }
-        }
-        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            Entity entity = entities.get(currentEntity);
-            if(!entity.isDestroyed()) {
-                entity.afterStep(game, this, delta);
-            }
-        }
 
         //Delete destroyed entities
         entities.removeDestroyed();
@@ -203,9 +190,6 @@ public class Scene<G extends Game> extends GameState<G> {
     @Override
     public void render(Game game, Renderer renderer) {
         entitySystemEngine.render(renderer);
-        for(Entity entity : entities) {
-            entity.render(game, this, renderer);
-        }
     }
 
     /**
