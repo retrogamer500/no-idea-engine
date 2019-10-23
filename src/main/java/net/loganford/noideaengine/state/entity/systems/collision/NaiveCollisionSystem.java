@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.state.entity.systems.collision;
 
+import net.loganford.noideaengine.shape.AbstractCompoundShape;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.entity.Entity;
@@ -32,7 +33,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
     @Override
     public boolean collidesWith(Shape shape, Class<? extends Entity> clazz) {
         for(Entity entity : entities) {
-            if(clazz.isAssignableFrom(entity.getClass())) {
+            if(clazz.isAssignableFrom(entity.getClass()) && entity.getShape() != null) {
                 if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
                     return true;
                 }
@@ -45,10 +46,20 @@ public class NaiveCollisionSystem extends CollisionSystem {
     @Override
     public <C extends Entity> C getCollision(Shape shape, Class<C> clazz) {
         for(Entity entity : entities) {
-            if(clazz.isAssignableFrom(entity.getClass())) {
-                if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
-                    return (C)entity;
+            if(clazz.isAssignableFrom(entity.getClass()) && entity.getShape() != null) {
+                if(entity.getShape() instanceof AbstractCompoundShape) {
+                    for (Shape otherShape : (AbstractCompoundShape) entity.getShape()) {
+                        if (entity.getShape() != otherShape && entity.getShape().collidesWith(otherShape)) {
+                            return (C)entity;
+                        }
+                    }
                 }
+                else {
+                    if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
+                        return (C)entity;
+                    }
+                }
+
             }
         }
         return null;
@@ -66,10 +77,20 @@ public class NaiveCollisionSystem extends CollisionSystem {
     @Override
     public <C extends Entity> void getCollisions(List<C> list, Shape shape, Class<C> clazz) {
         for(Entity entity : entities) {
-            if(clazz.isAssignableFrom(entity.getClass())) {
-                if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
-                    list.add((C)entity);
+            if(clazz.isAssignableFrom(entity.getClass()) && entity.getShape() != null) {
+                if(entity.getShape() instanceof AbstractCompoundShape) {
+                    for (Shape otherShape : (AbstractCompoundShape) entity.getShape()) {
+                        if (entity.getShape() != otherShape && entity.getShape().collidesWith(otherShape)) {
+                            list.add((C)entity);
+                        }
+                    }
                 }
+                else {
+                    if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
+                        list.add((C)entity);
+                    }
+                }
+
             }
         }
     }
@@ -82,12 +103,24 @@ public class NaiveCollisionSystem extends CollisionSystem {
         result.getVelocity().set(velocity);
 
         for(Entity entity : entities) {
-            if (clazz.isAssignableFrom(entity.getClass())) {
-                SweepResult otherResult = shape.sweep(velocity, entity.getShape());
-                otherResult.setEntity(entity);
+            if (clazz.isAssignableFrom(entity.getClass()) && entity.getShape() != null) {
+                if(entity.getShape() instanceof AbstractCompoundShape) {
+                    for (Shape otherShape : (AbstractCompoundShape) entity.getShape()) {
+                        SweepResult otherResult = shape.sweep(velocity, otherShape);
+                        otherResult.setEntity(entity);
 
-                if(otherResult.getDistance() < result.getDistance()) {
-                    result.set(otherResult);
+                        if(otherResult.getDistance() < result.getDistance()) {
+                            result.set(otherResult);
+                        }
+                    }
+                }
+                else {
+                    SweepResult otherResult = shape.sweep(velocity, entity.getShape());
+                    otherResult.setEntity(entity);
+
+                    if(otherResult.getDistance() < result.getDistance()) {
+                        result.set(otherResult);
+                    }
                 }
             }
         }

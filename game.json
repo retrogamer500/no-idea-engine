@@ -44,6 +44,12 @@
         "scriptKey": "glob:*",
         "key": "{1}"
       }
+    ],
+    "models": [
+      {
+        "filename": "glob:data/models/*.{obj}",
+        "key": "{1}"
+      }
     ]
   }
 }

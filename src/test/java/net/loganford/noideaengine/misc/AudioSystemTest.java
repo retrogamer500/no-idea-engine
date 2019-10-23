@@ -1,8 +1,9 @@
-package net.loganford.noideaengine.audio;
+package net.loganford.noideaengine.misc;
 
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
+import net.loganford.noideaengine.audio.Audio;
 import net.loganford.noideaengine.state.Scene;
 import org.junit.Test;
 

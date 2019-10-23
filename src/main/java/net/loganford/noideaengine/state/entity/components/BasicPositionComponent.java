@@ -74,7 +74,7 @@ public class BasicPositionComponent extends AbstractPositionComponent {
         this.z = z;
         getEntity().getAfterMotionSignal().dispatch(getEntity());
         if(getEntity().getShape() != null) {
-            getEntity().getShape().setPosition(x + getEntity().getShapeOffsetX(), y + getEntity().getShapeOffsetY());
+            getEntity().getShape().setPosition(x + getEntity().getShapeOffsetX(), y + getEntity().getShapeOffsetY(), z + getEntity().getShapeOffsetZ());
         }
     }
 

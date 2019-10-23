@@ -24,6 +24,11 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
         float edgeDotSphereVert = edge.dot(v);
 
         float a = edgeSqrLen * - velocity.lengthSquared() + edgeDotVel * edgeDotVel;
+
+        if(a == 0) {
+            return;
+        }
+
         float b = edgeSqrLen * (2f * velocity.dot(v)) - 2f * edgeDotVel * edgeDotSphereVert;
         float c = edgeSqrLen * (1f - v.lengthSquared()) + edgeDotSphereVert * edgeDotSphereVert;
 
@@ -37,6 +42,10 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
         float t1 = (-b - disSqrt) / (2f * a);
         float t2 = (-b + disSqrt) / (2f * a);
         float t = Math.min(t1, t2);
+
+        if( t < 0 || t > 1) {
+            return;
+        }
 
         float f = (edgeDotVel * t - edgeDotSphereVert) / edgeSqrLen;
 

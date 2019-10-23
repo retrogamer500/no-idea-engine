@@ -429,48 +429,59 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param wall class which blocks the entity's movement
      */
     public void move(Vector3f velocity, float delta, MovementBehavior behavior, Class<? extends Entity> wall) {
-        float speedPerSecond = velocity.length();
-
-        if(speedPerSecond == 0) {
+        if(velocity.lengthSquared() == 0) {
             return;
         }
 
-        Vector3f nextVelocity = V3F.set(velocity).mul(delta/1000f);
-        float speedPerFrame = nextVelocity.length();
+        float speedPerSecond = velocity.length(); //Speed of this object per second
+        float remainingSpeed = speedPerSecond * delta / 1000f; //Number of units left to move this frame
+        Vector3f nextDirection = V3F_4.set(velocity).normalize(); //Unit vector of direction
 
         SweepResult result;
         for(int i = 0; i < 8; i++) {
-            result = sweep(nextVelocity, wall);
+            result = sweep(V3F_2.set(nextDirection).mul(remainingSpeed), wall);
             move(result);
-            result.remainder(nextVelocity);
 
-            if(behavior == MovementBehavior.SLIDE) {
-                result.slide(nextVelocity);
-            }
-            else if(behavior == MovementBehavior.BOUNCE) {
-                result.reflect(nextVelocity);
-            }
-            else if(behavior == MovementBehavior.STOP) {
-                nextVelocity.set(0, 0, 0);
-            }
-
-            float frameRemainder = nextVelocity.length();
 
             if(result.collides()) {
-                if(nextVelocity.lengthSquared() == 0) {
-                    //Collision is at 90 degree angle, so do stop moving
-                    velocity.set(0, 0, 0);
+                result.remainder(V3F_3);
+                remainingSpeed = V3F_3.length();
+
+                if(behavior == MovementBehavior.SLIDE) {
+                    result.slide(nextDirection);
+
+                    if(nextDirection.lengthSquared() == 0) {
+                        remainingSpeed = 0;
+                    }
+                    else {
+                        speedPerSecond *= nextDirection.length();
+                        remainingSpeed *= nextDirection.length();
+                        nextDirection.normalize();
+                    }
                 }
-                else {
-                    //Collision is at an angle, so deflect velocity
-                    float speedRemainder = speedPerSecond * (frameRemainder / speedPerFrame);
-                    velocity.set(nextVelocity).normalize().mul(speedRemainder);
+                else if(behavior == MovementBehavior.BOUNCE) {
+                    result.reflect(nextDirection);
                 }
+                else if(behavior == MovementBehavior.STOP) {
+                    remainingSpeed = 0;
+                    nextDirection.zero();
+                }
+            }
+            else {
+                remainingSpeed = 0;
             }
 
-            if(nextVelocity.lengthSquared() == 0) {
+            if(remainingSpeed == 0) {
                 break;
             }
+        }
+
+        //Update original velocity
+        if(nextDirection.lengthSquared() == 0) {
+            velocity.set(0, 0, 0);
+        }
+        else {
+            velocity.set(nextDirection).normalize().mul(speedPerSecond);
         }
     }
 

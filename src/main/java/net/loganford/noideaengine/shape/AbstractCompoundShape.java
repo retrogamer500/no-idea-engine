@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 public abstract class AbstractCompoundShape extends Shape implements Iterable<Shape> {
 
+    private static SweepResult SWEEP_RESULT = new SweepResult();
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_1 = new Vector3f();
 
@@ -42,21 +43,6 @@ public abstract class AbstractCompoundShape extends Shape implements Iterable<Sh
 
             i++;
         }
-    }
-
-    @Override
-    public boolean collidesWith(Shape other) {
-        for(Shape shape : this) {
-            if(shape.collidesWith(other)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void sweep(SweepResult result, Vector3fc velocity, Shape b) {
-        //Todo: implement
     }
 
     @Override

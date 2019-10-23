@@ -1,6 +1,8 @@
-package net.loganford.noideaengine.graphics;
+package net.loganford.noideaengine.misc;
 
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.graphics.Font;
+import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import org.junit.Test;
 

@@ -1,5 +1,5 @@
 'use strict';
-const ScriptedEntity = Java.type('net.loganford.noideaengine.scripting.engine.javascript.JsScriptEngineTest$ScriptedEntity');
+const ScriptedEntity = Java.type('net.loganford.noideaengine.misc.JsScriptEngineTest$ScriptedEntity');
 
 function getClass() {
     return Java.extend(ScriptedEntity, {

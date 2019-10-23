@@ -1,6 +1,8 @@
-package net.loganford.noideaengine.graphics;
+package net.loganford.noideaengine.misc;
 
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.graphics.Sprite;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector4f;

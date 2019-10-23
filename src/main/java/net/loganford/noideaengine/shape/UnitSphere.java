@@ -7,6 +7,10 @@ public class UnitSphere extends Shape {
 
     private Vector3f pos = new Vector3f();
 
+    public UnitSphere() {
+
+    }
+
     public UnitSphere(Vector3fc pos) {
         this.pos.set(pos);
     }

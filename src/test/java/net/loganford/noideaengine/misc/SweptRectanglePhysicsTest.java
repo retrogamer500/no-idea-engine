@@ -1,4 +1,4 @@
-package net.loganford.noideaengine.state.entity.systems.collision;
+package net.loganford.noideaengine.misc;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
@@ -7,10 +7,14 @@ import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.MovementBehavior;
+import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
+import net.loganford.noideaengine.state.entity.systems.UnregisterSystem;
+import net.loganford.noideaengine.state.entity.systems.collision.NaiveCollisionSystem;
+import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import org.joml.Vector3f;
 import org.junit.Test;
 
-public class SpacialPartitionCollisionSystemTest {
+public class SweptRectanglePhysicsTest {
 
 
     public class TestWall extends Entity {
@@ -74,13 +78,6 @@ public class SpacialPartitionCollisionSystemTest {
                 velocity.add(acceleration);
             }
 
-            //Apply friction
-            float speed = velocity.length();
-            if(speed > 0) {
-                speed = Math.max(0, speed - friction);
-                velocity.normalize().mul(speed);
-            }
-
             //Limit max speed
             if(velocity.length() > maxSpeed) {
                 velocity.normalize().mul(maxSpeed);
@@ -88,10 +85,19 @@ public class SpacialPartitionCollisionSystemTest {
 
             //Move entity, sliding smoothly off walls
             move(velocity, delta, MovementBehavior.SLIDE, TestWall.class);
+
+            //Apply friction
+            float speed = velocity.length();
+            if(speed > 0) {
+                speed = Math.max(0, speed - friction);
+                velocity.normalize().mul(speed);
+            }
         }
     }
 
 
+    @UnregisterSystem(SpacialPartitionCollisionSystem.class)
+    @RegisterSystem(NaiveCollisionSystem.class)
     public class TestScene extends Scene {
 
         @Override

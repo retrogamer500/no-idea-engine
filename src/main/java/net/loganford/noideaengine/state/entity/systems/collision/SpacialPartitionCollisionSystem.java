@@ -64,10 +64,10 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(shape, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i).getOwningEntity();
-                if (entity.getShape() != shape &&
-                        clazz.isAssignableFrom(entity.getClass()) &&
-                        entity.getShape().collidesWith(shape)) {
+                Shape otherShape = bucket.get(i);
+                if (otherShape != shape &&
+                        clazz.isAssignableFrom(otherShape.getOwningEntity().getClass()) &&
+                        otherShape.collidesWith(shape)) {
                     result[0] = true;
                     return BucketActionResult.EXIT_EARLY;
                 }
@@ -86,11 +86,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(shape, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i).getOwningEntity();
-                if (entity.getShape() != shape &&
-                        clazz.isAssignableFrom(entity.getClass()) &&
-                        entity.getShape().collidesWith(shape)) {
-                    result[0] = entity;
+                Shape otherShape = bucket.get(i);
+                if (otherShape != shape &&
+                        clazz.isAssignableFrom(otherShape.getOwningEntity().getClass()) &&
+                        otherShape.collidesWith(shape)) {
+                    result[0] = otherShape.getOwningEntity();
                     return BucketActionResult.EXIT_EARLY;
                 }
             }
@@ -117,11 +117,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(shape, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i).getOwningEntity();
-                if (entity.getShape() != shape &&
-                        clazz.isAssignableFrom(entity.getClass()) &&
-                        entity.getShape().collidesWith(shape)) {
-                    resultSet.add((C)entity);
+                Shape otherShape = bucket.get(i);
+                if (otherShape != shape &&
+                        clazz.isAssignableFrom(otherShape.getOwningEntity().getClass()) &&
+                        otherShape.collidesWith(shape)) {
+                    resultSet.add((C)otherShape.getOwningEntity());
                 }
             }
 
@@ -144,12 +144,12 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
         performBucketAction(sweepMask, (bucket) -> {
             for (int i = 0; i < bucket.size(); i++) {
-                Entity entity = bucket.get(i).getOwningEntity();
-                if (entity.getShape() != shape &&
-                        clazz.isAssignableFrom(entity.getClass())) {
+                Shape otherShape = bucket.get(i);
+                if (otherShape != shape &&
+                        clazz.isAssignableFrom(otherShape.getOwningEntity().getClass())) {
 
-                    SweepResult otherResult = shape.sweep(velocity, entity.getShape());
-                    otherResult.setEntity(entity);
+                    SweepResult otherResult = shape.sweep(velocity, otherShape);
+                    otherResult.setEntity(otherShape.getOwningEntity());
 
                     if(otherResult.getDistance() < result.getDistance()) {
                         result.set(otherResult);
@@ -191,7 +191,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
             if(velocity.z() < 0) {
                 CUBE.setZ(CUBE.getZ() + velocity.z());
             }
-            CUBE.setDepth(CUBE.getDepth() + Math.abs(velocity.y()));
+            CUBE.setDepth(CUBE.getDepth() + Math.abs(velocity.z()));
 
             return CUBE;
         }
@@ -213,6 +213,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         if(entity.getShape() != null) {
             if(entity.getShape() instanceof AbstractCompoundShape) {
                 for(Shape shape : ((AbstractCompoundShape) entity.getShape())) {
+                    shape.setOwningEntity(entity);
                     performBucketAction(shape, (bucket) -> {
                         bucket.add(shape);
                         return BucketActionResult.CONTINUE;

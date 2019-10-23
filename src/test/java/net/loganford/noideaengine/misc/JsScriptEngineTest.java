@@ -1,4 +1,4 @@
-package net.loganford.noideaengine.scripting.engine.javascript;
+package net.loganford.noideaengine.misc;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;

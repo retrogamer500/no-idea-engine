@@ -9,6 +9,7 @@ import org.joml.Vector3f;
 public class SweepResult<E extends Entity> {
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
+    private static Vector3f V3F_3 = new Vector3f();
 
     @Getter(onMethod = @__({@Scriptable})) @Setter private float distance = 1f;
     @Getter @Setter private Vector3f normal = new Vector3f();
@@ -49,7 +50,7 @@ public class SweepResult<E extends Entity> {
     public void reflect(Vector3f vector) {
         if(collides()) {
             float dotted = 2 * V3F.set(vector).dot(normal);
-            V3F.set(vector).sub(normal.mul(dotted)).normalize();
+            V3F.set(vector).sub(V3F_3.set(normal).mul(dotted)).normalize();
             V3F.mul(vector.length());
             vector.set(V3F);
         }
@@ -62,8 +63,11 @@ public class SweepResult<E extends Entity> {
     @Scriptable
     public void slide(Vector3f vector) {
         if(collides()) {
+            System.out.println("Normal: " + normal);
+            System.out.println("Original: " + vector);
             float dotted = Math.abs(V3F.set(normal).dot(vector));
             vector.set(V3F.set(normal).mul(dotted).add(vector));
+            System.out.println("Result: " + vector);
         }
     }
 

@@ -46,6 +46,7 @@ public class Renderer {
 
     //Default shaders
     @Getter private ShaderProgram shaderDefault;
+    @Getter private ShaderProgram shaderForwardOpaque;
     @Getter private ShaderProgram shaderSolid;
     @Getter private ShaderProgram shaderTile;
 
@@ -54,9 +55,9 @@ public class Renderer {
     @Getter @Setter private View view;
     @Getter @Setter private Camera camera;
     private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
-    @Getter private Vector3f lightDirection = new Vector3f();
-    @Getter private Vector3f lightColor = new Vector3f();
-    @Getter private Vector3f ambientLightColor = new Vector3f();
+    @Getter private Vector3f lightDirection = new Vector3f(2, -10, 2).normalize();
+    @Getter private Vector3f lightColor = new Vector3f(2, 2, 2);
+    @Getter private Vector3f ambientLightColor = new Vector3f(.1f, .1f, .1f);
     @Getter private boolean cullingBackface = true;
 
     public Renderer(Game game) {
@@ -121,6 +122,7 @@ public class Renderer {
         JarResourceMapper jarResourceMapper = new JarResourceMapper(getClass().getClassLoader());
         shaderDefault = shaderLoader.load("SHADER_DEFAULT", jarResourceMapper.get("default.vert"), jarResourceMapper.get("default.frag"));
         shaderSolid = shaderLoader.load("SHADER_SOLID", jarResourceMapper.get("solid.vert"), jarResourceMapper.get("solid.frag"));
+        shaderForwardOpaque = shaderLoader.load("SHADER_OPAQUE", jarResourceMapper.get("phong.vert"), jarResourceMapper.get("phong.frag"));
         shaderTile = shaderLoader.load("SHADER_TILE", jarResourceMapper.get("tile.vert"), jarResourceMapper.get("tile.frag"));
     }
 
