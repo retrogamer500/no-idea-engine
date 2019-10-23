@@ -6,6 +6,7 @@ import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EntitySystemEngine {
@@ -25,7 +26,11 @@ public class EntitySystemEngine {
      * @param system
      */
     public void addSystem(EntitySystem system) {
-        systems.add(system);
+        int index = Collections.binarySearch(systems, system, (o1, o2) -> Float.compare(o1.getPriority(), o2.getPriority()));
+        if(index < 0) {
+            index = -(index + 1);
+        }
+        systems.add(index, system);
     }
 
     /**
