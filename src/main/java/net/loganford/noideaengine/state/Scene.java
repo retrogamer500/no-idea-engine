@@ -442,7 +442,7 @@ public class Scene<G extends Game> extends GameState<G> {
 
             for(Annotation annotation : clazz.getAnnotationsByType(UnregisterSystem.class)) {
                 Class<? extends EntitySystem> systemClass = ((UnregisterSystem)annotation).value();
-                systemClazzList.remove(systemClass);
+                systemClazzList.removeIf(p -> p.getLeft().equals(systemClass));
             }
         }
         return systemClazzList;
