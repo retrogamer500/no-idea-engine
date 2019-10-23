@@ -1,6 +1,9 @@
 package net.loganford.noideaengine.state.entity.systems.collision;
 
+import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.shape.*;
+import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.signals.AfterMotionSignal;
 import net.loganford.noideaengine.state.entity.signals.BeforeMotionSignal;
@@ -28,19 +31,27 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private int bucketCount;
     private List<List<Shape>> buckets;
 
-    public SpacialPartitionCollisionSystem() {
-        this(32, 1024);
-    }
+    public SpacialPartitionCollisionSystem(Game game, Scene scene, String[] args) {
+        super(game, scene, args);
 
-    public SpacialPartitionCollisionSystem(int cellSize, int bucketCount) {
-        this.cellSize = cellSize;
-        this.bucketCount = bucketCount;
+        if(args.length == 2) {
+            this.cellSize = Integer.parseInt(args[0]);
+            this.bucketCount = Integer.parseInt(args[1]);
+        }
+        else if(args.length == 0) {
+            this.cellSize = 32;
+            this.bucketCount = 1024;
+        }
+        else {
+            throw new GameEngineException("Invalid arguments for SpacialPartitionCollisionSystem");
+        }
 
         buckets = new ArrayList<>(bucketCount);
         for(int i = 0; i < bucketCount; i++) {
             buckets.add(new ArrayList<>());
         }
     }
+
 
     @Override
     public void addEntity(Entity entity) {

@@ -23,6 +23,10 @@ public abstract class CollisionSystem extends EntitySystem {
     private static SweepResult SWEEP_RESULT = new SweepResult();
     private static Vector3f V3F = new Vector3f();
 
+    public CollisionSystem(Game game, Scene scene, String[] args) {
+        super(game, scene, args);
+    }
+
     @Scriptable
     public abstract boolean collidesWith(Shape shape, Class<? extends Entity> clazz);
     @Scriptable

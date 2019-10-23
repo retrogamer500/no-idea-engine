@@ -12,9 +12,8 @@ public class StepRenderSystem extends EntitySystem {
     private int currentEntity = 0;
     private Scene scene;
 
-    @Override
-    public void initSystem(Game game, Scene scene) {
-        super.initSystem(game, scene);
+    public StepRenderSystem(Game game, Scene scene, String[] args) {
+        super(game, scene, args);
         scene.getEntityAddedIndexSignal().subscribe(new EntityAddedIndexListener());
         this.scene = scene;
     }

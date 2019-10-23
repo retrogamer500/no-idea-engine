@@ -1,8 +1,10 @@
 package net.loganford.noideaengine.state.entity.systems.collision;
 
+import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.shape.AbstractCompoundShape;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.shape.SweepResult;
+import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import org.joml.Vector3fc;
 
@@ -13,10 +15,12 @@ public class NaiveCollisionSystem extends CollisionSystem {
     private static List LIST = new ArrayList<>();
     private List<Entity> entities;
 
-    public NaiveCollisionSystem() {
-        super();
+    public NaiveCollisionSystem(Game game, Scene scene, String[] args) {
+        super(game, scene, args);
+
         entities = new ArrayList<>();
     }
+
 
     @Override
     public void addEntity(Entity entity) {

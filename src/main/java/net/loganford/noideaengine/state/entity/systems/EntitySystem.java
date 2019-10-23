@@ -21,7 +21,7 @@ public abstract class EntitySystem implements Listener<Entity> {
     @Getter private List<Class<? extends Component>> componentList;
     @Getter @Setter private int priority = 0;
 
-    public EntitySystem() {
+    public EntitySystem(Game game, Scene scene, String[] args) {
         componentList = new ArrayList<>();
 
         Class clazz = getClass();
@@ -33,10 +33,6 @@ public abstract class EntitySystem implements Listener<Entity> {
 
             clazz = clazz.getSuperclass();
         }
-    }
-
-    public void initSystem(Game game, Scene scene) {
-
     }
 
     public void addEntity(Entity entity) {

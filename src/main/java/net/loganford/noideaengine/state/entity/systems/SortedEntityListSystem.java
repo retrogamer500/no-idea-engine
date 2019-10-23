@@ -15,8 +15,9 @@ public abstract class SortedEntityListSystem extends EntitySystem {
 
     private EntityComponentStore entities;
 
-    public SortedEntityListSystem() {
-        super();
+    public SortedEntityListSystem(Game game, Scene scene, String[] args) {
+        super(game, scene, args);
+
         entities = new EntityComponentStore(getComponentList());
     }
 
