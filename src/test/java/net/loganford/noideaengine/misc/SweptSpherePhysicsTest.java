@@ -7,12 +7,17 @@ import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.MovementBehavior;
+import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
+import net.loganford.noideaengine.state.entity.systems.UnregisterSystem;
+import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import org.joml.Vector3f;
 import org.junit.Test;
 
 
 public class SweptSpherePhysicsTest {
 
+    @UnregisterSystem(SpacialPartitionCollisionSystem.class)
+    @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"4", "1024"})
     public class TestScene extends Scene {
 
         @Override

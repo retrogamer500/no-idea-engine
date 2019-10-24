@@ -433,15 +433,15 @@ public class Scene<G extends Game> extends GameState<G> {
                 systemClazzList.addAll(getSystemsForClass(clazz.getSuperclass()));
             }
 
+            for(Annotation annotation : clazz.getAnnotationsByType(UnregisterSystem.class)) {
+                Class<? extends EntitySystem> systemClass = ((UnregisterSystem)annotation).value();
+                systemClazzList.removeIf(p -> p.getLeft().equals(systemClass));
+            }
+
             for(Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
                 Class<? extends EntitySystem> systemClass = ((RegisterSystem)annotation).value();
                 String[] arguments = ((RegisterSystem)annotation).arguments();
                 systemClazzList.add(new MutablePair<>(systemClass, arguments));
-            }
-
-            for(Annotation annotation : clazz.getAnnotationsByType(UnregisterSystem.class)) {
-                Class<? extends EntitySystem> systemClass = ((UnregisterSystem)annotation).value();
-                systemClazzList.removeIf(p -> p.getLeft().equals(systemClass));
             }
         }
         return systemClazzList;
