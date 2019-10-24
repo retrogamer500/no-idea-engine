@@ -7,6 +7,9 @@ import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.MovementBehavior;
+import net.loganford.noideaengine.state.entity.components.FirstPersonCameraComponent;
+import net.loganford.noideaengine.state.entity.components.RegisterComponent;
+import net.loganford.noideaengine.state.entity.systems.FirstPersonCameraSystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import net.loganford.noideaengine.state.entity.systems.UnregisterSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
@@ -18,12 +21,14 @@ public class SweptSpherePhysicsTest {
 
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
     @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"4", "1024"})
+    @RegisterSystem(FirstPersonCameraSystem.class)
     public class TestScene extends Scene {
 
         @Override
         public void beginState(Game game) {
             super.beginState(game);
             add(new Level());
+            add(new Player(), 0, 10, 10);
 
             for(int i = 0; i < 5; i++) {
                 for(int j = 0; j < 5; j++) {
@@ -34,9 +39,14 @@ public class SweptSpherePhysicsTest {
             //add(new UnitSphereEntity(), -5.7f, 6, -6);
 
 
-            getCamera().setPostition(0, 10, 10);
+            getCamera().setPosition(0, 10, 10);
             getCamera().lookAt(-3, 0, 0);
         }
+    }
+
+    @RegisterComponent(FirstPersonCameraComponent.class)
+    public class Player extends Entity {
+
     }
 
     public class Level extends Entity {

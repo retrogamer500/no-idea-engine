@@ -4,23 +4,20 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class Camera extends AbstractViewProjection {
-    @Getter @Setter private Vector3f position;
-    @Getter @Setter private Vector3f focus;
-    @Getter @Setter private Vector3f up;
+    @Getter private Vector3f position = new Vector3f();
+    @Getter @Setter private Vector3f focus = new Vector3f();
+    @Getter @Setter private Vector3f up = new Vector3f(0, 1, 0);
     @Getter @Setter private float fov;
 
     public Camera(Game game, GameState gameState) {
-        this(game, gameState, (float)Math.toRadians(90));
+        this(game, gameState, (float)Math.toRadians(75));
     }
 
     public Camera(Game game, GameState gameState, float fov) {
         super(game, gameState);
-
-        position = new Vector3f();
-        focus = new Vector3f();
-        up = new Vector3f(0, 1, 0);
 
         this.fov = fov;
     }
@@ -32,15 +29,19 @@ public class Camera extends AbstractViewProjection {
         viewMatrix.identity().translate(-position.x, -position.y, -position.z);
     }
 
-    public void setPostition(float x, float y, float z) {
+    public void setPosition(float x, float y, float z) {
         this.position.set(x, y, z);
     }
 
-    public void lookAt(Vector3f destination) {
+    public void lookAt(Vector3fc destination) {
         focus.set(destination);
     }
 
     public void lookAt(float x, float y, float z) {
         focus.set(x, y, z);
+    }
+
+    public void setPosition(Vector3fc position) {
+        this.position.set(position);
     }
 }

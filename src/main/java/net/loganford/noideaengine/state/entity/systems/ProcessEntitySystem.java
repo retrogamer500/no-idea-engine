@@ -60,7 +60,7 @@ public abstract class ProcessEntitySystem extends EntitySystem {
             resort = false;
         }
 
-        for(currentEntity = 0; currentEntity < scene.getEntities().size(); currentEntity++) {
+        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
             Entity entity = entities.get(currentEntity).getEntity();
             List<Component> components = entities.get(currentEntity).getComponents();
             if(!entity.isDestroyed()) {
@@ -86,7 +86,7 @@ public abstract class ProcessEntitySystem extends EntitySystem {
 
     @Override
     public void render(Game game, Scene scene, Renderer renderer) {
-        for(currentEntity = 0; currentEntity < scene.getEntities().size(); currentEntity++) {
+        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
             Entity entity = entities.get(currentEntity).getEntity();
             List<Component> components = entities.get(currentEntity).getComponents();
             if(!entity.isDestroyed()) {
