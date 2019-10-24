@@ -45,10 +45,10 @@ public class Renderer {
     @Getter private Model model2Cube;
 
     //Default shaders
-    @Getter private ShaderProgram shaderDefault;
-    @Getter private ShaderProgram shaderForwardOpaque;
-    @Getter private ShaderProgram shaderSolid;
-    @Getter private ShaderProgram shaderTile;
+    @Getter @Setter private ShaderProgram shaderDefault;
+    @Getter @Setter private ShaderProgram shaderForwardOpaque;
+    @Getter @Setter private ShaderProgram shaderSolid;
+    @Getter @Setter private ShaderProgram shaderTile;
 
     //Render state
     private Stack<ShaderProgram> shaderStack = new Stack<>();
