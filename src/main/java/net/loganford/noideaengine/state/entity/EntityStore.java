@@ -1,5 +1,9 @@
 package net.loganford.noideaengine.state.entity;
 
+import net.loganford.noideaengine.utils.pooling.ObjectPool;
+import net.loganford.noideaengine.utils.pooling.Poolable;
+import net.loganford.noideaengine.utils.pooling.Pools;
+
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -60,11 +64,22 @@ public abstract class EntityStore<T> implements Iterable<T> {
     }
 
     public void removeDestroyed() {
+        removeDestroyed(false);
+    }
+
+    public void removeDestroyed(boolean returnToPool) {
         for(int i = items.size() - 1; i >= 0; i--) {
             T item = items.get(i);
-            if(unwrap(item).isDestroyed()) {
+            Entity entity = unwrap(item);
+            if(entity.isDestroyed()) {
                 items.remove(i);
                 typeCache.remove(unwrap(item));
+
+                if(returnToPool && entity instanceof Poolable) {
+                    Poolable poolable = (Poolable) entity;
+                    ObjectPool pool = Pools.getPool(poolable.getClass());
+                    pool.put(poolable);
+                }
             }
         }
     }

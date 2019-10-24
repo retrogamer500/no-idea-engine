@@ -180,7 +180,7 @@ public class Scene<G extends Game> extends GameState<G> {
         entitySystemEngine.step(delta);
 
         //Delete destroyed entities
-        entities.removeDestroyed();
+        entities.removeDestroyed(true);
     }
 
     /**
