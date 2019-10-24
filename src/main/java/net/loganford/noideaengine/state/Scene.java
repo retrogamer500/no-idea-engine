@@ -62,7 +62,7 @@ public class Scene<G extends Game> extends GameState<G> {
             entityAddedSignal.dispatch(entity);
             entityAddedIndexSignal.dispatch(index);
 
-            if(index <= currentEntity) {
+            if(index < currentEntity) {
                 currentEntity++;
             }
 

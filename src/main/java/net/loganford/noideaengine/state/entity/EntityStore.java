@@ -27,13 +27,16 @@ public abstract class EntityStore<T> implements Iterable<T> {
         return index;
     }
 
-    public void remove(Entity entity) {
+    public int remove(Entity entity) {
+        int returnValue = -1;
         for(int i = items.size() - 1; i >= 0; i--) {
             if(unwrap(items.get(i)).equals(entity)) {
                 items.remove(i);
                 typeCache.remove(entity);
+                returnValue = i;
             }
         }
+        return returnValue;
     }
 
     public void resort() {
