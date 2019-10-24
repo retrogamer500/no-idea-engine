@@ -59,7 +59,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
 
     //Components that are frequently accessed-- want to avoid a hashmap access
     @Getter private AbstractPositionComponent positionComponent;
-    @Getter private BasicCollisionComponent collisionComponent;
+    @Getter private AbstractCollisionComponent collisionComponent;
 
     /**
      * Creates the entity at position (0,0,0), but does not add it to the scene.
@@ -243,8 +243,8 @@ public class Entity<G extends Game, S extends Scene<G>> {
         if(component instanceof AbstractPositionComponent) {
             positionComponent = (AbstractPositionComponent)component;
         }
-        else if(component instanceof BasicCollisionComponent) {
-            collisionComponent = (BasicCollisionComponent) component;
+        else if(component instanceof AbstractCollisionComponent) {
+            collisionComponent = (AbstractCollisionComponent) component;
         }
     }
 

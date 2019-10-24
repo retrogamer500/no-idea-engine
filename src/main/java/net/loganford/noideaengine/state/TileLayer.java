@@ -7,11 +7,11 @@ import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Texture;
-import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.components.BasicCollisionComponent;
+import net.loganford.noideaengine.state.entity.components.AbstractCollisionComponent;
 import net.loganford.noideaengine.state.entity.components.UnregisterComponent;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL33;
@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
  * support large textures. However, this engine guarantees a minimum width of 2048.
  */
 @Log4j2
-@UnregisterComponent(BasicCollisionComponent.class)
+@UnregisterComponent(AbstractCollisionComponent.class)
 public class TileLayer extends Entity<Game, Scene<Game>> implements UnsafeMemory {
     private static Vector2f V2F = new Vector2f();
     private static int MAX_SIZE = 65535;

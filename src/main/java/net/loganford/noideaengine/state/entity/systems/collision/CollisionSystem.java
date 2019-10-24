@@ -7,8 +7,8 @@ import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.state.entity.components.AbstractCollisionComponent;
 import net.loganford.noideaengine.state.entity.components.AbstractPositionComponent;
-import net.loganford.noideaengine.state.entity.components.BasicCollisionComponent;
 import net.loganford.noideaengine.state.entity.components.RegisterComponent;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import org.joml.Vector2fc;
@@ -17,7 +17,7 @@ import org.joml.Vector3fc;
 
 import java.util.List;
 
-@RegisterComponent(BasicCollisionComponent.class)
+@RegisterComponent(AbstractCollisionComponent.class)
 @RegisterComponent(AbstractPositionComponent.class)
 public abstract class CollisionSystem extends EntitySystem {
     private static SweepResult SWEEP_RESULT = new SweepResult();
