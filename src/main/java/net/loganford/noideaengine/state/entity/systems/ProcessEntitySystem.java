@@ -69,14 +69,14 @@ public abstract class ProcessEntitySystem extends EntitySystem {
         }
     }
 
-    abstract void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta);
+    protected abstract void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta);
 
     public int getComponentLocation(Class<? extends Component> component) {
         int index = -1;
 
         for (int i = 0; i < getComponentList().size(); i++) {
             Class<? extends Component> registeredComponent = getComponentList().get(i);
-            if (registeredComponent.isAssignableFrom(registeredComponent)) {
+            if (registeredComponent.isAssignableFrom(component)) {
                 index = i;
             }
         }
@@ -95,7 +95,7 @@ public abstract class ProcessEntitySystem extends EntitySystem {
         }
     }
 
-    abstract void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer);
+    protected abstract void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer);
 
 
     private class EntityDepthChangedListener implements Listener<Entity> {

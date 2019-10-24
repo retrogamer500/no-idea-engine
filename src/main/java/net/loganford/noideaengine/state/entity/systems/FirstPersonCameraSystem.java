@@ -24,7 +24,7 @@ public class FirstPersonCameraSystem extends ProcessEntitySystem {
     }
 
     @Override
-    void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta) {
+    protected void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta) {
         FirstPersonCameraComponent firstPersonCameraComponent =
                 (FirstPersonCameraComponent) components.get(firstPersonCameraComponentIndex);
 
@@ -46,7 +46,7 @@ public class FirstPersonCameraSystem extends ProcessEntitySystem {
     }
 
     @Override
-    void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer) {
+    protected void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer) {
 
     }
 }

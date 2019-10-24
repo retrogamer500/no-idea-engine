@@ -8,8 +8,10 @@ import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.MovementBehavior;
 import net.loganford.noideaengine.state.entity.components.FirstPersonCameraComponent;
+import net.loganford.noideaengine.state.entity.components.FreeMovementComponent;
 import net.loganford.noideaengine.state.entity.components.RegisterComponent;
 import net.loganford.noideaengine.state.entity.systems.FirstPersonCameraSystem;
+import net.loganford.noideaengine.state.entity.systems.FreeMovementSystem;
 import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import net.loganford.noideaengine.state.entity.systems.UnregisterSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
@@ -22,6 +24,7 @@ public class SweptSpherePhysicsTest {
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
     @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"4", "1024"})
     @RegisterSystem(FirstPersonCameraSystem.class)
+    @RegisterSystem(FreeMovementSystem.class)
     public class TestScene extends Scene {
 
         @Override
@@ -45,6 +48,7 @@ public class SweptSpherePhysicsTest {
     }
 
     @RegisterComponent(FirstPersonCameraComponent.class)
+    @RegisterComponent(FreeMovementComponent.class)
     public class Player extends Entity {
 
     }
