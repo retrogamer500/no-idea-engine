@@ -1,7 +1,6 @@
 package net.loganford.noideaengine.state.entity.systems;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
@@ -18,8 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EntitySystem implements Listener<Entity> {
+    @Getter private SystemPriorityChangedSignal systemPriorityChangedSignal = new SystemPriorityChangedSignal();
     @Getter private List<Class<? extends Component>> componentList;
-    @Getter @Setter private int priority = 0;
+    @Getter private float priority = 0;
 
     public EntitySystem(Game game, Scene scene, String[] args) {
         componentList = new ArrayList<>();
@@ -66,5 +66,10 @@ public abstract class EntitySystem implements Listener<Entity> {
         else if(signal instanceof DestructionSignal) {
             removeEntity(entity);
         }
+    }
+
+    public void setPriority(float priority) {
+        this.priority = priority;
+        systemPriorityChangedSignal.dispatch(this);
     }
 }

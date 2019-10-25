@@ -26,6 +26,8 @@ public class FreeMovementSystem extends ProcessEntitySystem {
         abstractPositionComponentIndex = getComponentLocation(AbstractPositionComponent.class);
         freeMovementComponentIndex = getComponentLocation(FreeMovementComponent.class);
         abstractCameraComponentIndex = getComponentLocation(AbstractCameraComponent.class);
+
+        setPriority(11);
     }
 
     @Override
