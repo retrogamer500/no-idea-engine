@@ -7,6 +7,7 @@ import java.lang.annotation.*;
 @Repeatable(RegisterComponent.List.class)
 public @interface RegisterComponent {
     Class<? extends Component> value();
+    String[] arguments() default {};
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})
