@@ -1,6 +1,9 @@
 package net.loganford.noideaengine.misc;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.Input;
 import net.loganford.noideaengine.graphics.Model;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.UnitSphere;
@@ -20,6 +23,8 @@ import org.junit.Test;
 
 
 public class SweptSpherePhysicsTest {
+
+    private static Vector3f V3F = new Vector3f();
 
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
     @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"4", "1024"})
@@ -51,6 +56,17 @@ public class SweptSpherePhysicsTest {
     @RegisterComponent(FreeMovementComponent.class)
     public class Player extends Entity {
 
+        @Override
+        public void step(Game game, Scene scene, float delta) {
+            super.step(game, scene, delta);
+
+            if(game.getInput().mousePressed(Input.MOUSE_1)) {
+                UnitSphereEntity entity = new UnitSphereEntity();
+                FirstPersonCameraComponent cameraComponent = (FirstPersonCameraComponent) getComponent(FirstPersonCameraComponent.class);
+                entity.getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));
+                scene.add(entity, getPos());
+            }
+        }
     }
 
     public class Level extends Entity {
@@ -76,7 +92,7 @@ public class SweptSpherePhysicsTest {
 
     public class UnitSphereEntity extends Entity {
         private Model model;
-        private Vector3f velocity = new Vector3f(0, -2f, 0);
+        @Getter @Setter private Vector3f velocity = new Vector3f(0, -2f, 0);
 
         @Override
         public void onCreate(Game game, Scene scene) {

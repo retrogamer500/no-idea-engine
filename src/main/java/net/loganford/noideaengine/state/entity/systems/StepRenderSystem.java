@@ -10,10 +10,11 @@ import net.loganford.noideaengine.utils.messaging.Signal;
 public class StepRenderSystem extends EntitySystem {
 
     private int currentEntity = 0;
+    private EntityAddedIndexListener entityAddedIndexListener = new EntityAddedIndexListener();
 
     public StepRenderSystem(Game game, Scene scene, String[] args) {
         super(game, scene, args);
-        scene.getEntityAddedIndexSignal().subscribe(new EntityAddedIndexListener());
+        scene.getEntityAddedIndexSignal().subscribe(entityAddedIndexListener);
     }
 
     @Override
