@@ -7,6 +7,14 @@ import net.loganford.noideaengine.state.entity.Entity;
 public abstract class Component {
     @Getter private Entity entity;
 
+    public Component() {
+        this(new String[]{});
+    }
+
+    public Component(String[] args) {
+
+    }
+
     public void componentAdded(Entity entity) {
         this.entity = entity;
     }

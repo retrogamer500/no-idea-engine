@@ -17,6 +17,8 @@ import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -756,12 +758,14 @@ public class Entity<G extends Game, S extends Scene<G>> {
      */
     private void loadAndInitializeComponents() {
         Class clazz = getClass();
-        List<Class<? extends Component>> componentClazzList = getComponentsForClass(getClass());
+        List<Pair<Class<? extends Component>, String[]>> componentClazzList = getComponentsForClass(getClass());
 
-        for(Class<? extends Component> componentClazz : componentClazzList) {
+        for(Pair<Class<? extends Component>, String[]> componentAnnotation : componentClazzList) {
             try {
-                Constructor<? extends Component> constructor = componentClazz.getConstructor();
-                Component component = constructor.newInstance();
+                Class<? extends Component> componentClass = componentAnnotation.getLeft();
+                String[] arguments = componentAnnotation.getRight();
+                Constructor<? extends Component> constructor = componentClass.getConstructor(String[].class);
+                Component component = constructor.newInstance(arguments);
                 component.componentAdded(this);
                 addComponent(component);
             }
@@ -776,8 +780,8 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param clazz current class
      * @return a list of all of the loaded components.
      */
-    private List<Class<? extends Component>> getComponentsForClass(Class clazz) {
-        List<Class<? extends Component>> componentClazzList = new ArrayList<>();
+    private List<Pair<Class<? extends Component>, String[]>> getComponentsForClass(Class clazz) {
+        List<Pair<Class<? extends Component>, String[]>> componentClazzList = new ArrayList<>();
         if(clazz != null) {
 
             Annotation inherit = clazz.getAnnotation(InheritComponents.class);
@@ -785,14 +789,15 @@ public class Entity<G extends Game, S extends Scene<G>> {
                 componentClazzList.addAll(getComponentsForClass(clazz.getSuperclass()));
             }
 
-            for(Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
-                Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
-                componentClazzList.add(componentClazz);
-            }
-
             for(Annotation annotation : clazz.getAnnotationsByType(UnregisterComponent.class)) {
                 Class<? extends Component> componentClazz = ((UnregisterComponent)annotation).value();
-                componentClazzList.remove(componentClazz);
+                componentClazzList.removeIf(p -> p.getLeft().equals(componentClazz));
+            }
+
+            for(Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
+                Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
+                String[] arguments = ((RegisterComponent)annotation).arguments();
+                componentClazzList.add(new MutablePair<Class<? extends Component>, String[]>(componentClazz, arguments));
             }
         }
         return componentClazzList;

@@ -4,6 +4,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.state.entity.components.AbstractPositionComponent;
 import net.loganford.noideaengine.state.entity.components.Component;
 import net.loganford.noideaengine.state.entity.components.FirstPersonCameraComponent;
 import net.loganford.noideaengine.state.entity.components.RegisterComponent;
@@ -11,20 +12,29 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
+@RegisterComponent(AbstractPositionComponent.class)
 @RegisterComponent(FirstPersonCameraComponent.class)
 public class FirstPersonCameraSystem extends ProcessEntitySystem {
+
+    private int abstractPositionComponentIndex;
     private int firstPersonCameraComponentIndex;
+
     private static Vector3f V3F = new Vector3f();
 
     public FirstPersonCameraSystem(Game game, Scene scene, String[] args) {
         super(game, scene, args);
+
+        abstractPositionComponentIndex = getComponentLocation(AbstractPositionComponent.class);
         firstPersonCameraComponentIndex = getComponentLocation(FirstPersonCameraComponent.class);
+
         game.getWindow().setMouseCaptured(true);
         setPriority(10);
     }
 
     @Override
     protected void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta) {
+        AbstractPositionComponent abstractPositionComponent =
+                (AbstractPositionComponent) components.get(abstractPositionComponentIndex);
         FirstPersonCameraComponent firstPersonCameraComponent =
                 (FirstPersonCameraComponent) components.get(firstPersonCameraComponentIndex);
 
@@ -39,7 +49,7 @@ public class FirstPersonCameraSystem extends ProcessEntitySystem {
 
 
         //Set scene's camera
-        scene.getCamera().setPosition(entity.getPos());
+        scene.getCamera().setPosition(abstractPositionComponent.getPos());
         V3F.set(firstPersonCameraComponent.getDirection());
         V3F.add(scene.getCamera().getPosition());
         scene.getCamera().lookAt(V3F);

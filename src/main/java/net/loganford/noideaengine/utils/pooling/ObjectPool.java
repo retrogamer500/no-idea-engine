@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.GameEngineException;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectPool<O extends Poolable> {
     @Getter @Setter private int maxSize = 1024;
     private List<O> objects = new ArrayList<>();
+    private Constructor<O> constructor;
     private Class<O> clazz;
 
     public ObjectPool(Class<O> clazz) {
@@ -19,7 +21,10 @@ public class ObjectPool<O extends Poolable> {
     public O obtain() {
         if(objects.size() == 0) {
             try {
-                O object = clazz.getConstructor().newInstance();
+                if(constructor == null) {
+                    constructor = clazz.getConstructor();
+                }
+                O object = constructor.newInstance();
                 return object;
             }
             catch(Exception e) {
