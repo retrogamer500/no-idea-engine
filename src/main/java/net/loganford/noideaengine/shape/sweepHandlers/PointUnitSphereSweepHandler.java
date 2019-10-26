@@ -30,7 +30,7 @@ public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphe
         float t2 = (-b + disSqrt) / (2f * a);
         float t = Math.min(t1, t2);
 
-        if( t < 0 || t > 1) {
+        if( t <= 0 || t > 1) {
             return;
         }
 

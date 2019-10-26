@@ -6,7 +6,10 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.MovementBehavior;
+import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
+import net.loganford.noideaengine.state.entity.components.RegisterComponent;
+import net.loganford.noideaengine.state.entity.systems.PhysicsSystem;
+import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
 import org.joml.Vector3f;
 import org.junit.Test;
 
@@ -28,18 +31,17 @@ public class SweptRectanglePhysicsTest {
         }
     }
 
+    @RegisterComponent(PhysicsComponent.class)
     public class TestPlayer extends Entity {
-        private Vector3f velocity = new Vector3f();
         private Vector3f acceleration = new Vector3f();
-
-        private float friction = 32f; //Acceleration per second
-        private float accelerationAmount = friction + 32f; //Acceleration per second, must be higher than friction
-        private float maxSpeed = 500;
+        private float accelerationAmount = 64f; //Acceleration per second, must be higher than friction
 
         @Override
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             setShape(new Rect(0, 0, 16, 16));
+            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setSolidEntity(TestWall.class);
+            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setBounceVelocity(Float.MAX_VALUE);
         }
 
         @Override
@@ -69,28 +71,14 @@ public class SweptRectanglePhysicsTest {
             }
 
             //Apply acceleration
-            if(acceleration.length() > 0) {
+            if(acceleration.lengthSquared() > 0) {
                 acceleration.normalize().mul(accelerationAmount);
-                velocity.add(acceleration);
-            }
-
-            //Limit max speed
-            if(velocity.length() > maxSpeed) {
-                velocity.normalize().mul(maxSpeed);
-            }
-
-            //Move entity, sliding smoothly off walls
-            move(velocity, delta, MovementBehavior.SLIDE, TestWall.class);
-
-            //Apply friction
-            float speed = velocity.length();
-            if(speed > 0) {
-                speed = Math.max(0, speed - friction);
-                velocity.normalize().mul(speed);
+                ((PhysicsComponent)getComponent(PhysicsComponent.class)).getVelocity().add(acceleration);
             }
         }
     }
 
+    @RegisterSystem(PhysicsSystem.class)
     public class TestScene extends Scene {
 
         @Override

@@ -63,11 +63,8 @@ public class SweepResult<E extends Entity> {
     @Scriptable
     public void slide(Vector3f vector) {
         if(collides()) {
-            System.out.println("Normal: " + normal);
-            System.out.println("Original: " + vector);
             float dotted = Math.abs(V3F.set(normal).dot(vector));
             vector.set(V3F.set(normal).mul(dotted).add(vector));
-            System.out.println("Result: " + vector);
         }
     }
 
