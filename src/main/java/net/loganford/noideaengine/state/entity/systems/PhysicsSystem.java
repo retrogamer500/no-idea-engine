@@ -23,6 +23,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_3 = new Vector3f();
     private static Vector3f V3F_4 = new Vector3f();
     private static Vector3f V3F_5 = new Vector3f();
+    private static Vector3f V3F_6 = new Vector3f();
 
     public PhysicsSystem(Game game, Scene scene, String[] args) {
         super(game, scene, args);
@@ -40,6 +41,9 @@ public class PhysicsSystem extends ProcessEntitySystem {
                 (AbstractPositionComponent) components.get(abstractPositionComponentIndex);
         AbstractCollisionComponent abstractCollisionComponent =
                 (AbstractCollisionComponent) components.get(abstractCollisionIndex);
+
+        //Add gravity
+        physicsComponent.getVelocity().add(V3F_6.set(physicsComponent.getGravity()).mul(delta / 1000f));
 
         //Limit max speed
         if(physicsComponent.getVelocity().length() > physicsComponent.getMaxSpeed()) {
@@ -103,6 +107,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
                     speedPerSecond -= physicsComponent.getBounceVelocityDampener();
                     speedPerSecond = Math.max(0, speedPerSecond);
                     nextDirection.set(bouncedVector);
+                    nextDirection.mul(speedPerSecond).add(V3F_6.set(physicsComponent.getGravity())).normalize();
                 }
             }
             else {

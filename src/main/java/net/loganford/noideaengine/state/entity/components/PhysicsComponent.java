@@ -17,9 +17,13 @@ public class PhysicsComponent extends Component {
     /*Every time this entity bounces, subtract velocity by this much*/
     @Getter @Setter private float bounceVelocityDampener = .1f;
     /*Friction per second*/
-    @Getter @Setter private float friction = 32f;
+    @Getter @Setter private float friction = 0f;
     /*Max speed*/
     @Getter @Setter private float maxSpeed = 500f;
     /*Gravity*/
     @Getter @Setter private Vector3f gravity = new Vector3f(0, 0, 0);
+
+    public PhysicsComponent(String[] args) {
+        super(args);
+    }
 }

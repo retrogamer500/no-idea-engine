@@ -14,6 +14,10 @@ public abstract class AbstractCollisionComponent extends Component implements Li
     @Getter private float shapeOffsetY = 0;
     @Getter private float shapeOffsetZ = 0;
 
+    public AbstractCollisionComponent(String[] args) {
+        super(args);
+    }
+
     @Override
     public void componentAdded(Entity entity) {
         super.componentAdded(entity);

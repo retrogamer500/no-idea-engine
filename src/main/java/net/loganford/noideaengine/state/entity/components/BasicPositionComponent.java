@@ -8,6 +8,10 @@ public class BasicPositionComponent extends AbstractPositionComponent {
     private float y;
     private float z;
 
+    public BasicPositionComponent(String[] args) {
+        super(args);
+    }
+
     @Override
     public void setX(float x) {
         getEntity().getBeforeMotionSignal().dispatch(getEntity());

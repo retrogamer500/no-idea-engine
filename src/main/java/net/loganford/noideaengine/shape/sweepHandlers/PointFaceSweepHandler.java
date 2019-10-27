@@ -3,7 +3,6 @@ package net.loganford.noideaengine.shape.sweepHandlers;
 import net.loganford.noideaengine.graphics.Face;
 import net.loganford.noideaengine.shape.Point;
 import net.loganford.noideaengine.shape.SweepResult;
-import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -25,7 +24,7 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
         Vector3f h = V3F_2.set(velocity).cross(edge2);
         float det = edge1.dot(h);
 
-        if(det > -MathUtils.EPSILON && det < MathUtils.EPSILON) {
+        if(det == 0) {
             return;
         }
 

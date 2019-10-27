@@ -419,7 +419,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      */
     @Scriptable
     public void move(SweepResult result) {
-        move(V3F.set(result.getVelocity()).mul(Math.max(0, result.getDistance() - MathUtils.EPSILON)));
+        move(V3F.set(result.getVelocity()).mul(Math.max(0, result.getDistance() - 0.01f)));
     }
 
     /**
@@ -765,7 +765,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
                 Class<? extends Component> componentClass = componentAnnotation.getLeft();
                 String[] arguments = componentAnnotation.getRight();
                 Constructor<? extends Component> constructor = componentClass.getConstructor(String[].class);
-                Component component = constructor.newInstance(arguments);
+                Component component = constructor.newInstance(new Object[]{arguments});
                 component.componentAdded(this);
                 addComponent(component);
             }

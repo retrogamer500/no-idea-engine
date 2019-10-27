@@ -13,6 +13,10 @@ public class AbstractCameraComponent extends Component {
     @Getter @Setter private float roll;
     @Getter @Setter private float yaw;
 
+    public AbstractCameraComponent(String[] args) {
+        super(args);
+    }
+
     public Vector3fc getDirection() {
         V3F.set(1, 0, 0);
         V3F.rotateX(getRoll());

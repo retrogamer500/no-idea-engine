@@ -7,6 +7,10 @@ import org.joml.Vector3fc;
 public abstract class AbstractPositionComponent extends Component {
     private static Vector3f V3F = new Vector3f();
 
+    public AbstractPositionComponent(String[] args) {
+        super(args);
+    }
+
     public abstract void setX(float x);
     public abstract void setY(float y);
     public abstract void setZ(float z);

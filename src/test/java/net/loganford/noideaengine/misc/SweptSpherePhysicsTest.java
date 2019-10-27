@@ -23,6 +23,7 @@ public class SweptSpherePhysicsTest {
 
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
     @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"4", "1024"})
+    //@RegisterSystem(NaiveCollisionSystem.class)
     @RegisterSystem(FirstPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)
@@ -95,7 +96,8 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             ((PhysicsComponent)getComponent(PhysicsComponent.class)).setSolidEntity(Level.class);
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).getVelocity().set(0, -2f, 0);
+            //((PhysicsComponent)getComponent(PhysicsComponent.class)).getVelocity().set(0, -2f, 0);
+            ((PhysicsComponent)getComponent(PhysicsComponent.class)).getGravity().set(0, -3f, 0);
             model = game.getModelManager().get("unitSphere");
             setShape(new UnitSphere());
         }
