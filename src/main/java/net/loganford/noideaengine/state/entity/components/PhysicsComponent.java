@@ -13,7 +13,7 @@ public class PhysicsComponent extends Component {
     /*If velocity projected on the normal is greater than this, then bounce, otherwise slide*/
     @Getter @Setter private float bounceVelocity = .1f;
     /*Every time this entity bounces, multiply velocity by this much*/
-    @Getter @Setter private float bounceVelocityMultiplier = .8f;
+    @Getter @Setter private float bounceVelocityMultiplier = .3f;
     /*Every time this entity bounces, subtract velocity by this much*/
     @Getter @Setter private float bounceVelocityDampener = .1f;
     /*Friction per second*/

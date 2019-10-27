@@ -64,6 +64,9 @@ public class SweptSpherePhysicsTest {
                 FirstPersonCameraComponent cameraComponent = (FirstPersonCameraComponent) getComponent(FirstPersonCameraComponent.class);
                 ((PhysicsComponent)entity.getComponent(PhysicsComponent.class)).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));
             }
+            if(game.getInput().mousePressed(Input.MOUSE_2)) {
+                scene.with(UnitSphereEntity.class, Entity::destroy);
+            }
         }
     }
 
@@ -97,7 +100,7 @@ public class SweptSpherePhysicsTest {
             super.onCreate(game, scene);
             ((PhysicsComponent)getComponent(PhysicsComponent.class)).setSolidEntity(Level.class);
             //((PhysicsComponent)getComponent(PhysicsComponent.class)).getVelocity().set(0, -2f, 0);
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).getGravity().set(0, -3f, 0);
+            ((PhysicsComponent)getComponent(PhysicsComponent.class)).getGravity().set(0, -10f, 0);
             model = game.getModelManager().get("unitSphere");
             setShape(new UnitSphere());
         }

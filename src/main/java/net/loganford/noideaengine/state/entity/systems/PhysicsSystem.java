@@ -103,11 +103,10 @@ public class PhysicsSystem extends ProcessEntitySystem {
                 }
                 else {
                     //Bounce
-                    speedPerSecond *= physicsComponent.getBounceVelocityMultiplier();
+                    speedPerSecond *= physicsComponent.getBounceVelocityMultiplier(); //This part of the code is fucked up
                     speedPerSecond -= physicsComponent.getBounceVelocityDampener();
                     speedPerSecond = Math.max(0, speedPerSecond);
                     nextDirection.set(bouncedVector);
-                    nextDirection.mul(speedPerSecond).add(V3F_6.set(physicsComponent.getGravity())).normalize();
                 }
             }
             else {
