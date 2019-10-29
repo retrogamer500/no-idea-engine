@@ -26,6 +26,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_6 = new Vector3f();
     private static Vector3f V3F_7 = new Vector3f();
     private static Vector3f V3F_8 = new Vector3f();
+    private static Vector3f V3F_9 = new Vector3f();
 
     public PhysicsSystem(Game game, Scene scene, String[] args) {
         super(game, scene, args);
@@ -78,10 +79,19 @@ public class PhysicsSystem extends ProcessEntitySystem {
             result = entity.sweep(V3F_2.set(nextDirection).mul(remainingSpeed), physicsComponent.getSolidEntity());
             entity.move(result);
 
-
             if(result.collides()) {
                 result.remainder(V3F_3);
                 remainingSpeed = V3F_3.length();
+
+                //Process interactive entities
+                if(result.getEntity() != null && ((Entity)result.getEntity()).getPhysicsComponent() != null &&
+                physicsComponent.isInteractive() && ((Entity)result.getEntity()).getPhysicsComponent().isInteractive()) {
+                    PhysicsComponent otherPhysicsComponent = ((Entity)result.getEntity()).getPhysicsComponent();
+                    float ratio = physicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
+                    otherPhysicsComponent.getVelocity().add(V3F_9.set(result.getNormal()).mul(-1/ratio * physicsComponent.getVelocity().length()));
+                    speedPerSecond *= ratio;
+                    remainingSpeed *= ratio;
+                }
 
                 //Calculate bounce vector and determine whether to slide or bounce
                 Vector3f bouncedVector = V3F_4.set(nextDirection);
@@ -98,8 +108,6 @@ public class PhysicsSystem extends ProcessEntitySystem {
                         remainingSpeed = 0;
                     }
                     else {
-
-
                         //Calculate friction (if gravity exists)
                         float frictionAmount = 0;
                         if(physicsComponent.getGravity().lengthSquared() != 0) {

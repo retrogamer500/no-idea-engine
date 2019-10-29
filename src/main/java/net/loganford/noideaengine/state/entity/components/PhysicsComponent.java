@@ -25,6 +25,9 @@ public class PhysicsComponent extends Component {
     /**Gravity per second*/
     @Getter @Setter private Vector3f gravity = new Vector3f(0, 0, 0);
 
+    @Getter @Setter private boolean interactive = false;
+    @Getter @Setter private float mass = 20f;
+
     public PhysicsComponent(String[] args) {
         super(args);
     }
