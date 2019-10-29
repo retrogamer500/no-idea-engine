@@ -16,6 +16,8 @@ public class PhysicsComponent extends Component {
     @Getter @Setter private float bounceVelocityDampener = .5f;
     /**Every time the entity is sliding on the ground, subtract velocity by this much*/
     @Getter @Setter private float frictionDampener = 5f;
+    /**Cosine of an angle. If a slope is smaller than this angle, then no friction occurs.*/
+    @Getter @Setter private float sphereFactor = 0;
     /**Air resistance*/
     @Getter @Setter private float resistance = 0f;
     /**Max speed*/

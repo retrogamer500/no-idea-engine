@@ -104,17 +104,16 @@ public class PhysicsSystem extends ProcessEntitySystem {
                         float frictionAmount = 0;
                         if(physicsComponent.getGravity().lengthSquared() != 0) {
                             float gravityDotNormal = Math.max(0, -V3F_8.set(physicsComponent.getGravity()).normalize().dot(result.getNormal()));
-                            frictionAmount = timeMultiplier * gravityDotNormal * physicsComponent.getFrictionDampener();
+                            if(gravityDotNormal >= physicsComponent.getSphereFactor()) {
+                                frictionAmount = timeMultiplier * gravityDotNormal * physicsComponent.getFrictionDampener();
+                            }
                         }
 
                         speedPerSecond *= nextDirection.length();
                         speedPerSecond = Math.max(0, speedPerSecond - frictionAmount);
 
                         remainingSpeed *= nextDirection.length();
-                        remainingSpeed = Math.max(0, remainingSpeed - .5f * frictionAmount * timeMultiplier);
-                        //remainingSpeed = speedPerSecond * timeMultiplier;
-
-                        System.out.println(speedPerSecond + " " + remainingSpeed);
+                        remainingSpeed = Math.max(0, remainingSpeed - .5f * frictionAmount * timeMultiplier); //Calculus, dudes
 
                         nextDirection.normalize();
                     }
