@@ -252,18 +252,21 @@ public class Entity<G extends Game, S extends Scene<G>> {
 
     /**
      * Removes a component from the entity. This may remove the entity from the systems which it is registered to.
-     * @param component the component which to remove.
+     * @param clazz the component class which to remove.
      */
-    public void removeComponent(Component component) {
-        component.componentRemoved();
-        Class clazz = component.getClass();
-        while(clazz != null) {
-            if(components.get(clazz).equals(component)) {
-                components.remove(clazz, component);
-                clazz = clazz.getSuperclass();
+    public void removeComponent(Class<? extends Component> clazz) {
+        Component component = getComponent(clazz);
+        boolean removed = false;
+
+        for(Iterator<Map.Entry<Class, Component>> it = components.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<Class, Component> entry = it.next();
+            if(entry.getValue() == component) {
+                it.remove();
+                removed = true;
             }
         }
-        if(scene != null) {
+
+        if(removed && scene != null) {
             componentRemovedSignal.dispatch(this);
         }
     }

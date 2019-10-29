@@ -104,7 +104,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
                         float frictionAmount = 0;
                         if(physicsComponent.getGravity().lengthSquared() != 0) {
                             float gravityDotNormal = Math.max(0, -V3F_8.set(physicsComponent.getGravity()).normalize().dot(result.getNormal()));
-                            if(gravityDotNormal >= physicsComponent.getSphereFactor()) {
+                            if(gravityDotNormal >= physicsComponent.getRollFactor()) {
                                 frictionAmount = timeMultiplier * gravityDotNormal * physicsComponent.getFrictionDampener();
                             }
                         }
