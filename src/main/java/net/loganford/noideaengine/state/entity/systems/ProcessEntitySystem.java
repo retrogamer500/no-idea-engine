@@ -34,7 +34,7 @@ public abstract class ProcessEntitySystem extends EntitySystem {
 
         int index = entities.add(entity);
 
-        if(index < currentEntity) {
+        if(index <= currentEntity) {
             currentEntity++;
         }
 

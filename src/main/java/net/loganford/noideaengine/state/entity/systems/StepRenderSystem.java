@@ -53,7 +53,7 @@ public class StepRenderSystem extends EntitySystem {
     private class EntityAddedIndexListener implements Listener<Integer> {
         @Override
         public void receive(Signal<Integer> signal, Integer index) {
-            if(index < currentEntity) {
+            if(index <= currentEntity) {
                 currentEntity++;
             }
         }

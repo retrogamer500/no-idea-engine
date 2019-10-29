@@ -87,10 +87,11 @@ public class PhysicsSystem extends ProcessEntitySystem {
                 if(result.getEntity() != null && ((Entity)result.getEntity()).getPhysicsComponent() != null &&
                 physicsComponent.isInteractive() && ((Entity)result.getEntity()).getPhysicsComponent().isInteractive()) {
                     PhysicsComponent otherPhysicsComponent = ((Entity)result.getEntity()).getPhysicsComponent();
-                    float ratio = physicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
-                    otherPhysicsComponent.getVelocity().add(V3F_9.set(result.getNormal()).mul(-1/ratio * physicsComponent.getVelocity().length()));
-                    speedPerSecond *= ratio;
-                    remainingSpeed *= ratio;
+                    float ratio1 = physicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
+                    float ratio2 = otherPhysicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
+                    otherPhysicsComponent.getVelocity().add(V3F_9.set(result.getNormal()).mul(-1 * ratio2 * physicsComponent.getVelocity().length()));
+                    speedPerSecond *= ratio1;
+                    remainingSpeed *= ratio1;
                 }
 
                 //Calculate bounce vector and determine whether to slide or bounce

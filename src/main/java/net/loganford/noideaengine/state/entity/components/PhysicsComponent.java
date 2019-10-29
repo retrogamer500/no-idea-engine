@@ -2,14 +2,13 @@ package net.loganford.noideaengine.state.entity.components;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.loganford.noideaengine.state.entity.Entity;
 import org.joml.Vector3f;
 
 public class PhysicsComponent extends Component {
     /**Current velocity*/
     @Getter @Setter private Vector3f velocity = new Vector3f();
     /**Class of entities that are solid*/
-    @Getter @Setter private Class<? extends Entity> solidEntity;
+    @Getter @Setter private Class<?> solidEntity;
     /**Every time this entity bounces, multiply velocity by this much*/
     @Getter @Setter private float bounceVelocityMultiplier = .3f;
     /**Every time this entity bounces, subtract velocity by this much*/

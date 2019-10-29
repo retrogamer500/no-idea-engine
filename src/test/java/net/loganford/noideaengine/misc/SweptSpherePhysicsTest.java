@@ -59,10 +59,11 @@ public class SweptSpherePhysicsTest {
 
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
                 UnitSphereEntity entity = new UnitSphereEntity();
+                System.out.println("Creating entity!");
                 scene.add(entity, getPos());
 
-                FirstPersonCameraComponent cameraComponent = (FirstPersonCameraComponent) getComponent(FirstPersonCameraComponent.class);
-                ((PhysicsComponent)entity.getComponent(PhysicsComponent.class)).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));
+                FirstPersonCameraComponent cameraComponent = getComponent(FirstPersonCameraComponent.class);
+                entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));
             }
             if(game.getInput().mousePressed(Input.MOUSE_2)) {
                 scene.with(UnitSphereEntity.class, Entity::destroy);
@@ -70,7 +71,9 @@ public class SweptSpherePhysicsTest {
         }
     }
 
-    public class Level extends Entity {
+    public interface SolidInterface {}
+
+    public class Level extends Entity implements SolidInterface {
         private Model model;
 
         @Override
@@ -92,15 +95,16 @@ public class SweptSpherePhysicsTest {
     }
 
     @RegisterComponent(PhysicsComponent.class)
-    public class UnitSphereEntity extends Entity {
+    public class UnitSphereEntity extends Entity implements SolidInterface {
         private Model model;
 
         @Override
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setSolidEntity(Level.class);
+            getComponent(PhysicsComponent.class).setSolidEntity(SolidInterface.class);
             //((PhysicsComponent)getComponent(PhysicsComponent.class)).getVelocity().set(0, -2f, 0);
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).getGravity().set(0, -10f, 0);
+            getComponent(PhysicsComponent.class).getGravity().set(0, -10f, 0);
+            getComponent(PhysicsComponent.class).setInteractive(true);
             model = game.getModelManager().get("unitSphere");
             setShape(new UnitSphere());
         }

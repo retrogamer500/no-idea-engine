@@ -50,6 +50,7 @@ public class ShapeIntersectionEngine {
         addSweepHandler(Point.class, Cylinder.class, new PointCylinderSweepHandler());
         addSweepHandler(Point.class, Ellipsoid.class, new PointEllipsoidSweepHandler());
         addSweepHandler(UnitSphere.class, Face.class, new UnitSphereFaceSweepHandler());
+        addSweepHandler(UnitSphere.class, UnitSphere.class, new UnitSphereUnitSphereSweepHandler());
     }
 
     public int registerShape(Class<? extends Shape> clazz) {
