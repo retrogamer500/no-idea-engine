@@ -62,6 +62,7 @@ public class Entity {
     //Components that are frequently accessed-- want to avoid a hashmap access
     @Getter private AbstractPositionComponent positionComponent;
     @Getter private AbstractCollisionComponent collisionComponent;
+    @Getter private PhysicsComponent physicsComponent;
 
     /**
      * Creates the entity at position (0,0,0), but does not add it to the scene.
@@ -248,6 +249,9 @@ public class Entity {
         else if(component instanceof AbstractCollisionComponent) {
             collisionComponent = (AbstractCollisionComponent) component;
         }
+        else if(component instanceof PhysicsComponent) {
+            physicsComponent = (PhysicsComponent) component;
+        }
     }
 
     /**
@@ -268,6 +272,17 @@ public class Entity {
 
         if(removed && scene != null) {
             componentRemovedSignal.dispatch(this);
+
+            //Update cache
+            if(component instanceof AbstractPositionComponent) {
+                positionComponent = null;
+            }
+            else if(component instanceof AbstractCollisionComponent) {
+                collisionComponent = null;
+            }
+            else if(component instanceof PhysicsComponent) {
+                physicsComponent = null;
+            }
         }
     }
 
