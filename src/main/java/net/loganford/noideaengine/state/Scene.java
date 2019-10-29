@@ -2,7 +2,6 @@ package net.loganford.noideaengine.state;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import net.jodah.typetools.TypeResolver;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.Image;
@@ -29,8 +28,8 @@ import java.util.List;
 @Log4j2
 @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"32", "1024"})
 @RegisterSystem(StepRenderSystem.class)
-public class Scene<G extends Game> extends GameState<G> {
-    private G game;
+public class Scene extends GameState {
+    private Game game;
     private int currentEntity = 0;
 
     @Getter private boolean sceneBegun = false;
@@ -52,26 +51,21 @@ public class Scene<G extends Game> extends GameState<G> {
     @SuppressWarnings("unchecked")
     public void add(Entity entity) {
         log.debug("Adding entity: " + entity.getClass().getName() + " Entity count: " + entities.size());
-        if(testEntityGenerics(entity)) {
-            entity.setScene(this);
-            entity.setGame(game);
-            entity.setDepthChanged(false);
+        entity.setScene(this);
+        entity.setGame(game);
+        entity.setDepthChanged(false);
 
-            int index = entities.add(entity);
+        int index = entities.add(entity);
 
-            entityAddedSignal.dispatch(entity);
-            entityAddedIndexSignal.dispatch(index);
+        entityAddedSignal.dispatch(entity);
+        entityAddedIndexSignal.dispatch(index);
 
-            if(index < currentEntity) {
-                currentEntity++;
-            }
-
-            if(sceneBegun) {
-                entity.onCreate(game, this);
-            }
+        if(index < currentEntity) {
+            currentEntity++;
         }
-        else {
-            throw new GameEngineException("Tried to add entity to scene with improper generics: " + entity.getClass().getName());
+
+        if(sceneBegun) {
+            entity.onCreate(game, this);
         }
     }
 
@@ -117,7 +111,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @param game the game
      */
     @Override
-    public void beginState(G game) {
+    public void beginState(Game game) {
         super.beginState(game);
         this.game = game;
         entities = new SimpleEntityStore();
@@ -132,7 +126,7 @@ public class Scene<G extends Game> extends GameState<G> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void postBeginState(G game) {
+    public void postBeginState(Game game) {
         super.postBeginState(game);
 
         //Create any new entities added prior to the state beginning
@@ -149,17 +143,10 @@ public class Scene<G extends Game> extends GameState<G> {
         Iterator<Entity> it = game.getPersistentEntities().iterator();
         while(it.hasNext()) {
             Entity entity = it.next();
-            if(testEntityGenerics(entity)) {
-                if(testEntityGenerics(entity)) {
-                    entity.getSystems().clear(); //Clear cache of systems from last scene
-                    add(entity);
-                    entity.beginScene(game, this);
-                    it.remove();
-                }
-                else {
-                    log.info("Tried to add persistent entity to scene with improper generics: " + entity.getClass().getName());
-                }
-            }
+            entity.getSystems().clear(); //Clear cache of systems from last scene
+            add(entity);
+            entity.beginScene(game, this);
+            it.remove();
         }
     }
 
@@ -170,7 +157,7 @@ public class Scene<G extends Game> extends GameState<G> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void step(G game, float delta) {
+    public void step(Game game, float delta) {
         super.step(game, delta);
 
         //Resort entities which have had their depth changed
@@ -218,7 +205,7 @@ public class Scene<G extends Game> extends GameState<G> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void endState(G game) {
+    public void endState(Game game) {
         super.endState(game);
         sceneBegun = false;
 
@@ -258,7 +245,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @return the nearest entity to a location
      */
     @Scriptable
-    public <C extends Entity> C nearest(Class<C> clazz, float x, float y) {
+    public <C> C nearest(Class<C> clazz, float x, float y) {
         return nearest(clazz, x, y, 0f);
     }
 
@@ -271,13 +258,14 @@ public class Scene<G extends Game> extends GameState<G> {
      * @return the nearest entity to a location
      */
     @Scriptable
-    public <C extends Entity> C nearest(Class<C> clazz, float x, float y, float z) {
+    public <C> C nearest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float minDisSqr = Float.MAX_VALUE;
 
-        for(Entity entity : entities.byClass(clazz)) {
+        for(Object object : entities.byClass(clazz)) {
+            Entity entity = (Entity) object;
             @SuppressWarnings("unchecked") C casted = (C) entity;
-            float disSqr = MathUtils.distanceSqr(x, y, z, casted.getX(), casted.getY(), casted.getZ());
+            float disSqr = MathUtils.distanceSqr(x, y, z, entity.getX(), entity.getY(), entity.getZ());
             if(disSqr < minDisSqr) {
                 minDisSqr = disSqr;
                 returnValue = casted;
@@ -295,7 +283,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @return the furthest entity to a location
      */
     @Scriptable
-    public <C extends Entity> C furthest(Class<C> clazz, float x, float y) {
+    public <C> C furthest(Class<C> clazz, float x, float y) {
         return furthest(clazz, x, y, 0);
     }
 
@@ -308,13 +296,14 @@ public class Scene<G extends Game> extends GameState<G> {
      * @return the furthest entity to a location
      */
     @Scriptable
-    public <C extends Entity> C furthest(Class<C> clazz, float x, float y, float z) {
+    public <C> C furthest(Class<C> clazz, float x, float y, float z) {
         C returnValue = null;
         float maxDisSqr = Float.MAX_VALUE;
 
-        for(Entity entity : entities.byClass(clazz)) {
+        for(Object object : entities.byClass(clazz)) {
+            Entity entity = (Entity) object;
             @SuppressWarnings("unchecked") C casted = (C) entity;
-            float disSqr = MathUtils.distanceSqr(x, y, z, casted.getX(), casted.getY(), casted.getZ());
+            float disSqr = MathUtils.distanceSqr(x, y, z, entity.getX(), entity.getY(), entity.getZ());
             if(disSqr > maxDisSqr) {
                 maxDisSqr = disSqr;
                 returnValue = casted;
@@ -333,7 +322,7 @@ public class Scene<G extends Game> extends GameState<G> {
      * @return a list of nearby entities
      */
     @Scriptable
-    public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
+    public <C> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, int count) {
         return nearest(clazz, x, y, 0, count);
     }
 
@@ -348,13 +337,14 @@ public class Scene<G extends Game> extends GameState<G> {
      * @return a list of nearby entities
      */
     @Scriptable
-    public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, float z, int count) {
+    public <C> List<EntityDistancePair<C>> nearest(Class<C> clazz, float x, float y, float z, int count) {
         List<EntityDistancePair<C>> pairs = new ArrayList<>(count);
 
-        for(Entity entity : entities.byClass(clazz)) {
+        for(Object object : entities.byClass(clazz)) {
+            Entity entity = (Entity) object;
             //AssignableFrom method above avoids any exceptions
             @SuppressWarnings("unchecked") C casted = (C) entity;
-            float disSqr = MathUtils.distanceSqr(x, y, z, casted.getX(), casted.getY(), casted.getZ());
+            float disSqr = MathUtils.distanceSqr(x, y, z, entity.getX(), entity.getY(), entity.getZ());
             EntityDistancePair<C> pair = new EntityDistancePair<>(casted, disSqr);
 
             if(pairs.size() == 0) {
@@ -385,17 +375,6 @@ public class Scene<G extends Game> extends GameState<G> {
     @Scriptable
     public <C extends Entity> int count(Class<C> clazz) {
         return entities.byClass(clazz).size();
-    }
-
-    /**
-     * Tests whether an entity can be placed in the scene.
-     * @param e the entity to test
-     * @return whether the entity's generics allow it to be entered into this scene.
-     */
-    private boolean testEntityGenerics(Entity e) {
-        Class<?>[] generics = TypeResolver.resolveRawArguments(Entity.class, e.getClass());
-        return generics[0].isAssignableFrom(game.getClass()) &&
-                (generics[1] == TypeResolver.Unknown.class || generics[1].isAssignableFrom(getClass()));
     }
 
     /**

@@ -35,7 +35,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
     }
 
     @Override
-    public boolean collidesWith(Shape shape, Class<? extends Entity> clazz) {
+    public boolean collidesWith(Shape shape, Class<?> clazz) {
         for(Entity entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass()) && entity.getShape() != null) {
                 if (entity.getShape() != shape && entity.getShape().collidesWith(shape)) {
@@ -48,7 +48,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> C getCollision(Shape shape, Class<C> clazz) {
+    public <C> C getCollision(Shape shape, Class<C> clazz) {
         for(Entity entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass()) && entity.getShape() != null) {
                 if(entity.getShape() instanceof AbstractCompoundShape) {
@@ -71,7 +71,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz) {
+    public <C> List<C> getCollisions(Shape shape, Class<C> clazz) {
         LIST.clear();
         getCollisions(LIST, shape, clazz);
         return LIST;
@@ -79,7 +79,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> void getCollisions(List<C> list, Shape shape, Class<C> clazz) {
+    public <C> void getCollisions(List<C> list, Shape shape, Class<C> clazz) {
         for(Entity entity : entities) {
             if(clazz.isAssignableFrom(entity.getClass()) && entity.getShape() != null) {
                 if(entity.getShape() instanceof AbstractCompoundShape) {
@@ -101,7 +101,7 @@ public class NaiveCollisionSystem extends CollisionSystem {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+    public <E> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
         result.clear();
         result.getPosition().set(shape.getPosition());
         result.getVelocity().set(velocity);

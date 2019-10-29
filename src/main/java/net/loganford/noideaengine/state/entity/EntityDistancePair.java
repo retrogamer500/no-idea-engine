@@ -2,7 +2,7 @@ package net.loganford.noideaengine.state.entity;
 
 import lombok.Getter;
 
-public class EntityDistancePair<C extends Entity> {
+public class EntityDistancePair<C> {
 
     @Getter private C entity;
     @Getter private float distanceSqr;

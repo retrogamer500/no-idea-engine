@@ -3,14 +3,12 @@ package net.loganford.noideaengine.state;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import net.jodah.typetools.TypeResolver;
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.resources.RequireGroup;
+import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL33;
 
@@ -267,14 +265,8 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      */
     @SuppressWarnings("unchecked")
     public void addUILayer(UILayer layer) {
-        Class<?>[] generics = TypeResolver.resolveRawArguments(UILayer.class, uiLayers.getClass());
-        if(generics[0].isAssignableFrom(game.getClass()) && generics[1].isAssignableFrom(getClass())) {
-            uiLayers.add(layer);
-            layer.beginUILayer(game, this);
-        }
-        else {
-            throw new GameEngineException("Tried to add UILayer to state with improper generics: " + layer.getClass().getName());
-        }
+        uiLayers.add(layer);
+        layer.beginUILayer(game, this);
     }
 
     /**

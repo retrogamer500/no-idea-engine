@@ -29,15 +29,15 @@ import java.util.*;
 
 @RegisterComponent(BasicPositionComponent.class)
 @RegisterComponent(BasicCollisionComponent.class)
-public class Entity<G extends Game, S extends Scene<G>> {
+public class Entity {
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
     private static Vector3f V3F_3 = new Vector3f();
     private static Vector3f V3F_4 = new Vector3f();
     private static Vector3f V3F_5 = new Vector3f();
 
-    @Getter @Setter private S scene;
-    @Getter @Setter private G game;
+    @Getter @Setter private Scene scene;
+    @Getter @Setter private Game game;
     @Getter @Setter private boolean persistent;
     @Getter private boolean destroyed = false;
     @Scriptable @Getter private float depth = 0;
@@ -48,7 +48,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
     private Map<Class, Component> unmodifiableComponents;
     @Getter private Set<EntitySystem> systems;
 
-    //Entity's sprite, when set gets drawn in the render method
+    //Entity'Scene sprite, when set gets drawn in the render method
     @Getter(onMethod = @__({@Scriptable})) @Setter(onMethod = @__({@Scriptable})) private Sprite sprite;
 
     //Signals
@@ -79,7 +79,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param game the current game
      * @param scene the current scene
      */
-    public void onCreate(G game, S scene) {
+    public void onCreate(Game game, Scene scene) {
         scene.getEntitySystemEngine().processNewEntityComponents(this);
     }
 
@@ -99,7 +99,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param scene the current scene
      * @param delta time since the previous frame, in milliseconds
      */
-    public void beforeStep(G game, S scene, float delta) {}
+    public void beforeStep(Game game, Scene scene, float delta) {}
 
     /**
      * This method is called every step of the game loop. Delta time is passed through here. Do not call any draw
@@ -108,7 +108,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param scene the current scene
      * @param delta time since the previous frame, in milliseconds
      */
-    public void step(G game, S scene, float delta) {
+    public void step(Game game, Scene scene, float delta) {
         alarms.step(delta);
 
         if(sprite != null) {
@@ -122,7 +122,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param scene the current scene
      * @param delta time since the previous frame, in milliseconds
      */
-    public void afterStep(G game, S scene, float delta) {}
+    public void afterStep(Game game, Scene scene, float delta) {}
 
     /**
      * This method is called once per step. Render the entity here. Do not change the state of the entity-- do that in
@@ -131,7 +131,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param scene the current scene
      * @param renderer reference to the renderer for primate rendering and more advanced drawing functionality
      */
-    public void render(G game, S scene, Renderer renderer) {
+    public void render(Game game, Scene scene, Renderer renderer) {
         if(sprite != null) {
             sprite.render(renderer, getX(), getY());
         }
@@ -142,21 +142,21 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param game the current game
      * @param scene the current scene
      */
-    public void onDestroy(G game, S scene) {}
+    public void onDestroy(Game game, Scene scene) {}
 
     /**
      * Called after onCreate when the scene begins.
      * @param game the current game
      * @param scene the current scene
      */
-    public void beginScene(G game, S scene) {}
+    public void beginScene(Game game, Scene scene) {}
 
     /**
      * Called when the scene ends.
      * @param game the current game
      * @param scene the current scene
      */
-    public void endScene(G game, S scene) {}
+    public void endScene(Game game, Scene scene) {}
 
     /**
      * Sets the depth of the entity. Entities are drawn from the entity with the highest depth to the lowest. The entity
@@ -178,7 +178,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return the nearest entity
      */
     @Scriptable
-    public <C extends Entity> C nearest(Class<C> clazz) {
+    public <C> C nearest(Class<C> clazz) {
         return getScene().nearest(clazz, getX(), getY());
     }
 
@@ -188,7 +188,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return the furthest entity
      */
     @Scriptable
-    public <C extends Entity> C furthest(Class<C> clazz) {
+    public <C> C furthest(Class<C> clazz) {
         return getScene().furthest(clazz, getX(), getY());
     }
 
@@ -199,7 +199,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return a list of nearby entities
      */
     @Scriptable
-    public <C extends Entity> List<EntityDistancePair<C>> nearest(Class<C> clazz, int count) {
+    public <C> List<EntityDistancePair<C>> nearest(Class<C> clazz, int count) {
         return getScene().nearest(clazz, getX(), getY(), count);
     }
 
@@ -224,7 +224,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
     }
 
     /**
-     * Adds a component to the entity. A call to this may add this entity to any of the scene's systems.
+     * Adds a component to the entity. A call to this may add this entity to any of the scene'Scene systems.
      * @param component the component to add to the entity
      */
     public void addComponent(Component component) {
@@ -515,7 +515,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return whether this entity collides with another of the specific class
      */
     @Scriptable
-    public boolean collidesWith(Class<? extends Entity> clazz) {
+    public boolean collidesWith(Class<?> clazz) {
         return getScene().getCollisionSystem().collidesWith(getShape(), clazz);
     }
 
@@ -525,7 +525,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return one entity of the specific class which collides with this entity, or null if none exists
      */
     @Scriptable
-    public <C extends Entity> C getCollision(Class<C> clazz) {
+    public <C> C getCollision(Class<C> clazz) {
         return getScene().getCollisionSystem().getCollision(getShape(), clazz);
     }
 
@@ -537,7 +537,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return one entity of the specific class which collides with this entity, or null if none exists
      */
     @Scriptable
-    public <C extends Entity> C getCollisionAt(Class<C> clazz, float x, float y) {
+    public <C> C getCollisionAt(Class<C> clazz, float x, float y) {
         return getCollisionAt(clazz, x, y, 0);
     }
 
@@ -547,7 +547,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param v position to check for collisions
      * @return one entity of the specific class which collides with this entity, or null if none exists
      */
-    public <C extends Entity> C getCollisionAt(Class<C> clazz, Vector3fc v) {
+    public <C> C getCollisionAt(Class<C> clazz, Vector3fc v) {
         return getCollisionAt(clazz, v.x(), v.y(), v.z());
     }
 
@@ -560,7 +560,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return one entity of the specific class which collides with this entity, or null if none exists
      */
     @Scriptable
-    public <C extends Entity> C getCollisionAt(Class<C> clazz, float x, float y, float z) {
+    public <C> C getCollisionAt(Class<C> clazz, float x, float y, float z) {
         getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY(), z - getShapeOffsetZ());
         C entity = getScene().getCollisionSystem().getCollision(getShape(), clazz);
         getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY(), this.getZ() - getShapeOffsetZ());
@@ -573,7 +573,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return a list of all entities which collide with the entity
      */
     @Scriptable
-    public <C extends Entity> List<C> getCollisions(Class<C> clazz) {
+    public <C> List<C> getCollisions(Class<C> clazz) {
         return getScene().getCollisionSystem().getCollisions(getShape(), clazz);
     }
 
@@ -585,7 +585,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return a list of all entities which collide with the entity
      */
     @Scriptable
-    public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, float x, float y) {
+    public <C> List<C> getCollisionsAt(Class<C> clazz, float x, float y) {
         return getCollisionsAt(clazz, x, y, 0);
     }
 
@@ -595,7 +595,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param v position to check for collisions
      * @return a list of all entities which collide with the entity
      */
-    public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, Vector3fc v) {
+    public <C> List<C> getCollisionsAt(Class<C> clazz, Vector3fc v) {
         return getCollisionsAt(clazz, v.x(), v.y(), v.z());
     }
 
@@ -608,7 +608,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return a list of all entities which collide with the entity
      */
     @Scriptable
-    public <C extends Entity> List<C> getCollisionsAt(Class<C> clazz, float x, float y, float z) {
+    public <C> List<C> getCollisionsAt(Class<C> clazz, float x, float y, float z) {
         getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY(), z - getShapeOffsetZ());
         List<C> entities = getScene().getCollisionSystem().getCollisions(getShape(), clazz);
         getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY(), this.getZ() - getShapeOffsetZ());
@@ -623,7 +623,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return whether a collision occurs at the specified location
      */
     @Scriptable
-    public boolean placeMeeting(Class<? extends Entity> clazz, float x, float y) {
+    public boolean placeMeeting(Class<?> clazz, float x, float y) {
         return placeMeeting(clazz, x, y, 0);
     }
 
@@ -635,7 +635,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return whether a certain position is free from collisions.
      */
     @Scriptable
-    public boolean placeFree(Class<? extends Entity> clazz, float x, float y) {
+    public boolean placeFree(Class<?> clazz, float x, float y) {
         return placeFree(clazz, x, y, 0);
     }
 
@@ -645,7 +645,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param v position to check for collisions
      * @return whether a collision occurs at the specified location
      */
-    public boolean placeMeeting(Class<? extends Entity> clazz, Vector3fc v) {
+    public boolean placeMeeting(Class<?> clazz, Vector3fc v) {
         return placeMeeting(clazz, v.x(), v.y(), v.z());
     }
 
@@ -655,7 +655,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @param v position to check for collisions
      * @return whether a certain position is free from collisions.
      */
-    public boolean placeFree(Class<? extends Entity> clazz, Vector3fc v) {
+    public boolean placeFree(Class<?> clazz, Vector3fc v) {
         return placeFree(clazz, v.x(), v.y(), v.z());
     }
 
@@ -668,7 +668,7 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return whether a collision occurs at the specified location
      */
     @Scriptable
-    public boolean placeMeeting(Class<? extends Entity> clazz, float x, float y, float z) {
+    public boolean placeMeeting(Class<?> clazz, float x, float y, float z) {
         getShape().setPosition(x - getShapeOffsetX(), y - getShapeOffsetY(), z - getShapeOffsetZ());
         boolean returnValue = collidesWith(clazz);
         getShape().setPosition(this.getX() - getShapeOffsetX(), this.getY() - getShapeOffsetY(), this.getZ() - getShapeOffsetZ());
@@ -684,67 +684,67 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return whether a certain position is free from collisions.
      */
     @Scriptable
-    public boolean placeFree(Class<? extends Entity> clazz, float x, float y, float z) {
+    public boolean placeFree(Class<?> clazz, float x, float y, float z) {
         return !placeMeeting(clazz, x, y, z);
     }
 
     /**
-     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * Sweeps this entity'Scene mask across the game world until it impacts another solid.
      * @param result the result of the sweep test
      * @param velocity vector to sweep along
      * @param clazz type of entity to collide against
      */
-    public <E extends Entity> void sweep(SweepResult result, Vector3fc velocity, Class<E> clazz) {
+    public <E> void sweep(SweepResult result, Vector3fc velocity, Class<E> clazz) {
         getScene().getCollisionSystem().sweep(result, this.getShape(), velocity, clazz);
     }
 
     /**
-     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * Sweeps this entity'Scene mask across the game world until it impacts another solid.
      * @param result the result of the sweep test
      * @param vx x component of vector to sweep along
      * @param vy y component of vector to sweep along
      * @param clazz type of entity to collide against
      */
-    public <E extends Entity> void sweep(SweepResult<E> result, float vx, float vy, Class<E> clazz) {
+    public <E> void sweep(SweepResult<E> result, float vx, float vy, Class<E> clazz) {
         getScene().getCollisionSystem().sweep(result, this.getShape(), vx, vy, clazz);
     }
 
     /**
-     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * Sweeps this entity'Scene mask across the game world until it impacts another solid.
      * @param result the result of the sweep test
      * @param vx x component of vector to sweep along
      * @param vy y component of vector to sweep along
      * @param vz z component of vector to sweep along
      * @param clazz type of entity to collide against
      */
-    public <E extends Entity> void sweep(SweepResult<E> result, float vx, float vy, float vz, Class<E> clazz) {
+    public <E> void sweep(SweepResult<E> result, float vx, float vy, float vz, Class<E> clazz) {
         getScene().getCollisionSystem().sweep(result, this.getShape(), vx, vy, vz, clazz);
     }
 
     /**
-     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * Sweeps this entity'Scene mask across the game world until it impacts another solid.
      * @param velocity vector to sweep along
      * @param clazz type of entity to collide against
      * @return the result of the sweep test
      */
-    public <E extends Entity> SweepResult<E> sweep(Vector3fc velocity, Class<E> clazz) {
+    public <E> SweepResult<E> sweep(Vector3fc velocity, Class<E> clazz) {
         return getScene().getCollisionSystem().sweep(this.getShape(), velocity, clazz);
     }
 
     /**
-     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * Sweeps this entity'Scene mask across the game world until it impacts another solid.
      * @param vx x component of vector to sweep along
      * @param vy y component of vector to sweep along
      * @param clazz type of entity to collide against
      * @return the result of the sweep test
      */
     @Scriptable
-    public <E extends Entity> SweepResult<E> sweep(float vx, float vy, Class<E> clazz) {
+    public <E> SweepResult<E> sweep(float vx, float vy, Class<E> clazz) {
         return getScene().getCollisionSystem().sweep(this.getShape(), vx, vy, clazz);
     }
 
     /**
-     * Sweeps this entity's mask across the game world until it impacts another solid.
+     * Sweeps this entity'Scene mask across the game world until it impacts another solid.
      * @param vx x component of vector to sweep along
      * @param vy y component of vector to sweep along
      * @param vz z component of vector to sweep along
@@ -752,12 +752,12 @@ public class Entity<G extends Game, S extends Scene<G>> {
      * @return the result of the sweep test
      */
     @Scriptable
-    public <E extends Entity> SweepResult<E> sweep(float vx, float vy, float vz, Class<E> clazz) {
+    public <E> SweepResult<E> sweep(float vx, float vy, float vz, Class<E> clazz) {
         return getScene().getCollisionSystem().sweep(this.getShape(), vx, vy, vy, clazz);
     }
 
     /**
-     * Creates components based off of this entity's annotations and adds them to the entity
+     * Creates components based off of this entity'Scene annotations and adds them to the entity
      */
     private void loadAndInitializeComponents() {
         Class clazz = getClass();

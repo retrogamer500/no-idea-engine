@@ -70,7 +70,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     }
 
     @Override
-    public boolean collidesWith(Shape shape, Class<? extends Entity> clazz) {
+    public boolean collidesWith(Shape shape, Class<?> clazz) {
         boolean[] result = {false};
 
         performBucketAction(shape, (bucket) -> {
@@ -92,7 +92,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> C getCollision(Shape shape, Class<C> clazz) {
+    public <C> C getCollision(Shape shape, Class<C> clazz) {
         Entity[] result = {null};
 
         performBucketAction(shape, (bucket) -> {
@@ -114,7 +114,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> List<C> getCollisions(Shape shape, Class<C> clazz) {
+    public <C> List<C> getCollisions(Shape shape, Class<C> clazz) {
         LIST.clear();
         getCollisions(LIST, shape, clazz);
         return LIST;
@@ -122,7 +122,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Entity> void getCollisions(List<C> list, Shape shape, Class<C> clazz) {
+    public <C> void getCollisions(List<C> list, Shape shape, Class<C> clazz) {
         SET.clear();
         Set<C> resultSet = (Set<C>) SET;
 
@@ -145,7 +145,7 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends Entity> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+    public <E> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
         result.clear();
         result.getPosition().set(shape.getPosition());
         result.getVelocity().set(velocity);

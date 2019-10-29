@@ -27,7 +27,7 @@ import java.nio.ByteBuffer;
  */
 @Log4j2
 @UnregisterComponent(AbstractCollisionComponent.class)
-public class TileLayer extends Entity<Game, Scene<Game>> implements UnsafeMemory {
+public class TileLayer extends Entity implements UnsafeMemory {
     private static Vector2f V2F = new Vector2f();
     private static int MAX_SIZE = 65535;
 
@@ -151,7 +151,7 @@ public class TileLayer extends Entity<Game, Scene<Game>> implements UnsafeMemory
      * @param scene the current scene
      */
     @Override
-    public void onDestroy(Game game, Scene<Game> scene) {
+    public void onDestroy(Game game, Scene scene) {
         freeMemory();
         super.onDestroy(game, scene);
     }

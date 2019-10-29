@@ -3,10 +3,9 @@ package net.loganford.noideaengine.shape;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.scripting.Scriptable;
-import net.loganford.noideaengine.state.entity.Entity;
 import org.joml.Vector3f;
 
-public class SweepResult<E extends Entity> {
+public class SweepResult<E> {
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
     private static Vector3f V3F_3 = new Vector3f();

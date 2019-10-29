@@ -11,7 +11,7 @@ import org.junit.Test;
 public class JsScriptEngineTest {
     @Test
     public void testScripts() {
-        Scene scene = new Scene<Game>() {
+        Scene scene = new Scene() {
 
             @Override
             public void beginState(Game game) {

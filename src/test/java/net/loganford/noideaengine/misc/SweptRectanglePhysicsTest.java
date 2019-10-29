@@ -40,8 +40,8 @@ public class SweptRectanglePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             setShape(new Rect(0, 0, 16, 16));
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setSolidEntity(TestWall.class);
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setResistance(32f);
+            getComponent(PhysicsComponent.class).setSolidEntity(TestWall.class);
+            getComponent(PhysicsComponent.class).setResistance(32f);
         }
 
         @Override
@@ -73,7 +73,7 @@ public class SweptRectanglePhysicsTest {
             //Apply acceleration
             if(acceleration.lengthSquared() > 0) {
                 acceleration.normalize().mul(accelerationAmount);
-                ((PhysicsComponent)getComponent(PhysicsComponent.class)).getVelocity().add(acceleration);
+                getComponent(PhysicsComponent.class).getVelocity().add(acceleration);
             }
         }
     }
@@ -95,6 +95,8 @@ public class SweptRectanglePhysicsTest {
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
                 add(new TestWall(), getView().getMouseX(), getView().getMouseY());
             }
+
+            //Entity e = nearest(Entity.class);
         }
     }
 

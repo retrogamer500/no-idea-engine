@@ -4,10 +4,10 @@ import lombok.Getter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 
-public abstract class UILayer<G extends Game, S extends GameState> {
+public abstract class UILayer {
     @Getter private boolean destroyed = false;
 
-    public abstract void beginUILayer(G game, S gameState);
+    public abstract void beginUILayer(Game game, GameState gameState);
 
     public boolean renderBelow() {
         return true;
@@ -25,7 +25,7 @@ public abstract class UILayer<G extends Game, S extends GameState> {
         destroyed = true;
     }
 
-    public abstract void render(G game, S gameState, Renderer renderer);
+    public abstract void render(Game game, GameState gameState, Renderer renderer);
 
-    public abstract void step(G game, S scene, float delta);
+    public abstract void step(Game game, GameState scene, float delta);
 }

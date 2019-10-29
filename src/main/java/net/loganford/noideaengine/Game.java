@@ -3,7 +3,6 @@ package net.loganford.noideaengine;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import net.jodah.typetools.TypeResolver;
 import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.audio.Audio;
 import net.loganford.noideaengine.audio.AudioSystem;
@@ -335,11 +334,6 @@ public class Game {
      * @param requestedNextState new state
      */
     public void setState(GameState requestedNextState) {
-        Class<?> generic = TypeResolver.resolveRawArgument(GameState.class, requestedNextState.getClass());
-        if (!getClass().isAssignableFrom(generic)) {
-            throw new GameEngineException("Invalid GameState: state cannot be casted due to generics.");
-        }
-
         //If the current state is a transition, we simply go to the next state.
         //Otherwise, if loading is required we go to a loading screen, but if not we go to a transition.
         if (nextGameState == null) {

@@ -84,7 +84,7 @@ public abstract class EntityStore<T> implements Iterable<T> {
         }
     }
 
-    public <C extends Entity> List<C> byClass(Class<C> clazz) {
+    public <C> List<C> byClass(Class<C> clazz) {
         return typeCache.get(clazz);
     }
 
@@ -143,7 +143,7 @@ public abstract class EntityStore<T> implements Iterable<T> {
         }
 
         @SuppressWarnings("unchecked")
-        public <C extends Entity> List<C> get(Class<C> clazz) {
+        public <C> List<C> get(Class<C> clazz) {
             ArrayList<C> entityList = new ArrayList<>();
 
             for (Map.Entry<Class<? extends Entity>, Set<? extends Entity>> entry : map.entrySet()) {
