@@ -24,6 +24,8 @@ public class PhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_4 = new Vector3f();
     private static Vector3f V3F_5 = new Vector3f();
     private static Vector3f V3F_6 = new Vector3f();
+    private static Vector3f V3F_7 = new Vector3f();
+    private static Vector3f V3F_8 = new Vector3f();
 
     public PhysicsSystem(Game game, Scene scene, String[] args) {
         super(game, scene, args);
@@ -53,12 +55,10 @@ public class PhysicsSystem extends ProcessEntitySystem {
         handleMovement(entity, physicsComponent, abstractPositionComponent, abstractCollisionComponent, delta);
 
         //Friction
-        if(physicsComponent.getGravity().lengthSquared() == 0) {
-            float speed = physicsComponent.getVelocity().length();
-            if(speed > 0) {
-                speed = Math.max(0, speed - physicsComponent.getFriction());
-                physicsComponent.getVelocity().normalize().mul(speed);
-            }
+        float speed = physicsComponent.getVelocity().length();
+        if(speed > 0 && physicsComponent.getResistance() != 0) {
+            speed = Math.max(0, speed - physicsComponent.getResistance());
+            physicsComponent.getVelocity().normalize().mul(speed);
         }
     }
 
@@ -68,8 +68,9 @@ public class PhysicsSystem extends ProcessEntitySystem {
             return;
         }
 
+        float timeMultiplier = delta / 1000f;
         float speedPerSecond = physicsComponent.getVelocity().length(); //Speed of this object per second
-        float remainingSpeed = speedPerSecond * delta / 1000f; //Number of units left to move this frame
+        float remainingSpeed = speedPerSecond * timeMultiplier; //Number of units left to move this frame
         Vector3f nextDirection = V3F.set(physicsComponent.getVelocity()).normalize(); //Unit vector of direction
 
         SweepResult result;
@@ -88,25 +89,45 @@ public class PhysicsSystem extends ProcessEntitySystem {
                 Vector3f projected = V3F_5.set(bouncedVector).mul(speedPerSecond);
                 float scalarProjection =  projected.dot(result.getNormal());
 
-                if(scalarProjection < physicsComponent.getBounceVelocity()) {
+                if(scalarProjection * physicsComponent.getBounceVelocityMultiplier() - physicsComponent.getBounceVelocityDampener() <= 0) {
                     //Slide
                     result.slide(nextDirection);
 
                     if(nextDirection.lengthSquared() == 0) {
+                        //Sliding object has squarely hit an edge, set remaining speed to 0. This will break the loop.
                         remainingSpeed = 0;
                     }
                     else {
+
+
+                        //Calculate friction (if gravity exists)
+                        float frictionAmount = 0;
+                        if(physicsComponent.getGravity().lengthSquared() != 0) {
+                            float gravityDotNormal = Math.max(0, -V3F_8.set(physicsComponent.getGravity()).normalize().dot(result.getNormal()));
+                            frictionAmount = timeMultiplier * gravityDotNormal * physicsComponent.getFrictionDampener();
+                        }
+
                         speedPerSecond *= nextDirection.length();
+                        speedPerSecond = Math.max(0, speedPerSecond - frictionAmount);
+
                         remainingSpeed *= nextDirection.length();
+                        remainingSpeed = Math.max(0, remainingSpeed - .5f * frictionAmount * timeMultiplier);
+                        //remainingSpeed = speedPerSecond * timeMultiplier;
+
+                        System.out.println(speedPerSecond + " " + remainingSpeed);
+
                         nextDirection.normalize();
                     }
                 }
                 else {
                     //Bounce
-                    speedPerSecond *= physicsComponent.getBounceVelocityMultiplier(); //This part of the code is fucked up
-                    speedPerSecond -= physicsComponent.getBounceVelocityDampener();
-                    speedPerSecond = Math.max(0, speedPerSecond);
                     nextDirection.set(bouncedVector);
+                    Vector3f dampenFactor = V3F_7.set(result.getNormal()).mul(-(scalarProjection * physicsComponent.getBounceVelocityMultiplier() + physicsComponent.getBounceVelocityDampener()));
+                    nextDirection.mul(speedPerSecond).add(dampenFactor);
+                    speedPerSecond = nextDirection.length();
+                    nextDirection.normalize();
+
+
                 }
             }
             else {

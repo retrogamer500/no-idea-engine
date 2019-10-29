@@ -6,21 +6,21 @@ import net.loganford.noideaengine.state.entity.Entity;
 import org.joml.Vector3f;
 
 public class PhysicsComponent extends Component {
-    /*Current velocity*/
+    /**Current velocity*/
     @Getter @Setter private Vector3f velocity = new Vector3f();
-    /*Class of entities that are solid*/
+    /**Class of entities that are solid*/
     @Getter @Setter private Class<? extends Entity> solidEntity;
-    /*If velocity projected on the normal is greater than this, then bounce, otherwise slide*/
-    @Getter @Setter private float bounceVelocity = .1f;
-    /*Every time this entity bounces, multiply velocity by this much*/
+    /**Every time this entity bounces, multiply velocity by this much*/
     @Getter @Setter private float bounceVelocityMultiplier = .3f;
-    /*Every time this entity bounces, subtract velocity by this much*/
-    @Getter @Setter private float bounceVelocityDampener = .1f;
-    /*Friction per second*/
-    @Getter @Setter private float friction = 0f;
-    /*Max speed*/
+    /**Every time this entity bounces, subtract velocity by this much*/
+    @Getter @Setter private float bounceVelocityDampener = .5f;
+    /**Every time the entity is sliding on the ground, subtract velocity by this much*/
+    @Getter @Setter private float frictionDampener = 5f;
+    /**Air resistance*/
+    @Getter @Setter private float resistance = 0f;
+    /**Max speed*/
     @Getter @Setter private float maxSpeed = 500f;
-    /*Gravity*/
+    /**Gravity*/
     @Getter @Setter private Vector3f gravity = new Vector3f(0, 0, 0);
 
     public PhysicsComponent(String[] args) {

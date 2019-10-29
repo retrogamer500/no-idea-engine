@@ -41,8 +41,7 @@ public class SweptRectanglePhysicsTest {
             super.onCreate(game, scene);
             setShape(new Rect(0, 0, 16, 16));
             ((PhysicsComponent)getComponent(PhysicsComponent.class)).setSolidEntity(TestWall.class);
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setBounceVelocity(Float.MAX_VALUE);
-            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setFriction(32f);
+            ((PhysicsComponent)getComponent(PhysicsComponent.class)).setResistance(32f);
         }
 
         @Override
