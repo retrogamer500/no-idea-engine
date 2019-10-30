@@ -6,7 +6,8 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.Component;
-import net.loganford.noideaengine.state.entity.components.RegisterComponent;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.state.entity.signals.ComponentRemovedSignal;
 import net.loganford.noideaengine.state.entity.signals.DestructionSignal;
 import net.loganford.noideaengine.utils.messaging.Listener;
@@ -21,7 +22,7 @@ public abstract class EntitySystem implements Listener<Entity> {
     @Getter private List<Class<? extends Component>> componentList;
     @Getter private float priority = 0;
 
-    public EntitySystem(Game game, Scene scene, String[] args) {
+    public EntitySystem(Game game, Scene scene, Argument[] args) {
         componentList = new ArrayList<>();
 
         Class clazz = getClass();

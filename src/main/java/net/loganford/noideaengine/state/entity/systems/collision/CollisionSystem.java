@@ -8,7 +8,8 @@ import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.components.AbstractCollisionComponent;
 import net.loganford.noideaengine.state.entity.components.AbstractPositionComponent;
-import net.loganford.noideaengine.state.entity.components.RegisterComponent;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
@@ -22,7 +23,7 @@ public abstract class CollisionSystem extends EntitySystem {
     private static SweepResult SWEEP_RESULT = new SweepResult();
     private static Vector3f V3F = new Vector3f();
 
-    public CollisionSystem(Game game, Scene scene, String[] args) {
+    public CollisionSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
     }
 

@@ -6,6 +6,8 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.*;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class FreeMovementSystem extends ProcessEntitySystem {
     private int freeMovementComponentIndex;
     private int abstractCameraComponentIndex;
 
-    public FreeMovementSystem(Game game, Scene scene, String[] args) {
+    public FreeMovementSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
 
         abstractPositionComponentIndex = getComponentLocation(AbstractPositionComponent.class);

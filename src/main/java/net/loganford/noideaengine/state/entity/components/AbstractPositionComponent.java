@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.state.entity.components;
 
+import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -7,7 +8,7 @@ import org.joml.Vector3fc;
 public abstract class AbstractPositionComponent extends Component {
     private static Vector3f V3F = new Vector3f();
 
-    public AbstractPositionComponent(String[] args) {
+    public AbstractPositionComponent(Argument[] args) {
         super(args);
     }
 

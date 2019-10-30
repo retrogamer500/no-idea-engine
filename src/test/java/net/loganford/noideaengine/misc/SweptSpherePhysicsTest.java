@@ -10,9 +10,12 @@ import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.FirstPersonCameraComponent;
 import net.loganford.noideaengine.state.entity.components.FreeMovementComponent;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
-import net.loganford.noideaengine.state.entity.components.RegisterComponent;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.state.entity.systems.*;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
+import net.loganford.noideaengine.utils.annotations.RegisterSystem;
+import net.loganford.noideaengine.utils.annotations.UnregisterSystem;
 import org.joml.Vector3f;
 import org.junit.Test;
 
@@ -22,7 +25,10 @@ public class SweptSpherePhysicsTest {
     private static Vector3f V3F = new Vector3f();
 
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
-    @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"4", "1024"})
+    @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {
+            @Argument(name = "cellSize", intValue = 4),
+            @Argument(name = "bucketCount", intValue = 1024)
+    })
     //@RegisterSystem(NaiveCollisionSystem.class)
     @RegisterSystem(FirstPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)

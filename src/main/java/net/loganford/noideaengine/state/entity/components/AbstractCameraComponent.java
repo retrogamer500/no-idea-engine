@@ -2,6 +2,7 @@ package net.loganford.noideaengine.state.entity.components;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -13,7 +14,7 @@ public class AbstractCameraComponent extends Component {
     @Getter @Setter private float roll;
     @Getter @Setter private float yaw;
 
-    public AbstractCameraComponent(String[] args) {
+    public AbstractCameraComponent(Argument[] args) {
         super(args);
     }
 

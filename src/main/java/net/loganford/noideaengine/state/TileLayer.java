@@ -10,7 +10,7 @@ import net.loganford.noideaengine.graphics.Texture;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.AbstractCollisionComponent;
-import net.loganford.noideaengine.state.entity.components.UnregisterComponent;
+import net.loganford.noideaengine.utils.annotations.UnregisterComponent;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
 import org.joml.Vector2f;

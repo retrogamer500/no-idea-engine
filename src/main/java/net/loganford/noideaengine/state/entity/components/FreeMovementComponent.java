@@ -2,6 +2,7 @@ package net.loganford.noideaengine.state.entity.components;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Vector3f;
 
 public class FreeMovementComponent extends Component {
@@ -10,7 +11,7 @@ public class FreeMovementComponent extends Component {
     @Getter @Setter private float friction = 1f;
     @Getter @Setter private float maxSpeed = 10f;
 
-    public FreeMovementComponent(String[] args) {
+    public FreeMovementComponent(Argument[] args) {
         super(args);
     }
 }

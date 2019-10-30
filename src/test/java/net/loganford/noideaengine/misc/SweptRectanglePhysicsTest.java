@@ -7,9 +7,9 @@ import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
-import net.loganford.noideaengine.state.entity.components.RegisterComponent;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.state.entity.systems.PhysicsSystem;
-import net.loganford.noideaengine.state.entity.systems.RegisterSystem;
+import net.loganford.noideaengine.utils.annotations.RegisterSystem;
 import org.joml.Vector3f;
 import org.junit.Test;
 

@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.state.entity.components;
 
+import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Matrix4f;
 
 public class BasicPositionComponent extends AbstractPositionComponent {
@@ -8,7 +9,7 @@ public class BasicPositionComponent extends AbstractPositionComponent {
     private float y;
     private float z;
 
-    public BasicPositionComponent(String[] args) {
+    public BasicPositionComponent(Argument[] args) {
         super(args);
     }
 

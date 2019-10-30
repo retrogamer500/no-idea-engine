@@ -2,6 +2,7 @@ package net.loganford.noideaengine.state.entity.components;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Vector3f;
 
 public class PhysicsComponent extends Component {
@@ -23,11 +24,13 @@ public class PhysicsComponent extends Component {
     @Getter @Setter private float maxSpeed = 500f;
     /**Gravity per second*/
     @Getter @Setter private Vector3f gravity = new Vector3f(0, 0, 0);
-
+    /*Whether this entity can be pushed by others*/
     @Getter @Setter private boolean interactive = false;
+    /*Mass used when calculating collisions. This is a huge approximation so it is better to not use values too different
+    * from each other.*/
     @Getter @Setter private float mass = 20f;
 
-    public PhysicsComponent(String[] args) {
+    public PhysicsComponent(Argument[] args) {
         super(args);
     }
 }
