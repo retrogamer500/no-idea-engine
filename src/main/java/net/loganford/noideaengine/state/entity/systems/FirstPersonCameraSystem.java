@@ -46,7 +46,7 @@ public class FirstPersonCameraSystem extends ProcessEntitySystem {
         firstPersonCameraComponent.setPitch(firstPersonCameraComponent.getPitch() +
                 (game.getInput().getMouseDeltaY() * firstPersonCameraComponent.getSensitivity()));
 
-        firstPersonCameraComponent.setPitch(Math.min(Math.max(firstPersonCameraComponent.getPitch(), (float)-Math.PI/2f * .99f), (float)Math.PI/2f * .99f));
+        firstPersonCameraComponent.setPitch(Math.min(Math.max(firstPersonCameraComponent.getPitch(), firstPersonCameraComponent.getMinPitch()), firstPersonCameraComponent.getMaxPitch()));
 
 
         //Set scene's camera

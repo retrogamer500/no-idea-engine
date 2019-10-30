@@ -7,12 +7,13 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.components.FirstPersonCameraComponent;
+import net.loganford.noideaengine.state.entity.components.AbstractCameraComponent;
 import net.loganford.noideaengine.state.entity.components.FreeMovementComponent;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
-import net.loganford.noideaengine.state.entity.systems.FirstPersonCameraSystem;
+import net.loganford.noideaengine.state.entity.components.ThirdPersonCameraComponent;
 import net.loganford.noideaengine.state.entity.systems.FreeMovementSystem;
 import net.loganford.noideaengine.state.entity.systems.PhysicsSystem;
+import net.loganford.noideaengine.state.entity.systems.ThirdPersonCameraSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.annotations.*;
 import org.joml.Vector3f;
@@ -28,7 +29,7 @@ public class SweptSpherePhysicsTest {
             @Argument(name = "cellSize", intValue = 4),
             @Argument(name = "bucketCount", intValue = 1024)
     })
-    @RegisterSystem(FirstPersonCameraSystem.class)
+    @RegisterSystem(ThirdPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)
     public class TestScene extends Scene {
@@ -44,15 +45,20 @@ public class SweptSpherePhysicsTest {
                     add(new UnitSphereEntity(), 4*i - 10, 10, 4*j - 10);
                 }
             }
-
-            getCamera().setPosition(0, 10, 10);
-            getCamera().lookAt(-3, 0, 0);
         }
     }
 
-    @RegisterComponent(FirstPersonCameraComponent.class)
+    @RegisterComponent(ThirdPersonCameraComponent.class)
     @RegisterComponent(FreeMovementComponent.class)
     public class Player extends Entity {
+        private Model model;
+
+        @Override
+        public void onCreate(Game game, Scene scene) {
+            super.onCreate(game, scene);
+            model = game.getModelManager().get("unitSphere");
+            setShape(new UnitSphere());
+        }
 
         @Override
         public void step(Game game, Scene scene, float delta) {
@@ -62,12 +68,20 @@ public class SweptSpherePhysicsTest {
                 UnitSphereEntity entity = new UnitSphereEntity();
                 scene.add(entity, getPos());
 
-                FirstPersonCameraComponent cameraComponent = getComponent(FirstPersonCameraComponent.class);
+                AbstractCameraComponent cameraComponent = getComponent(AbstractCameraComponent.class);
                 entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));
             }
             if(game.getInput().mousePressed(Input.MOUSE_2)) {
                 scene.with(UnitSphereEntity.class, Entity::destroy);
             }
+        }
+
+        @Override
+        public void render(Game game, Scene scene, Renderer renderer) {
+            super.render(game, scene, renderer);
+            renderer.pushShader(renderer.getShaderForwardOpaque());
+            model.render(renderer, getPosMatrix());
+            renderer.popShader();
         }
     }
 
