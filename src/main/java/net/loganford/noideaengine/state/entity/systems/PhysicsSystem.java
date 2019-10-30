@@ -6,6 +6,7 @@ import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.*;
+import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
 
     private void handleMovement(Entity entity, PhysicsComponent physicsComponent, AbstractPositionComponent abstractPositionComponent,
                                 AbstractCollisionComponent abstractCollisionComponent, float delta) {
-        if(physicsComponent.getVelocity().lengthSquared() == 0) {
+        if(physicsComponent.getVelocity().lengthSquared() < MathUtils.EPSILON) {
             return;
         }
 
@@ -142,7 +143,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
                 remainingSpeed = 0;
             }
 
-            if(remainingSpeed == 0) {
+            if(remainingSpeed < MathUtils.EPSILON) {
                 break;
             }
         }
