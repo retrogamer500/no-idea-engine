@@ -10,12 +10,11 @@ import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.FirstPersonCameraComponent;
 import net.loganford.noideaengine.state.entity.components.FreeMovementComponent;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
-import net.loganford.noideaengine.utils.annotations.Argument;
-import net.loganford.noideaengine.utils.annotations.RegisterComponent;
-import net.loganford.noideaengine.state.entity.systems.*;
+import net.loganford.noideaengine.state.entity.systems.FirstPersonCameraSystem;
+import net.loganford.noideaengine.state.entity.systems.FreeMovementSystem;
+import net.loganford.noideaengine.state.entity.systems.PhysicsSystem;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
-import net.loganford.noideaengine.utils.annotations.RegisterSystem;
-import net.loganford.noideaengine.utils.annotations.UnregisterSystem;
+import net.loganford.noideaengine.utils.annotations.*;
 import org.joml.Vector3f;
 import org.junit.Test;
 
@@ -29,7 +28,6 @@ public class SweptSpherePhysicsTest {
             @Argument(name = "cellSize", intValue = 4),
             @Argument(name = "bucketCount", intValue = 1024)
     })
-    //@RegisterSystem(NaiveCollisionSystem.class)
     @RegisterSystem(FirstPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)
@@ -47,9 +45,6 @@ public class SweptSpherePhysicsTest {
                 }
             }
 
-            //add(new UnitSphereEntity(), -5.7f, 6, -6);
-
-
             getCamera().setPosition(0, 10, 10);
             getCamera().lookAt(-3, 0, 0);
         }
@@ -65,7 +60,6 @@ public class SweptSpherePhysicsTest {
 
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
                 UnitSphereEntity entity = new UnitSphereEntity();
-                System.out.println("Creating entity!");
                 scene.add(entity, getPos());
 
                 FirstPersonCameraComponent cameraComponent = getComponent(FirstPersonCameraComponent.class);
@@ -100,17 +94,17 @@ public class SweptSpherePhysicsTest {
         }
     }
 
-    @RegisterComponent(PhysicsComponent.class)
+    @RegisterComponent(value = PhysicsComponent.class, arguments = {
+            @Argument(name = "solidEntity", classValue = SolidInterface.class),
+            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -10f)),
+            @Argument(name = "interactive", booleanValue = true)
+    })
     public class UnitSphereEntity extends Entity implements SolidInterface {
         private Model model;
 
         @Override
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
-            getComponent(PhysicsComponent.class).setSolidEntity(SolidInterface.class);
-            //((PhysicsComponent)getComponent(PhysicsComponent.class)).getVelocity().set(0, -2f, 0);
-            getComponent(PhysicsComponent.class).getGravity().set(0, -10f, 0);
-            getComponent(PhysicsComponent.class).setInteractive(true);
             model = game.getModelManager().get("unitSphere");
             setShape(new UnitSphere());
         }
