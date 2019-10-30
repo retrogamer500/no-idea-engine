@@ -8,6 +8,7 @@ import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.EntityComponentStore;
 import net.loganford.noideaengine.state.entity.components.Component;
+import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.messaging.Listener;
 import net.loganford.noideaengine.utils.messaging.Signal;
 
@@ -22,7 +23,7 @@ public abstract class ProcessEntitySystem extends EntitySystem {
     private EntityComponentStore entities;
     private EntityDepthChangedListener entityDepthChangedListener = new EntityDepthChangedListener();
 
-    public ProcessEntitySystem(Game game, Scene scene, String[] args) {
+    public ProcessEntitySystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
 
         entities = new EntityComponentStore(getComponentList());

@@ -16,6 +16,10 @@ import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.state.entity.signals.*;
 import net.loganford.noideaengine.state.entity.systems.EntitySystem;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.InheritComponents;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
+import net.loganford.noideaengine.utils.annotations.UnregisterComponent;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -776,13 +780,13 @@ public class Entity {
      */
     private void loadAndInitializeComponents() {
         Class clazz = getClass();
-        List<Pair<Class<? extends Component>, String[]>> componentClazzList = getComponentsForClass(getClass());
+        List<Pair<Class<? extends Component>, Argument[]>> componentClazzList = getComponentsForClass(getClass());
 
-        for(Pair<Class<? extends Component>, String[]> componentAnnotation : componentClazzList) {
+        for(Pair<Class<? extends Component>, Argument[]> componentAnnotation : componentClazzList) {
             try {
                 Class<? extends Component> componentClass = componentAnnotation.getLeft();
-                String[] arguments = componentAnnotation.getRight();
-                Constructor<? extends Component> constructor = componentClass.getConstructor(String[].class);
+                Argument[] arguments = componentAnnotation.getRight();
+                Constructor<? extends Component> constructor = componentClass.getConstructor(Argument[].class);
                 Component component = constructor.newInstance(new Object[]{arguments});
                 component.componentAdded(this);
                 addComponent(component);
@@ -798,8 +802,8 @@ public class Entity {
      * @param clazz current class
      * @return a list of all of the loaded components.
      */
-    private List<Pair<Class<? extends Component>, String[]>> getComponentsForClass(Class clazz) {
-        List<Pair<Class<? extends Component>, String[]>> componentClazzList = new ArrayList<>();
+    private List<Pair<Class<? extends Component>, Argument[]>> getComponentsForClass(Class clazz) {
+        List<Pair<Class<? extends Component>, Argument[]>> componentClazzList = new ArrayList<>();
         if(clazz != null) {
 
             Annotation inherit = clazz.getAnnotation(InheritComponents.class);
@@ -814,8 +818,8 @@ public class Entity {
 
             for(Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
                 Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
-                String[] arguments = ((RegisterComponent)annotation).arguments();
-                componentClazzList.add(new MutablePair<Class<? extends Component>, String[]>(componentClazz, arguments));
+                Argument[] arguments = ((RegisterComponent)annotation).arguments();
+                componentClazzList.add(new MutablePair<Class<? extends Component>, Argument[]>(componentClazz, arguments));
             }
         }
         return componentClazzList;

@@ -1,4 +1,4 @@
-package net.loganford.noideaengine.state.entity.components;
+package net.loganford.noideaengine.utils.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface InheritComponents {
+public @interface InheritSystems {
     boolean value() default true;
 }

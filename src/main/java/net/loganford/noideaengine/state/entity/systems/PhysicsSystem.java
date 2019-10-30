@@ -6,6 +6,8 @@ import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.*;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_8 = new Vector3f();
     private static Vector3f V3F_9 = new Vector3f();
 
-    public PhysicsSystem(Game game, Scene scene, String[] args) {
+    public PhysicsSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
 
         physicsComponentIndex = getComponentLocation(PhysicsComponent.class);

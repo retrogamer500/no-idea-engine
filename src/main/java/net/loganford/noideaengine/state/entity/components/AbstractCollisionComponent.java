@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.signals.AfterMotionSignal;
+import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.messaging.Listener;
 import net.loganford.noideaengine.utils.messaging.Signal;
 
@@ -14,7 +15,7 @@ public abstract class AbstractCollisionComponent extends Component implements Li
     @Getter private float shapeOffsetY = 0;
     @Getter private float shapeOffsetZ = 0;
 
-    public AbstractCollisionComponent(String[] args) {
+    public AbstractCollisionComponent(Argument[] args) {
         super(args);
     }
 

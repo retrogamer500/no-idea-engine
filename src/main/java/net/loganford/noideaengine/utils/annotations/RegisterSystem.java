@@ -1,4 +1,6 @@
-package net.loganford.noideaengine.state.entity.systems;
+package net.loganford.noideaengine.utils.annotations;
+
+import net.loganford.noideaengine.state.entity.systems.EntitySystem;
 
 import java.lang.annotation.*;
 
@@ -7,7 +9,7 @@ import java.lang.annotation.*;
 @Repeatable(RegisterSystem.List.class)
 public @interface RegisterSystem {
     Class<? extends EntitySystem> value();
-    String[] arguments() default {};
+    Argument[] arguments() default {};
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})

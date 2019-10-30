@@ -3,6 +3,7 @@ package net.loganford.noideaengine.state.entity.components;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Vector3f;
 
 public class PhysicsComponent extends Component {
@@ -30,7 +31,7 @@ public class PhysicsComponent extends Component {
     * from each other.*/
     @Getter @Setter private float mass = 20f;
 
-    public PhysicsComponent(String[] args) {
+    public PhysicsComponent(Argument[] args) {
         super(args);
     }
 }

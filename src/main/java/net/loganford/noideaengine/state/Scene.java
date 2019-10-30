@@ -13,6 +13,10 @@ import net.loganford.noideaengine.state.entity.systems.collision.CollisionSystem
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.state.signals.EntityAddedIndexSignal;
 import net.loganford.noideaengine.state.signals.EntityAddedSignal;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.InheritSystems;
+import net.loganford.noideaengine.utils.annotations.RegisterSystem;
+import net.loganford.noideaengine.utils.annotations.UnregisterSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -26,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Log4j2
-@RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {"32", "1024"})
+@RegisterSystem(value = SpacialPartitionCollisionSystem.class)
 @RegisterSystem(StepRenderSystem.class)
 public class Scene extends GameState {
     private Game game;
@@ -381,14 +385,14 @@ public class Scene extends GameState {
      * Loads and creates all the systems in the scene based off of the annotations.
      */
     private void loadSystems() {
-        List<Pair<Class<? extends EntitySystem>, String[]>> systemClazzList = getSystemsForClass(getClass());
+        List<Pair<Class<? extends EntitySystem>, Argument[]>> systemClazzList = getSystemsForClass(getClass());
 
-        for(Pair<Class<? extends EntitySystem>, String[]> systemAnnotation : systemClazzList) {
+        for(Pair<Class<? extends EntitySystem>, Argument[]> systemAnnotation : systemClazzList) {
             try {
-                String[] systemArguments = systemAnnotation.getRight();
+                Argument[] systemArguments = systemAnnotation.getRight();
                 Class<? extends EntitySystem> systemClass = systemAnnotation.getLeft();
 
-                Constructor<? extends EntitySystem> constructor = systemClass.getConstructor(Game.class, Scene.class, String[].class);
+                Constructor<? extends EntitySystem> constructor = systemClass.getConstructor(Game.class, Scene.class, Argument[].class);
                 EntitySystem system = constructor.newInstance(game, this, systemArguments);
 
                 if(system instanceof CollisionSystem) {
@@ -403,8 +407,8 @@ public class Scene extends GameState {
         }
     }
 
-    private List<Pair<Class<? extends EntitySystem>, String[]>> getSystemsForClass(Class clazz) {
-        List<Pair<Class<? extends EntitySystem>, String[]>> systemClazzList = new ArrayList<>();
+    private List<Pair<Class<? extends EntitySystem>, Argument[]>> getSystemsForClass(Class clazz) {
+        List<Pair<Class<? extends EntitySystem>, Argument[]>> systemClazzList = new ArrayList<>();
         if(clazz != null) {
 
             Annotation inherit = clazz.getAnnotation(InheritSystems.class);
@@ -419,7 +423,7 @@ public class Scene extends GameState {
 
             for(Annotation annotation : clazz.getAnnotationsByType(RegisterSystem.class)) {
                 Class<? extends EntitySystem> systemClass = ((RegisterSystem)annotation).value();
-                String[] arguments = ((RegisterSystem)annotation).arguments();
+                Argument[] arguments = ((RegisterSystem)annotation).arguments();
                 systemClazzList.add(new MutablePair<>(systemClass, arguments));
             }
         }

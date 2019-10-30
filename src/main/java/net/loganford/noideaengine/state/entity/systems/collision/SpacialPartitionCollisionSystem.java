@@ -1,12 +1,13 @@
 package net.loganford.noideaengine.state.entity.systems.collision;
 
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.shape.*;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.signals.AfterMotionSignal;
 import net.loganford.noideaengine.state.entity.signals.BeforeMotionSignal;
+import net.loganford.noideaengine.utils.annotations.AnnotationUtil;
+import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import net.loganford.noideaengine.utils.messaging.Signal;
 import org.joml.Vector3fc;
@@ -31,20 +32,14 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
     private int bucketCount;
     private List<List<Shape>> buckets;
 
-    public SpacialPartitionCollisionSystem(Game game, Scene scene, String[] args) {
+    public SpacialPartitionCollisionSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
 
-        if(args.length == 2) {
-            this.cellSize = Integer.parseInt(args[0]);
-            this.bucketCount = Integer.parseInt(args[1]);
-        }
-        else if(args.length == 0) {
-            this.cellSize = 32;
-            this.bucketCount = 1024;
-        }
-        else {
-            throw new GameEngineException("Invalid arguments for SpacialPartitionCollisionSystem");
-        }
+        cellSize = 32;
+        bucketCount = 1024;
+
+        AnnotationUtil.getArgumentOptional("cellSize", args).ifPresent((a) -> cellSize = a.intValue());
+        AnnotationUtil.getArgumentOptional("bucketCount", args).ifPresent((a) -> bucketCount = a.intValue());
 
         buckets = new ArrayList<>(bucketCount);
         for(int i = 0; i < bucketCount; i++) {
