@@ -8,7 +8,6 @@ import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.AbstractCameraComponent;
-import net.loganford.noideaengine.state.entity.components.FreeMovementComponent;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
 import net.loganford.noideaengine.state.entity.components.ThirdPersonCameraComponent;
 import net.loganford.noideaengine.state.entity.systems.FreeMovementSystem;
@@ -38,18 +37,23 @@ public class SweptSpherePhysicsTest {
         public void beginState(Game game) {
             super.beginState(game);
             add(new Level());
-            add(new Player(), 0, 10, 10);
+            add(new Player(), 5.5f, 10, 0);
 
-            for(int i = 0; i < 5; i++) {
+            /*for(int i = 0; i < 5; i++) {
                 for(int j = 0; j < 5; j++) {
                     add(new UnitSphereEntity(), 4*i - 10, 10, 4*j - 10);
                 }
-            }
+            }*/
         }
     }
 
     @RegisterComponent(ThirdPersonCameraComponent.class)
-    @RegisterComponent(FreeMovementComponent.class)
+    @RegisterComponent(value = PhysicsComponent.class, arguments = {
+            @Argument(name = "solidEntity", classValue = SolidInterface.class),
+            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -10f)),
+            @Argument(name = "characterController", booleanValue = true),
+            @Argument(name = "bounceVelocityDampener", floatValue = 100000f)
+    })
     public class Player extends Entity {
         private Model model;
 

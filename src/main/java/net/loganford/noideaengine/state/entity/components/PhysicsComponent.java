@@ -20,16 +20,20 @@ public class PhysicsComponent extends Component {
     /**Cosine of an angle. If a slope is smaller than this angle, then no friction occurs.*/
     @Getter @Setter private float rollFactor = 0;
     /**Air resistance-- subtract velocity by this much per second*/
-    @Getter @Setter private float resistance = 0f;
+    @Getter @Setter private float drag = 0f;
     /**Max speed per second*/
     @Getter @Setter private float maxSpeed = 500f;
     /**Gravity per second*/
     @Getter @Setter private Vector3f gravity = new Vector3f(0, 0, 0);
-    /*Whether this entity can be pushed by others*/
+    /**Whether this entity can be pushed by others*/
     @Getter @Setter private boolean interactive = false;
-    /*Mass used when calculating collisions. This is a huge approximation so it is better to not use values too different
+    /**Mass used when calculating collisions. This is a huge approximation so it is better to not use values too different
     * from each other.*/
     @Getter @Setter private float mass = 20f;
+
+    @Getter @Setter private boolean characterController = false;
+    @Getter @Setter private Vector3f characterVelocity = new Vector3f();
+    @Getter @Setter private float floorAngle = .2f;
 
     public PhysicsComponent(Argument[] args) {
         super(args);
@@ -40,10 +44,13 @@ public class PhysicsComponent extends Component {
         AnnotationUtil.getArgumentOptional("bounceVelocityDampener", args).ifPresent((a) -> bounceVelocityDampener = a.floatValue());
         AnnotationUtil.getArgumentOptional("frictionDampener", args).ifPresent((a) -> frictionDampener = a.floatValue());
         AnnotationUtil.getArgumentOptional("rollFactor", args).ifPresent((a) -> rollFactor = a.floatValue());
-        AnnotationUtil.getArgumentOptional("resistance", args).ifPresent((a) -> resistance = a.floatValue());
+        AnnotationUtil.getArgumentOptional("drag", args).ifPresent((a) -> drag = a.floatValue());
         AnnotationUtil.getArgumentOptional("maxSpeed", args).ifPresent((a) -> maxSpeed = a.floatValue());
         AnnotationUtil.getArgumentOptional("gravity", args).ifPresent((a) -> AnnotationUtil.set(gravity, a.vectorValue()));
         AnnotationUtil.getArgumentOptional("interactive", args).ifPresent((a) -> interactive = a.booleanValue());
         AnnotationUtil.getArgumentOptional("mass", args).ifPresent((a) -> mass = a.floatValue());
+        AnnotationUtil.getArgumentOptional("characterController", args).ifPresent((a) -> characterController = a.booleanValue());
+        AnnotationUtil.getArgumentOptional("characterVelocity", args).ifPresent((a) -> AnnotationUtil.set(characterVelocity, a.vectorValue()));
+        AnnotationUtil.getArgumentOptional("floorAngle", args).ifPresent((a) -> floorAngle = a.floatValue());
     }
 }

@@ -5,7 +5,10 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.components.*;
+import net.loganford.noideaengine.state.entity.components.AbstractCollisionComponent;
+import net.loganford.noideaengine.state.entity.components.AbstractPositionComponent;
+import net.loganford.noideaengine.state.entity.components.Component;
+import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.utils.math.MathUtils;
@@ -21,6 +24,10 @@ public class PhysicsSystem extends ProcessEntitySystem {
     private int abstractPositionComponentIndex;
     private int abstractCollisionIndex;
 
+    private static int MODIFIER_NONE = 0;
+    private static int MODIFIER_GRAVITY = 1;
+    private static int MODIFIER_MOVEMENT = 2;
+
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
     private static Vector3f V3F_3 = new Vector3f();
@@ -30,6 +37,8 @@ public class PhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_7 = new Vector3f();
     private static Vector3f V3F_8 = new Vector3f();
     private static Vector3f V3F_9 = new Vector3f();
+    private static Vector3f V3F_10 = new Vector3f();
+    private static Vector3f V3F_11 = new Vector3f();
 
     public PhysicsSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
@@ -56,26 +65,51 @@ public class PhysicsSystem extends ProcessEntitySystem {
             physicsComponent.getVelocity().normalize().mul(physicsComponent.getMaxSpeed());
         }
 
-        handleMovement(entity, physicsComponent, abstractPositionComponent, abstractCollisionComponent, delta);
+        if(physicsComponent.isCharacterController()) {
+            handleMovement(entity,
+                    physicsComponent,
+                    abstractPositionComponent,
+                    abstractCollisionComponent,
+                    physicsComponent.getCharacterVelocity(),
+                    delta,
+                    MODIFIER_MOVEMENT);
 
-        //Friction
+            handleMovement(entity,
+                    physicsComponent,
+                    abstractPositionComponent,
+                    abstractCollisionComponent,
+                    physicsComponent.getVelocity(),
+                    delta,
+                    MODIFIER_GRAVITY);
+        }
+        else {
+            handleMovement(entity,
+                    physicsComponent,
+                    abstractPositionComponent,
+                    abstractCollisionComponent,
+                    physicsComponent.getVelocity(),
+                    delta,
+                    MODIFIER_NONE);
+        }
+
+        //Drag
         float speed = physicsComponent.getVelocity().length();
-        if(speed > 0 && physicsComponent.getResistance() != 0) {
-            speed = Math.max(0, speed - physicsComponent.getResistance());
+        if(speed > 0 && physicsComponent.getDrag() != 0) {
+            speed = Math.max(0, speed - physicsComponent.getDrag());
             physicsComponent.getVelocity().normalize().mul(speed);
         }
     }
 
     private void handleMovement(Entity entity, PhysicsComponent physicsComponent, AbstractPositionComponent abstractPositionComponent,
-                                AbstractCollisionComponent abstractCollisionComponent, float delta) {
-        if(physicsComponent.getVelocity().lengthSquared() < MathUtils.EPSILON) {
+                                AbstractCollisionComponent abstractCollisionComponent, Vector3f velocity, float delta, int modifier) {
+        if(velocity.lengthSquared() < MathUtils.EPSILON) {
             return;
         }
 
         float timeMultiplier = delta / 1000f;
-        float speedPerSecond = physicsComponent.getVelocity().length(); //Speed of this object per second
+        float speedPerSecond = velocity.length(); //Speed of this object per second
         float remainingSpeed = speedPerSecond * timeMultiplier; //Number of units left to move this frame
-        Vector3f nextDirection = V3F.set(physicsComponent.getVelocity()).normalize(); //Unit vector of direction
+        Vector3f nextDirection = V3F.set(velocity).normalize(); //Unit vector of direction
 
         SweepResult result;
         for(int i = 0; i < 8; i++) {
@@ -83,6 +117,25 @@ public class PhysicsSystem extends ProcessEntitySystem {
             entity.move(result);
 
             if(result.collides()) {
+
+                //Handle special character movement
+                if(modifier != 0) {
+                    Vector3f projNormGravity = V3F_10.set(physicsComponent.getGravity()).mul(result.getNormal().dot(physicsComponent.getGravity()) / physicsComponent.getGravity().lengthSquared());
+                    float floorAngle = V3F_10.set(physicsComponent.getGravity()).normalize().dot(result.getNormal());
+                    System.out.println("test");
+
+                    if (modifier == MODIFIER_GRAVITY) {
+                        if (floorAngle < -(1 - physicsComponent.getFloorAngle())) {
+                            result.getNormal().set(projNormGravity.normalize());
+                        }
+                    }
+                    else if (modifier == MODIFIER_MOVEMENT) {
+                        if (floorAngle > -(1 - physicsComponent.getFloorAngle())) {
+                            result.getNormal().sub(projNormGravity).normalize();
+                        }
+                    }
+                }
+
                 result.remainder(V3F_3);
                 remainingSpeed = V3F_3.length();
 
@@ -92,7 +145,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
                     PhysicsComponent otherPhysicsComponent = ((Entity)result.getEntity()).getPhysicsComponent();
                     float ratio1 = physicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
                     float ratio2 = otherPhysicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
-                    otherPhysicsComponent.getVelocity().add(V3F_9.set(result.getNormal()).mul(-1 * ratio2 * physicsComponent.getVelocity().length()));
+                    otherPhysicsComponent.getVelocity().add(V3F_9.set(result.getNormal()).mul(-1 * ratio2 * velocity.length()));
                     speedPerSecond *= ratio1;
                     remainingSpeed *= ratio1;
                 }
@@ -152,10 +205,10 @@ public class PhysicsSystem extends ProcessEntitySystem {
 
         //Update original velocity
         if(nextDirection.lengthSquared() == 0) {
-            physicsComponent.getVelocity().set(0, 0, 0);
+            velocity.set(0, 0, 0);
         }
         else {
-            physicsComponent.getVelocity().set(nextDirection).normalize().mul(speedPerSecond);
+            velocity.set(nextDirection).normalize().mul(speedPerSecond);
         }
     }
 

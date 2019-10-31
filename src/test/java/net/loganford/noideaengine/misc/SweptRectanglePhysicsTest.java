@@ -7,8 +7,8 @@ import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
-import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.state.entity.systems.PhysicsSystem;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.utils.annotations.RegisterSystem;
 import org.joml.Vector3f;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class SweptRectanglePhysicsTest {
             super.onCreate(game, scene);
             setShape(new Rect(0, 0, 16, 16));
             getComponent(PhysicsComponent.class).setSolidEntity(TestWall.class);
-            getComponent(PhysicsComponent.class).setResistance(32f);
+            getComponent(PhysicsComponent.class).setDrag(32f);
         }
 
         @Override
