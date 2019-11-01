@@ -1,6 +1,12 @@
 package net.loganford.noideaengine.utils.math;
 
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+
 public class MathUtils {
+    private static Vector3f V3F = new Vector3f();
+    private static Vector3f V3F_2 = new Vector3f();
+
     public static float EPSILON = .001f;
     public static float PI = (float)Math.PI;
 
@@ -53,5 +59,30 @@ public class MathUtils {
     public static float lerp(float a, float b, float amount) {
         float diff = b - a;
         return a + diff * amount;
+    }
+
+    /**
+     * Breaks down a vector into normal and orthogonal components
+     * @param vector a vector
+     * @param normal a normal
+     * @param normalComponent if not null, this is set to the normal component of the vector
+     * @param orthogonalComponent if not null, this is set to the orthogonal component of the vector
+     */
+    public static void vectorComponents(Vector3fc vector, Vector3fc normal, Vector3f normalComponent, Vector3f orthogonalComponent) {
+        //Vector3f vectorProjNormal = V3F.set(normal).mul(vector.dot(normal) / normal.lengthSquared());
+        Vector3f vectorProjNormal = V3F;
+        vectorProjection(vector, normal, V3F);
+
+        if(normalComponent != null) {
+            normalComponent.set(vectorProjNormal);
+        }
+
+        if(orthogonalComponent != null) {
+            orthogonalComponent.set(V3F_2.set(vector).sub(normalComponent));
+        }
+    }
+
+    public static void vectorProjection(Vector3fc vector, Vector3fc onto, Vector3f result) {
+        result.set(V3F.set(onto).mul(vector.dot(onto) / onto.lengthSquared()));
     }
 }
