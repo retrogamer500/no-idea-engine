@@ -7,9 +7,10 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.components.AbstractCameraComponent;
+import net.loganford.noideaengine.state.entity.components.CharacterControllerComponent;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
 import net.loganford.noideaengine.state.entity.components.ThirdPersonCameraComponent;
+import net.loganford.noideaengine.state.entity.systems.CharacterControllerSystem;
 import net.loganford.noideaengine.state.entity.systems.FreeMovementSystem;
 import net.loganford.noideaengine.state.entity.systems.PhysicsSystem;
 import net.loganford.noideaengine.state.entity.systems.ThirdPersonCameraSystem;
@@ -31,13 +32,14 @@ public class SweptSpherePhysicsTest {
     @RegisterSystem(ThirdPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)
+    @RegisterSystem(CharacterControllerSystem.class)
     public class TestScene extends Scene {
 
         @Override
         public void beginState(Game game) {
             super.beginState(game);
             add(new Level());
-            add(new Player(), 5.5f, 10, 0);
+            add(new Player(), 0, 10, 0);
 
             /*for(int i = 0; i < 5; i++) {
                 for(int j = 0; j < 5; j++) {
@@ -54,6 +56,7 @@ public class SweptSpherePhysicsTest {
             @Argument(name = "characterController", booleanValue = true),
             @Argument(name = "bounceVelocityDampener", floatValue = 100000f)
     })
+    @RegisterComponent(CharacterControllerComponent.class)
     public class Player extends Entity {
         private Model model;
 
@@ -69,11 +72,11 @@ public class SweptSpherePhysicsTest {
             super.step(game, scene, delta);
 
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
-                UnitSphereEntity entity = new UnitSphereEntity();
+                /*UnitSphereEntity entity = new UnitSphereEntity();
                 scene.add(entity, getPos());
 
                 AbstractCameraComponent cameraComponent = getComponent(AbstractCameraComponent.class);
-                entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));
+                entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));*/
             }
             if(game.getInput().mousePressed(Input.MOUSE_2)) {
                 scene.with(UnitSphereEntity.class, Entity::destroy);
@@ -98,7 +101,7 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
 
-            model = game.getModelManager().get("level");
+            model = game.getModelManager().get("level2");
             setShape(model.getShape());
         }
 
@@ -139,6 +142,7 @@ public class SweptSpherePhysicsTest {
     @Test
     public void testSweptSpherePhysics() {
         Game game = new Game(new TestScene());
+        //game.setFps(30, 30);
         game.run();
     }
 }

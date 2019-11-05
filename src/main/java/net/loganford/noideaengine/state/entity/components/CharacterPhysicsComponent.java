@@ -6,7 +6,7 @@ import net.loganford.noideaengine.utils.annotations.AnnotationUtil;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Vector3f;
 
-public class PhysicsComponent extends Component {
+public class CharacterPhysicsComponent extends Component {
     /**Current velocity*/
     @Getter @Setter private Vector3f velocity = new Vector3f();
     /**Class of entities that are solid*/
@@ -30,8 +30,20 @@ public class PhysicsComponent extends Component {
     /**Mass used when calculating collisions. This is a huge approximation so it is better to not use values too different
     * from each other.*/
     @Getter @Setter private float mass = 20f;
+    /**Whether to follow character physics.*/
+    @Getter @Setter private boolean characterController = false;
+    /**Max angle of floor for character physics. If the floor is larger than this angle, then the character will slide
+     * off down. Technically this is the arccos of the angle between gravity and the floor normal. Values are between
+     * 0 and 1.*/
+    @Getter @Setter private float floorAngle = .2f;
+    /**Max vertical speed for character physics (along direction of gravity)*/
+    @Getter @Setter private float maxVerticalSpeed = 10f;
+    /**Max horizontal speed for character physics orthogonal to gravity*/
+    @Getter @Setter private float maxHorizontalSpeed = 10f;
+    /**Whether the player is on the ground or not*/
+    @Getter @Setter private boolean onGround;
 
-    public PhysicsComponent(Argument[] args) {
+    public CharacterPhysicsComponent(Argument[] args) {
         super(args);
 
         AnnotationUtil.getArgumentOptional("velocity", args).ifPresent((a) -> AnnotationUtil.set(velocity, a.vectorValue()));
@@ -45,5 +57,9 @@ public class PhysicsComponent extends Component {
         AnnotationUtil.getArgumentOptional("gravity", args).ifPresent((a) -> AnnotationUtil.set(gravity, a.vectorValue()));
         AnnotationUtil.getArgumentOptional("interactive", args).ifPresent((a) -> interactive = a.booleanValue());
         AnnotationUtil.getArgumentOptional("mass", args).ifPresent((a) -> mass = a.floatValue());
+        AnnotationUtil.getArgumentOptional("characterController", args).ifPresent((a) -> characterController = a.booleanValue());
+        AnnotationUtil.getArgumentOptional("floorAngle", args).ifPresent((a) -> floorAngle = a.floatValue());
+        AnnotationUtil.getArgumentOptional("maxVerticalSpeed", args).ifPresent((a) -> maxVerticalSpeed = a.floatValue());
+        AnnotationUtil.getArgumentOptional("maxHorizontalSpeed", args).ifPresent((a) -> maxHorizontalSpeed = a.floatValue());
     }
 }

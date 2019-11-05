@@ -3,41 +3,43 @@ package net.loganford.noideaengine.shape.sweepHandlers;
 import net.loganford.noideaengine.shape.Point;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.shape.UnitSphere;
-import org.joml.Vector3f;
+import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
 public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphere> {
-    private static Vector3f V3F = new Vector3f();
-    private static Vector3f V3F_1 = new Vector3f();
-    private static Vector3f V3F_2 = new Vector3f();
-    private static Vector3f V3F_3 = new Vector3f();
+    private static Vector3d V3D = new Vector3d();
+    private static Vector3d V3D_1 = new Vector3d();
+    private static Vector3d V3D_2 = new Vector3d();
+
+    private static Vector3d velocityD = new Vector3d();
 
     @Override
     public void sweep(SweepResult result, Point point, Vector3fc velocity, UnitSphere unitSphere) {
         result.clear();
+        velocityD.set(velocity);
 
-        Vector3f oc = V3F.set(point.getPosition()).sub(unitSphere.getPosition());
-        float a = velocity.dot(velocity);
-        float b = 2f * oc.dot(velocity);
-        float c = oc.dot(oc) - 1f;
-        float discriminant = b * b - 4f * a * c;
+        Vector3d oc = V3D.set(point.getPosition()).sub(unitSphere.getPosition());
+        double a = velocityD.lengthSquared();
+        double b = 2.0 * oc.dot(velocityD);
+        double c = oc.dot(oc) - 1.0;
+        double discriminant = b * b - 4.0 * a * c;
         if(discriminant < 0) {
             return;
         }
 
-        float disSqrt = (float)Math.sqrt(discriminant);
-        float t1 = (-b - disSqrt) / (2f * a);
-        float t2 = (-b + disSqrt) / (2f * a);
-        float t = Math.min(t1, t2);
+        double disSqrt = Math.sqrt(discriminant);
+        double t1 = (-b - disSqrt) / (2f * a);
+        double t2 = (-b + disSqrt) / (2f * a);
+        double t = Math.min(t1, t2);
 
         if( t < 0 || t > 1) {
             return;
         }
 
-        Vector3f intersectionPoint = V3F_1.set(velocity).mul(t).add(point.getPosition());
-        Vector3f normal = V3F_3.set(intersectionPoint).sub(unitSphere.getPosition());
+        Vector3d intersectionPoint = V3D_1.set(velocity).mul(t).add(point.getPosition());
+        Vector3d normal = V3D_2.set(intersectionPoint).sub(unitSphere.getPosition());
 
-        result.setDistance(t);
+        result.setDistance((float)t);
         result.getNormal().set(normal);
         result.setShape(unitSphere);
     }

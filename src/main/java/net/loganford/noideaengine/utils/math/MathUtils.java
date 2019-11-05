@@ -1,11 +1,14 @@
 package net.loganford.noideaengine.utils.math;
 
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public class MathUtils {
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
+    private static Vector3d V3D = new Vector3d();
+    private static Vector3d V3D_2 = new Vector3d();
 
     public static float EPSILON = .001f;
     public static float PI = (float)Math.PI;
@@ -69,7 +72,6 @@ public class MathUtils {
      * @param orthogonalComponent if not null, this is set to the orthogonal component of the vector
      */
     public static void vectorComponents(Vector3fc vector, Vector3fc normal, Vector3f normalComponent, Vector3f orthogonalComponent) {
-        //Vector3f vectorProjNormal = V3F.set(normal).mul(vector.dot(normal) / normal.lengthSquared());
         Vector3f vectorProjNormal = V3F;
         vectorProjection(vector, normal, V3F);
 
