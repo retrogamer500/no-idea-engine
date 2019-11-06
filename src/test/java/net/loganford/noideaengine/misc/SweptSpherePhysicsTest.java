@@ -8,6 +8,7 @@ import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
 import net.loganford.noideaengine.state.entity.components.CharacterControllerComponent;
+import net.loganford.noideaengine.state.entity.components.CharacterPhysicsComponent;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
 import net.loganford.noideaengine.state.entity.components.ThirdPersonCameraComponent;
 import net.loganford.noideaengine.state.entity.systems.CharacterControllerSystem;
@@ -50,13 +51,16 @@ public class SweptSpherePhysicsTest {
     }
 
     @RegisterComponent(ThirdPersonCameraComponent.class)
-    @RegisterComponent(value = PhysicsComponent.class, arguments = {
+    @RegisterComponent(value = CharacterPhysicsComponent.class, arguments = {
             @Argument(name = "solidEntity", classValue = SolidInterface.class),
             @Argument(name = "gravity", vectorValue = @Vector3fa(y = -10f)),
-            @Argument(name = "characterController", booleanValue = true),
-            @Argument(name = "bounceVelocityDampener", floatValue = 100000f)
+            @Argument(name = "friction", floatValue = 30f),
+            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -10f))
     })
-    @RegisterComponent(CharacterControllerComponent.class)
+    @RegisterComponent(value = CharacterControllerComponent.class, arguments = {
+            @Argument(name = "acceleration", floatValue = 30f),
+            @Argument(name = "jumpSpeed", floatValue = 30f)
+    })
     public class Player extends Entity {
         private Model model;
 
@@ -77,9 +81,11 @@ public class SweptSpherePhysicsTest {
 
                 AbstractCameraComponent cameraComponent = getComponent(AbstractCameraComponent.class);
                 entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));*/
+                setPos(0, 10, 0);
+                getComponent(CharacterPhysicsComponent.class).getVelocity().set(0, 0, 0);
             }
             if(game.getInput().mousePressed(Input.MOUSE_2)) {
-                scene.with(UnitSphereEntity.class, Entity::destroy);
+                //scene.with(UnitSphereEntity.class, Entity::destroy);
             }
         }
 

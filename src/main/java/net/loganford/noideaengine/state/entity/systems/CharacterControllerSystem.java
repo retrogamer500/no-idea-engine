@@ -5,17 +5,14 @@ import net.loganford.noideaengine.Input;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.components.AbstractCameraComponent;
-import net.loganford.noideaengine.state.entity.components.CharacterControllerComponent;
-import net.loganford.noideaengine.state.entity.components.Component;
-import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
+import net.loganford.noideaengine.state.entity.components.*;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import org.joml.Vector3f;
 
 import java.util.List;
 
-@RegisterComponent(PhysicsComponent.class)
+@RegisterComponent(CharacterPhysicsComponent.class)
 @RegisterComponent(CharacterControllerComponent.class)
 @RegisterComponent(AbstractCameraComponent.class)
 public class CharacterControllerSystem extends ProcessEntitySystem {
@@ -28,7 +25,7 @@ public class CharacterControllerSystem extends ProcessEntitySystem {
     public CharacterControllerSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
 
-        physicsComponentIndex = getComponentLocation(PhysicsComponent.class);
+        physicsComponentIndex = getComponentLocation(CharacterPhysicsComponent.class);
         characterControllerComponentIndex = getComponentLocation(CharacterControllerComponent.class);
         abstractCameraComponentIndex = getComponentLocation(AbstractCameraComponent.class);
 
@@ -37,11 +34,11 @@ public class CharacterControllerSystem extends ProcessEntitySystem {
 
     @Override
     protected void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta) {
-        PhysicsComponent physicsComponent = (PhysicsComponent) components.get(physicsComponentIndex);
+        CharacterPhysicsComponent physicsComponent = (CharacterPhysicsComponent) components.get(physicsComponentIndex);
         CharacterControllerComponent characterControllerComponent = (CharacterControllerComponent) components.get(characterControllerComponentIndex);
         AbstractCameraComponent abstractCameraComponent = (AbstractCameraComponent) components.get(abstractCameraComponentIndex);
 
-        float acceleration = characterControllerComponent.getAcceleration() + physicsComponent.getFrictionDampener();
+        float acceleration = characterControllerComponent.getAcceleration() + physicsComponent.getFriction();
         if(game.getInput().keyDown(Input.KEY_W)) {
             physicsComponent.getVelocity().add(V3F.set(1, 0, 0).rotateY(-abstractCameraComponent.getYaw()).mul(acceleration * delta/1000f));
         }
