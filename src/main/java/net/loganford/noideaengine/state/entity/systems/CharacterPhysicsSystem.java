@@ -82,6 +82,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         physicsComponent.setOnGroundLast(physicsComponent.isOnGround());
         physicsComponent.setOnGround(false);
 
+        //Handle orthogonal movement
         handleMovement(entity,
                 physicsComponent,
                 abstractPositionComponent,
@@ -93,13 +94,14 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Reproject deflected orthogonal velocity onto plane
         float orthogonalSpeed = orthogonalVelocity.length();
         if(orthogonalSpeed > MathUtils.EPSILON ) {
-            MathUtils.vectorComponents(orthogonalVelocity.normalize(), physicsComponent.getGravity(), null, V3F_15);
+            MathUtils.vectorComponents(orthogonalVelocity, physicsComponent.getGravity(), null, V3F_15);
             orthogonalVelocity.set(V3F_15);
             orthogonalVelocity.normalize().mul(orthogonalSpeed);
         }
 
         System.out.println(orthogonalVelocity);
 
+        //Handle normal movement
         handleMovement(entity,
                 physicsComponent,
                 abstractPositionComponent,
@@ -107,6 +109,14 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                 normalVelocity,
                 delta,
                 false);
+
+        //Reproject deflected normal velocity onto gravity
+        float normalSpeed = normalVelocity.length();
+        if(normalSpeed > MathUtils.EPSILON) {
+            MathUtils.vectorComponents(normalVelocity, physicsComponent.getGravity(), V3F_15, null);
+            normalVelocity.set(V3F_15);
+            normalVelocity.normalize().mul(orthogonalSpeed);
+        }
 
 
         /*if(physicsComponent.isOnGroundLast()) {
@@ -157,8 +167,11 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         }
 
         SweepResult result;
-        for(int i = 0; i < 8; i++) {
+        for(int i = 0; i < 8 && remainingSpeed >= MathUtils.EPSILON; i++) {
             result = entity.sweep(V3F_2.set(nextDirection).mul(remainingSpeed), physicsComponent.getSolidEntity());
+
+            result.remainder(V3F_3);
+            remainingSpeed = V3F_3.length();
 
             if(remainingSpeed > MathUtils.EPSILON) {
                 entity.move(result);
@@ -184,10 +197,11 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                         result.getNormal().set(projNormGravity.normalize());
                         physicsComponent.setOnGround(true);
                     }
+                    else {
+                        hitWall = true;
+                    }
                 }
 
-                result.remainder(V3F_3);
-                remainingSpeed = V3F_3.length();
 
                 if(!hitWall && handlingMovement) {
                     nextDirection.mul(remainingSpeed);
@@ -197,10 +211,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                     if (planeNormal.dot(lineDirection) != 0) {
                         float t = -planeNormal.dot(nextDirection) / planeNormal.dot(lineDirection);
                         nextDirection.add(lineDirection.mul(t + MathUtils.EPSILON));
-                        remainingSpeed = nextDirection.length();
-                        if (nextDirection.lengthSquared() != 0) {
-                            nextDirection.normalize();
-                        }
+                        //remainingSpeed = nextDirection.length();
                     }
                 }
                 else {
@@ -211,46 +222,20 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                         remainingSpeed = 0;
                     } else {
 
-                        speedPerSecond *= nextDirection.length();
-                        remainingSpeed *= nextDirection.length();
-
-                        nextDirection.normalize();
+                        if(!hitWall || handlingMovement) {
+                            speedPerSecond *= nextDirection.length();
+                            remainingSpeed *= nextDirection.length();
+                        }
                     }
                 }
-
-
-
-                //Slide
-                //result.slide(nextDirection);
 
                 if(nextDirection.lengthSquared() == 0) {
                     //Sliding object has squarely hit an edge, set remaining speed to 0. This will break the loop.
                     remainingSpeed = 0;
                 }
                 else {
-                    //Calculate friction (if gravity exists)
-                    /*if(hitWall && handlingMovement) {
-                        float frictionAmount = 0;
-                        if(physicsComponent.getGravity().lengthSquared() != 0) {
-                            float gravityDotNormal = Math.max(0, -V3F_8.set(physicsComponent.getGravity()).normalize().dot(result.getNormal()));
-                            frictionAmount = timeMultiplier * gravityDotNormal * physicsComponent.getFriction();
-                        }
-
-                        speedPerSecond *= nextDirection.length();
-                        speedPerSecond = Math.max(0, speedPerSecond - frictionAmount);
-
-                        remainingSpeed *= nextDirection.length();
-                        remainingSpeed = Math.max(0, remainingSpeed - .5f * frictionAmount * timeMultiplier); //Calculus, dudes
-                    }*/
                     nextDirection.normalize();
                 }
-            }
-            else {
-                remainingSpeed = 0;
-            }
-
-            if(remainingSpeed < MathUtils.EPSILON) {
-                break;
             }
         }
 
@@ -259,7 +244,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
             velocity.set(0, 0, 0);
         }
         else {
-            velocity.set(nextDirection).normalize().mul(speedPerSecond);
+            velocity.set(nextDirection).mul(speedPerSecond);
         }
     }
 
@@ -267,6 +252,4 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
     protected void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer) {
 
     }
-
-
 }
