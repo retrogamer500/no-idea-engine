@@ -11,10 +11,7 @@ import net.loganford.noideaengine.state.entity.components.CharacterControllerCom
 import net.loganford.noideaengine.state.entity.components.CharacterPhysicsComponent;
 import net.loganford.noideaengine.state.entity.components.PhysicsComponent;
 import net.loganford.noideaengine.state.entity.components.ThirdPersonCameraComponent;
-import net.loganford.noideaengine.state.entity.systems.CharacterControllerSystem;
-import net.loganford.noideaengine.state.entity.systems.FreeMovementSystem;
-import net.loganford.noideaengine.state.entity.systems.PhysicsSystem;
-import net.loganford.noideaengine.state.entity.systems.ThirdPersonCameraSystem;
+import net.loganford.noideaengine.state.entity.systems.*;
 import net.loganford.noideaengine.state.entity.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.annotations.*;
 import org.joml.Vector3f;
@@ -33,6 +30,7 @@ public class SweptSpherePhysicsTest {
     @RegisterSystem(ThirdPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)
+    @RegisterSystem(CharacterPhysicsSystem.class)
     @RegisterSystem(CharacterControllerSystem.class)
     public class TestScene extends Scene {
 
@@ -54,8 +52,7 @@ public class SweptSpherePhysicsTest {
     @RegisterComponent(value = CharacterPhysicsComponent.class, arguments = {
             @Argument(name = "solidEntity", classValue = SolidInterface.class),
             @Argument(name = "gravity", vectorValue = @Vector3fa(y = -10f)),
-            @Argument(name = "friction", floatValue = 30f),
-            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -10f))
+            @Argument(name = "friction", floatValue = 30f)
     })
     @RegisterComponent(value = CharacterControllerComponent.class, arguments = {
             @Argument(name = "acceleration", floatValue = 30f),

@@ -80,7 +80,7 @@ public class MathUtils {
         }
 
         if(orthogonalComponent != null) {
-            orthogonalComponent.set(V3F_2.set(vector).sub(normalComponent));
+            orthogonalComponent.set(V3F_2.set(vector).sub(vectorProjNormal));
         }
     }
 

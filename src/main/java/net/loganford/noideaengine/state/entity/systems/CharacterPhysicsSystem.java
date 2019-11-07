@@ -5,7 +5,10 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.state.entity.Entity;
-import net.loganford.noideaengine.state.entity.components.*;
+import net.loganford.noideaengine.state.entity.components.AbstractCollisionComponent;
+import net.loganford.noideaengine.state.entity.components.AbstractPositionComponent;
+import net.loganford.noideaengine.state.entity.components.CharacterPhysicsComponent;
+import net.loganford.noideaengine.state.entity.components.Component;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.utils.math.MathUtils;
@@ -32,11 +35,20 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_14 = new Vector3f();
     private static Vector3f V3F_15 = new Vector3f();
     private static Vector3f V3F_16 = new Vector3f();
+    private static Vector3f V3F_17 = new Vector3f();
+
+    private static Vector3f V3F_18 = new Vector3f();
+    private static Vector3f V3F_19 = new Vector3f();
+    private static Vector3f V3F_20 = new Vector3f();
+    private static Vector3f V3F_21 = new Vector3f();
+    private static Vector3f V3F_22 = new Vector3f();
+    private static Vector3f V3F_23 = new Vector3f();
+    private static Vector3f V3F_24 = new Vector3f();
 
     public CharacterPhysicsSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
 
-        characterPhysicsComponentIndex = getComponentLocation(PhysicsComponent.class);
+        characterPhysicsComponentIndex = getComponentLocation(CharacterPhysicsComponent.class);
         abstractPositionComponentIndex = getComponentLocation(AbstractPositionComponent.class);
         abstractCollisionIndex = getComponentLocation(AbstractCollisionComponent.class);
     }
@@ -52,8 +64,6 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
 
         //Add gravity
         physicsComponent.getVelocity().add(V3F_6.set(physicsComponent.getGravity()).mul(delta / 1000f));
-
-
 
         Vector3f normalVelocity = V3F_13;
         Vector3f orthogonalVelocity = V3F_14;
@@ -83,10 +93,12 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Reproject deflected orthogonal velocity onto plane
         float orthogonalSpeed = orthogonalVelocity.length();
         if(orthogonalSpeed > MathUtils.EPSILON ) {
-            MathUtils.vectorComponents(orthogonalVelocity, physicsComponent.getGravity(), null, V3F_15);
+            MathUtils.vectorComponents(orthogonalVelocity.normalize(), physicsComponent.getGravity(), null, V3F_15);
             orthogonalVelocity.set(V3F_15);
             orthogonalVelocity.normalize().mul(orthogonalSpeed);
         }
+
+        System.out.println(orthogonalVelocity);
 
         handleMovement(entity,
                 physicsComponent,
@@ -97,16 +109,18 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                 false);
 
 
-        if(physicsComponent.isOnGroundLast()) {
+        /*if(physicsComponent.isOnGroundLast()) {
             float downAmount = .1f;
             SweepResult sweepResult = entity.sweep(V3F_16.set(physicsComponent.getGravity()).mul(downAmount), physicsComponent.getSolidEntity());
             if (sweepResult.collides()) {
                 entity.move(sweepResult);
-                physicsComponent.setOnGround(true);
+                //physicsComponent.setOnGround(true);
             }
-        }
+        }*/
 
         if(physicsComponent.isOnGround()) {
+            //normalVelocity.set(0, 0, 0);
+
             //Friction
             float speed = orthogonalVelocity.length();
             if(physicsComponent.isOnGround() &&  speed > 0) {
@@ -138,11 +152,15 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         float remainingSpeed = speedPerSecond * timeMultiplier; //Number of units left to move this frame
         Vector3f nextDirection = V3F.set(velocity).normalize(); //Unit vector of direction
 
+        if(velocity.lengthSquared() == 0) {
+            return;
+        }
+
         SweepResult result;
         for(int i = 0; i < 8; i++) {
             result = entity.sweep(V3F_2.set(nextDirection).mul(remainingSpeed), physicsComponent.getSolidEntity());
 
-            if(velocity.lengthSquared() < MathUtils.EPSILON) {
+            if(remainingSpeed > MathUtils.EPSILON) {
                 entity.move(result);
             }
 
@@ -171,8 +189,39 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                 result.remainder(V3F_3);
                 remainingSpeed = V3F_3.length();
 
+                if(!hitWall && handlingMovement) {
+                    nextDirection.mul(remainingSpeed);
+                    Vector3f planeNormal = V3F_19.set(result.getNormal());
+                    Vector3f lineDirection = V3F_21.set(physicsComponent.getGravity()).mul(-1).normalize();
+
+                    if (planeNormal.dot(lineDirection) != 0) {
+                        float t = -planeNormal.dot(nextDirection) / planeNormal.dot(lineDirection);
+                        nextDirection.add(lineDirection.mul(t + MathUtils.EPSILON));
+                        remainingSpeed = nextDirection.length();
+                        if (nextDirection.lengthSquared() != 0) {
+                            nextDirection.normalize();
+                        }
+                    }
+                }
+                else {
+                    result.slide(nextDirection);
+
+                    if (nextDirection.lengthSquared() == 0) {
+                        //Sliding object has squarely hit an edge, set remaining speed to 0. This will break the loop.
+                        remainingSpeed = 0;
+                    } else {
+
+                        speedPerSecond *= nextDirection.length();
+                        remainingSpeed *= nextDirection.length();
+
+                        nextDirection.normalize();
+                    }
+                }
+
+
+
                 //Slide
-                result.slide(nextDirection);
+                //result.slide(nextDirection);
 
                 if(nextDirection.lengthSquared() == 0) {
                     //Sliding object has squarely hit an edge, set remaining speed to 0. This will break the loop.
@@ -180,19 +229,19 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                 }
                 else {
                     //Calculate friction (if gravity exists)
-                    float frictionAmount = 0;
-                    if(physicsComponent.getGravity().lengthSquared() != 0) {
-                        float gravityDotNormal = Math.max(0, -V3F_8.set(physicsComponent.getGravity()).normalize().dot(result.getNormal()));
-                        frictionAmount = timeMultiplier * gravityDotNormal * physicsComponent.getFriction();
-                    }
+                    /*if(hitWall && handlingMovement) {
+                        float frictionAmount = 0;
+                        if(physicsComponent.getGravity().lengthSquared() != 0) {
+                            float gravityDotNormal = Math.max(0, -V3F_8.set(physicsComponent.getGravity()).normalize().dot(result.getNormal()));
+                            frictionAmount = timeMultiplier * gravityDotNormal * physicsComponent.getFriction();
+                        }
 
-                    if(hitWall) {
                         speedPerSecond *= nextDirection.length();
                         speedPerSecond = Math.max(0, speedPerSecond - frictionAmount);
 
                         remainingSpeed *= nextDirection.length();
                         remainingSpeed = Math.max(0, remainingSpeed - .5f * frictionAmount * timeMultiplier); //Calculus, dudes
-                    }
+                    }*/
                     nextDirection.normalize();
                 }
             }
