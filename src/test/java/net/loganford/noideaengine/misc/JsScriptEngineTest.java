@@ -4,7 +4,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.entity.Entity;
 import org.junit.Test;
 
 

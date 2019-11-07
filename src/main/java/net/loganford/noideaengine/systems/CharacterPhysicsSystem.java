@@ -1,0 +1,255 @@
+package net.loganford.noideaengine.systems;
+
+import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.shape.SweepResult;
+import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.entity.Entity;
+import net.loganford.noideaengine.components.AbstractCollisionComponent;
+import net.loganford.noideaengine.components.AbstractPositionComponent;
+import net.loganford.noideaengine.components.CharacterPhysicsComponent;
+import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
+import net.loganford.noideaengine.utils.math.MathUtils;
+import org.joml.Vector3f;
+
+import java.util.List;
+
+@RegisterComponent(CharacterPhysicsComponent.class)
+@RegisterComponent(AbstractPositionComponent.class)
+@RegisterComponent(AbstractCollisionComponent.class)
+public class CharacterPhysicsSystem extends ProcessEntitySystem {
+    private int characterPhysicsComponentIndex;
+    private int abstractPositionComponentIndex;
+    private int abstractCollisionIndex;
+
+    private static Vector3f V3F = new Vector3f();
+    private static Vector3f V3F_2 = new Vector3f();
+    private static Vector3f V3F_3 = new Vector3f();
+    private static Vector3f V3F_6 = new Vector3f();
+    private static Vector3f V3F_8 = new Vector3f();
+    private static Vector3f V3F_10 = new Vector3f();
+    private static Vector3f V3F_11 = new Vector3f();
+    private static Vector3f V3F_13 = new Vector3f();
+    private static Vector3f V3F_14 = new Vector3f();
+    private static Vector3f V3F_15 = new Vector3f();
+    private static Vector3f V3F_16 = new Vector3f();
+    private static Vector3f V3F_17 = new Vector3f();
+
+    private static Vector3f V3F_18 = new Vector3f();
+    private static Vector3f V3F_19 = new Vector3f();
+    private static Vector3f V3F_20 = new Vector3f();
+    private static Vector3f V3F_21 = new Vector3f();
+    private static Vector3f V3F_22 = new Vector3f();
+    private static Vector3f V3F_23 = new Vector3f();
+    private static Vector3f V3F_24 = new Vector3f();
+
+    public CharacterPhysicsSystem(Game game, Scene scene, Argument[] args) {
+        super(game, scene, args);
+
+        characterPhysicsComponentIndex = getComponentLocation(CharacterPhysicsComponent.class);
+        abstractPositionComponentIndex = getComponentLocation(AbstractPositionComponent.class);
+        abstractCollisionIndex = getComponentLocation(AbstractCollisionComponent.class);
+    }
+
+    @Override
+    protected void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta) {
+        CharacterPhysicsComponent physicsComponent =
+                (CharacterPhysicsComponent) components.get(characterPhysicsComponentIndex);
+        AbstractPositionComponent abstractPositionComponent =
+                (AbstractPositionComponent) components.get(abstractPositionComponentIndex);
+        AbstractCollisionComponent abstractCollisionComponent =
+                (AbstractCollisionComponent) components.get(abstractCollisionIndex);
+
+        //Add gravity
+        physicsComponent.getVelocity().add(V3F_6.set(physicsComponent.getGravity()).mul(delta / 1000f));
+
+        Vector3f normalVelocity = V3F_13;
+        Vector3f orthogonalVelocity = V3F_14;
+        MathUtils.vectorComponents(physicsComponent.getVelocity(), physicsComponent.getGravity(), normalVelocity, orthogonalVelocity);
+
+        //Limit max speed
+        if(normalVelocity.length() > physicsComponent.getMaxVerticalSpeed()) {
+            normalVelocity.normalize().mul(physicsComponent.getMaxVerticalSpeed());
+        }
+
+        //Limit max speed
+        if(orthogonalVelocity.length() > physicsComponent.getMaxHorizontalSpeed()) {
+            orthogonalVelocity.normalize().mul(physicsComponent.getMaxHorizontalSpeed());
+        }
+
+        physicsComponent.setOnGroundLast(physicsComponent.isOnGround());
+        physicsComponent.setOnGround(false);
+
+        //Handle orthogonal movement
+        handleMovement(entity,
+                physicsComponent,
+                abstractPositionComponent,
+                abstractCollisionComponent,
+                orthogonalVelocity,
+                delta,
+                true);
+
+        //Reproject deflected orthogonal velocity onto plane
+        float orthogonalSpeed = orthogonalVelocity.length();
+        if(orthogonalSpeed > MathUtils.EPSILON ) {
+            MathUtils.vectorComponents(orthogonalVelocity, physicsComponent.getGravity(), null, V3F_15);
+            orthogonalVelocity.set(V3F_15);
+            orthogonalVelocity.normalize().mul(orthogonalSpeed);
+        }
+
+        System.out.println(orthogonalVelocity);
+
+        //Handle normal movement
+        handleMovement(entity,
+                physicsComponent,
+                abstractPositionComponent,
+                abstractCollisionComponent,
+                normalVelocity,
+                delta,
+                false);
+
+        //Reproject deflected normal velocity onto gravity
+        float normalSpeed = normalVelocity.length();
+        if(normalSpeed > MathUtils.EPSILON) {
+            MathUtils.vectorComponents(normalVelocity, physicsComponent.getGravity(), V3F_15, null);
+            normalVelocity.set(V3F_15);
+            normalVelocity.normalize().mul(orthogonalSpeed);
+        }
+
+
+        /*if(physicsComponent.isOnGroundLast()) {
+            float downAmount = .1f;
+            SweepResult sweepResult = entity.sweep(V3F_16.set(physicsComponent.getGravity()).mul(downAmount), physicsComponent.getSolidEntity());
+            if (sweepResult.collides()) {
+                entity.move(sweepResult);
+                //physicsComponent.setOnGround(true);
+            }
+        }*/
+
+        if(physicsComponent.isOnGround()) {
+            //normalVelocity.set(0, 0, 0);
+
+            //Friction
+            float speed = orthogonalVelocity.length();
+            if(physicsComponent.isOnGround() &&  speed > 0) {
+                speed = Math.max(0, speed - physicsComponent.getFriction() * delta / 1000f);
+                if(speed > 0) {
+                    orthogonalVelocity.normalize().mul(speed);
+                }
+                else {
+                    orthogonalVelocity.set(0, 0, 0);
+                }
+            }
+        }
+
+        physicsComponent.getVelocity().set(normalVelocity).add(orthogonalVelocity);
+
+        //Drag
+        float speed = physicsComponent.getVelocity().length();
+        if(speed > 0 && physicsComponent.getDrag() != 0) {
+            speed = Math.max(0, speed - physicsComponent.getDrag());
+            physicsComponent.getVelocity().normalize().mul(speed);
+        }
+    }
+
+    private void handleMovement(Entity entity, CharacterPhysicsComponent physicsComponent, AbstractPositionComponent abstractPositionComponent,
+                                AbstractCollisionComponent abstractCollisionComponent, Vector3f velocity, float delta, boolean handlingMovement) {
+
+        float timeMultiplier = delta / 1000f;
+        float speedPerSecond = velocity.length(); //Speed of this object per second
+        float remainingSpeed = speedPerSecond * timeMultiplier; //Number of units left to move this frame
+        Vector3f nextDirection = V3F.set(velocity).normalize(); //Unit vector of direction
+
+        if(velocity.lengthSquared() == 0) {
+            return;
+        }
+
+        SweepResult result;
+        for(int i = 0; i < 8 && remainingSpeed >= MathUtils.EPSILON; i++) {
+            result = entity.sweep(V3F_2.set(nextDirection).mul(remainingSpeed), physicsComponent.getSolidEntity());
+
+            result.remainder(V3F_3);
+            remainingSpeed = V3F_3.length();
+
+            if(remainingSpeed > MathUtils.EPSILON) {
+                entity.move(result);
+            }
+
+            if(result.collides()) {
+                //Handle special character movement
+                boolean hitWall = false;
+                Vector3f projNormGravity = V3F_10.set(physicsComponent.getGravity()).mul(result.getNormal().dot(physicsComponent.getGravity()) / physicsComponent.getGravity().lengthSquared());
+                float floorAngle = V3F_11.set(physicsComponent.getGravity()).normalize().dot(result.getNormal());
+
+                if (handlingMovement) {
+                        if (floorAngle > -(1 - physicsComponent.getFloorAngle())) {
+                            result.getNormal().sub(projNormGravity).normalize();
+                            hitWall = true;
+                        }
+                        else {
+                            physicsComponent.setOnGround(true);
+                        }
+                    }
+                else {
+                    if (floorAngle < -(1 - physicsComponent.getFloorAngle())) {
+                        result.getNormal().set(projNormGravity.normalize());
+                        physicsComponent.setOnGround(true);
+                    }
+                    else {
+                        hitWall = true;
+                    }
+                }
+
+
+                if(!hitWall && handlingMovement) {
+                    nextDirection.mul(remainingSpeed);
+                    Vector3f planeNormal = V3F_19.set(result.getNormal());
+                    Vector3f lineDirection = V3F_21.set(physicsComponent.getGravity()).mul(-1).normalize();
+
+                    if (planeNormal.dot(lineDirection) != 0) {
+                        float t = -planeNormal.dot(nextDirection) / planeNormal.dot(lineDirection);
+                        nextDirection.add(lineDirection.mul(t + MathUtils.EPSILON));
+                        //remainingSpeed = nextDirection.length();
+                    }
+                }
+                else {
+                    result.slide(nextDirection);
+
+                    if (nextDirection.lengthSquared() == 0) {
+                        //Sliding object has squarely hit an edge, set remaining speed to 0. This will break the loop.
+                        remainingSpeed = 0;
+                    } else {
+
+                        if(!hitWall || handlingMovement) {
+                            speedPerSecond *= nextDirection.length();
+                            remainingSpeed *= nextDirection.length();
+                        }
+                    }
+                }
+
+                if(nextDirection.lengthSquared() == 0) {
+                    //Sliding object has squarely hit an edge, set remaining speed to 0. This will break the loop.
+                    remainingSpeed = 0;
+                }
+                else {
+                    nextDirection.normalize();
+                }
+            }
+        }
+
+        //Update original velocity
+        if(nextDirection.lengthSquared() == 0) {
+            velocity.set(0, 0, 0);
+        }
+        else {
+            velocity.set(nextDirection).mul(speedPerSecond);
+        }
+    }
+
+    @Override
+    protected void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer) {
+
+    }
+}

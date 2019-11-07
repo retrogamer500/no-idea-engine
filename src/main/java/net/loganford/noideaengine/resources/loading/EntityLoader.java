@@ -7,7 +7,7 @@ import net.loganford.noideaengine.config.json.EntityConfig;
 import net.loganford.noideaengine.scripting.Function;
 import net.loganford.noideaengine.scripting.Script;
 import net.loganford.noideaengine.scripting.ScriptedEntity;
-import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;

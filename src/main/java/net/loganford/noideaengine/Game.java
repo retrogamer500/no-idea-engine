@@ -18,7 +18,7 @@ import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.scripting.ScriptedEntity;
 import net.loganford.noideaengine.scripting.engine.javascript.JsScriptEngine;
 import net.loganford.noideaengine.state.GameState;
-import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.state.loading.BasicLoadingScreen;
 import net.loganford.noideaengine.state.loading.LoadingScreen;
 import net.loganford.noideaengine.state.transition.InstantTransition;

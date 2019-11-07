@@ -1,6 +1,6 @@
 package net.loganford.noideaengine.utils.annotations;
 
-import net.loganford.noideaengine.state.entity.systems.EntitySystem;
+import net.loganford.noideaengine.systems.EntitySystem;
 
 import java.lang.annotation.*;
 

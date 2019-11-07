@@ -2,7 +2,7 @@ package net.loganford.noideaengine.shape;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.entity.Entity;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 

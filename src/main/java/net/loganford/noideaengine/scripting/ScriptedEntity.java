@@ -2,7 +2,7 @@ package net.loganford.noideaengine.scripting;
 
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.resources.Resource;
-import net.loganford.noideaengine.state.entity.Entity;
+import net.loganford.noideaengine.entity.Entity;
 
 public class ScriptedEntity extends Resource {
     private Class<? extends Entity> clazz;
