@@ -1,15 +1,15 @@
 package net.loganford.noideaengine.systems.physics;
 
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.components.AbstractPositionComponent;
+import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
 import net.loganford.noideaengine.components.physics.AbstractPhysicsComponent;
+import net.loganford.noideaengine.components.physics.PhysicsComponent;
+import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.entity.Entity;
-import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
-import net.loganford.noideaengine.components.AbstractPositionComponent;
-import net.loganford.noideaengine.components.Component;
-import net.loganford.noideaengine.components.physics.PhysicsComponent;
 import net.loganford.noideaengine.systems.ProcessEntitySystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
@@ -93,6 +93,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
             if(result.collides()) {
                 result.remainder(V3F_3);
                 remainingSpeed = V3F_3.length();
+                System.out.println("Remainder: " + remainingSpeed);
 
                 //Process interactive entities
                 if(result.getEntity() != null && ((Entity)result.getEntity()).getPhysicsComponent() != null &&

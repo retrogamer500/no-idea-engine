@@ -5,10 +5,13 @@ import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
+import net.loganford.noideaengine.components.AbstractPositionComponent;
+import net.loganford.noideaengine.components.BasicPositionComponent;
+import net.loganford.noideaengine.components.Component;
 import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
 import net.loganford.noideaengine.components.collision.BasicCollisionComponent;
 import net.loganford.noideaengine.components.physics.AbstractPhysicsComponent;
-import net.loganford.noideaengine.components.physics.PhysicsComponent;
+import net.loganford.noideaengine.entity.signals.*;
 import net.loganford.noideaengine.graphics.Frame;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Sprite;
@@ -17,8 +20,6 @@ import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.components.*;
-import net.loganford.noideaengine.entity.signals.*;
 import net.loganford.noideaengine.systems.EntitySystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.InheritComponents;
@@ -258,7 +259,7 @@ public class Entity {
             collisionComponent = (AbstractCollisionComponent) component;
         }
         else if(component instanceof AbstractPhysicsComponent) {
-            physicsComponent = (PhysicsComponent) component;
+            physicsComponent = (AbstractPhysicsComponent) component;
         }
     }
 

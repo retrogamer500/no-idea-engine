@@ -1,14 +1,14 @@
 package net.loganford.noideaengine.systems.physics;
 
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.components.AbstractPositionComponent;
+import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
+import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
+import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.entity.Entity;
-import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
-import net.loganford.noideaengine.components.AbstractPositionComponent;
-import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
-import net.loganford.noideaengine.components.Component;
 import net.loganford.noideaengine.systems.ProcessEntitySystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
@@ -83,7 +83,6 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         physicsComponent.setOnGroundLast(physicsComponent.isOnGround());
         physicsComponent.setOnGround(false);
 
-        //Handle orthogonal movement
         handleMovement(entity,
                 physicsComponent,
                 abstractPositionComponent,
@@ -95,12 +94,12 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Reproject deflected orthogonal velocity onto plane
         float orthogonalSpeed = orthogonalVelocity.length();
         if(orthogonalSpeed > MathUtils.EPSILON ) {
-            MathUtils.vectorComponents(orthogonalVelocity, physicsComponent.getGravity(), null, V3F_15);
+            MathUtils.vectorComponents(orthogonalVelocity.normalize(), physicsComponent.getGravity(), null, V3F_15);
             orthogonalVelocity.set(V3F_15);
-            orthogonalVelocity.normalize().mul(orthogonalSpeed);
+            if(orthogonalVelocity.lengthSquared() != 0) {
+                orthogonalVelocity.normalize().mul(orthogonalSpeed);
+            }
         }
-
-        System.out.println(orthogonalVelocity);
 
         //Handle normal movement
         handleMovement(entity,
@@ -114,9 +113,11 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Reproject deflected normal velocity onto gravity
         float normalSpeed = normalVelocity.length();
         if(normalSpeed > MathUtils.EPSILON) {
-            MathUtils.vectorComponents(normalVelocity, physicsComponent.getGravity(), V3F_15, null);
-            normalVelocity.set(V3F_15);
-            normalVelocity.normalize().mul(orthogonalSpeed);
+            MathUtils.vectorComponents(normalVelocity.normalize(), physicsComponent.getGravity(), V3F_16, null);
+            normalVelocity.set(V3F_16);
+            if(normalVelocity.lengthSquared() != 0) {
+                normalVelocity.normalize().mul(normalSpeed);
+            }
         }
 
 
@@ -168,15 +169,15 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         }
 
         SweepResult result;
-        for(int i = 0; i < 8 && remainingSpeed >= MathUtils.EPSILON; i++) {
+        for(int i = 0; i < 8 && remainingSpeed != 0; i++) {
             result = entity.sweep(V3F_2.set(nextDirection).mul(remainingSpeed), physicsComponent.getSolidEntity());
-
-            result.remainder(V3F_3);
-            remainingSpeed = V3F_3.length();
 
             if(remainingSpeed > MathUtils.EPSILON) {
                 entity.move(result);
             }
+
+            result.remainder(V3F_3);
+            remainingSpeed = V3F_3.length();
 
             if(result.collides()) {
                 //Handle special character movement
