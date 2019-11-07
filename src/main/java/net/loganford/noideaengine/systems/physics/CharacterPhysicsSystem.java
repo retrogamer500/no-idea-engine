@@ -1,14 +1,15 @@
-package net.loganford.noideaengine.systems;
+package net.loganford.noideaengine.systems.physics;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.entity.Entity;
-import net.loganford.noideaengine.components.AbstractCollisionComponent;
+import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
 import net.loganford.noideaengine.components.AbstractPositionComponent;
-import net.loganford.noideaengine.components.CharacterPhysicsComponent;
+import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
 import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.systems.ProcessEntitySystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.utils.math.MathUtils;

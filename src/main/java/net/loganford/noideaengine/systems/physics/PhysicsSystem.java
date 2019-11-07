@@ -1,14 +1,16 @@
-package net.loganford.noideaengine.systems;
+package net.loganford.noideaengine.systems.physics;
 
 import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.components.physics.AbstractPhysicsComponent;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.entity.Entity;
-import net.loganford.noideaengine.components.AbstractCollisionComponent;
+import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
 import net.loganford.noideaengine.components.AbstractPositionComponent;
 import net.loganford.noideaengine.components.Component;
-import net.loganford.noideaengine.components.PhysicsComponent;
+import net.loganford.noideaengine.components.physics.PhysicsComponent;
+import net.loganford.noideaengine.systems.ProcessEntitySystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.utils.math.MathUtils;
@@ -95,7 +97,7 @@ public class PhysicsSystem extends ProcessEntitySystem {
                 //Process interactive entities
                 if(result.getEntity() != null && ((Entity)result.getEntity()).getPhysicsComponent() != null &&
                 physicsComponent.isInteractive() && ((Entity)result.getEntity()).getPhysicsComponent().isInteractive()) {
-                    PhysicsComponent otherPhysicsComponent = ((Entity)result.getEntity()).getPhysicsComponent();
+                    AbstractPhysicsComponent otherPhysicsComponent = ((Entity)result.getEntity()).getPhysicsComponent();
                     float ratio1 = physicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
                     float ratio2 = otherPhysicsComponent.getMass() / (otherPhysicsComponent.getMass() + physicsComponent.getMass());
                     otherPhysicsComponent.getVelocity().add(V3F_9.set(result.getNormal()).mul(-1 * ratio2 * physicsComponent.getVelocity().length()));

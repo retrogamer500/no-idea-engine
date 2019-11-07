@@ -1,7 +1,8 @@
-package net.loganford.noideaengine.components;
+package net.loganford.noideaengine.components.camera;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.noideaengine.components.Component;
 import net.loganford.noideaengine.utils.annotations.AnnotationUtil;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import org.joml.Vector3f;

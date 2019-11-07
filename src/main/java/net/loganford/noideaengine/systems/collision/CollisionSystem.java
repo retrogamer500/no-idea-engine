@@ -6,7 +6,7 @@ import net.loganford.noideaengine.scripting.Scriptable;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.components.AbstractCollisionComponent;
+import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
 import net.loganford.noideaengine.components.AbstractPositionComponent;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;

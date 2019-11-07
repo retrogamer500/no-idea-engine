@@ -1,4 +1,4 @@
-package net.loganford.noideaengine.components;
+package net.loganford.noideaengine.components.camera;
 
 import lombok.Getter;
 import lombok.Setter;

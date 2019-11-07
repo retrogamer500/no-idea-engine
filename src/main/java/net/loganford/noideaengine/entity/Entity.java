@@ -5,6 +5,10 @@ import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
+import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
+import net.loganford.noideaengine.components.collision.BasicCollisionComponent;
+import net.loganford.noideaengine.components.physics.AbstractPhysicsComponent;
+import net.loganford.noideaengine.components.physics.PhysicsComponent;
 import net.loganford.noideaengine.graphics.Frame;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Sprite;
@@ -66,7 +70,7 @@ public class Entity {
     //Components that are frequently accessed-- want to avoid a hashmap access
     @Getter private AbstractPositionComponent positionComponent;
     @Getter private AbstractCollisionComponent collisionComponent;
-    @Getter private PhysicsComponent physicsComponent;
+    @Getter private AbstractPhysicsComponent physicsComponent;
 
     /**
      * Creates the entity at position (0,0,0), but does not add it to the scene.
@@ -253,7 +257,7 @@ public class Entity {
         else if(component instanceof AbstractCollisionComponent) {
             collisionComponent = (AbstractCollisionComponent) component;
         }
-        else if(component instanceof PhysicsComponent) {
+        else if(component instanceof AbstractPhysicsComponent) {
             physicsComponent = (PhysicsComponent) component;
         }
     }
@@ -284,7 +288,7 @@ public class Entity {
             else if(component instanceof AbstractCollisionComponent) {
                 collisionComponent = null;
             }
-            else if(component instanceof PhysicsComponent) {
+            else if(component instanceof AbstractPhysicsComponent) {
                 physicsComponent = null;
             }
         }

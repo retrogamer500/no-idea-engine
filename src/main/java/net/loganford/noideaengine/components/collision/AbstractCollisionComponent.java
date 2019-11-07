@@ -1,6 +1,7 @@
-package net.loganford.noideaengine.components;
+package net.loganford.noideaengine.components.collision;
 
 import lombok.Getter;
+import net.loganford.noideaengine.components.Component;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.entity.signals.AfterMotionSignal;

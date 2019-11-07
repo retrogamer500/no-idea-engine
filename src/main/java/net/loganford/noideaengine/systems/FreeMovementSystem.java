@@ -2,6 +2,7 @@ package net.loganford.noideaengine.systems;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
+import net.loganford.noideaengine.components.camera.AbstractCameraComponent;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.entity.Entity;
