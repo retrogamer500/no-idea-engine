@@ -84,7 +84,8 @@ public class MathUtils {
         }
     }
 
-    public static void vectorProjection(Vector3fc vector, Vector3fc onto, Vector3f result) {
+    public static Vector3f vectorProjection(Vector3fc vector, Vector3fc onto, Vector3f result) {
         result.set(V3F.set(onto).mul(vector.dot(onto) / onto.lengthSquared()));
+        return result;
     }
 }

@@ -28,22 +28,16 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
     private static Vector3f V3F_3 = new Vector3f();
+    private static Vector3f V3F_4 = new Vector3f();
+    private static Vector3f V3F_5 = new Vector3f();
     private static Vector3f V3F_6 = new Vector3f();
+    private static Vector3f V3F_7 = new Vector3f();
     private static Vector3f V3F_8 = new Vector3f();
+    private static Vector3f V3F_9 = new Vector3f();
     private static Vector3f V3F_10 = new Vector3f();
     private static Vector3f V3F_11 = new Vector3f();
+    private static Vector3f V3F_12 = new Vector3f();
     private static Vector3f V3F_13 = new Vector3f();
-    private static Vector3f V3F_14 = new Vector3f();
-    private static Vector3f V3F_15 = new Vector3f();
-    private static Vector3f V3F_16 = new Vector3f();
-    private static Vector3f V3F_17 = new Vector3f();
-    private static Vector3f V3F_18 = new Vector3f();
-    private static Vector3f V3F_19 = new Vector3f();
-    private static Vector3f V3F_20 = new Vector3f();
-    private static Vector3f V3F_21 = new Vector3f();
-    private static Vector3f V3F_22 = new Vector3f();
-    private static Vector3f V3F_23 = new Vector3f();
-    private static Vector3f V3F_24 = new Vector3f();
 
     public CharacterPhysicsSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
@@ -63,11 +57,11 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                 (AbstractCollisionComponent) components.get(abstractCollisionIndex);
 
         //Add gravity
-        physicsComponent.getVelocity().add(V3F_6.set(physicsComponent.getGravity()).mul(delta / 1000f));
+        physicsComponent.getVelocity().add(V3F_4.set(physicsComponent.getGravity()).mul(delta / 1000f));
 
         //Separate velocity components
-        Vector3f normalVelocity = V3F_13;
-        Vector3f orthogonalVelocity = V3F_14;
+        Vector3f normalVelocity = V3F_7;
+        Vector3f orthogonalVelocity = V3F_8;
         MathUtils.vectorComponents(physicsComponent.getVelocity(), physicsComponent.getGravity(), normalVelocity, orthogonalVelocity);
 
         //Limit max speed
@@ -83,7 +77,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Check if we're on the ground
         physicsComponent.setOnGround(false);
         float distance = .01f;
-        SweepResult result = entity.sweep(V3F_22.set(physicsComponent.getGravity()).normalize().mul(distance), physicsComponent.getSolidEntity());
+        SweepResult result = entity.sweep(V3F_13.set(physicsComponent.getGravity()).normalize().mul(distance), physicsComponent.getSolidEntity());
         if(result.collides()) {
             float floorAngle = getFloorAngle(physicsComponent.getGravity(), result.getNormal());
             if(floorAngle <= physicsComponent.getFloorAngle()) {
@@ -91,7 +85,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
             }
         }
 
-
+        //Handle orthogonal movement
         handleMovement(entity,
                 physicsComponent,
                 abstractPositionComponent,
@@ -103,8 +97,8 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Reproject deflected orthogonal velocity onto plane
         float orthogonalSpeed = orthogonalVelocity.length();
         if(orthogonalSpeed > MathUtils.EPSILON ) {
-            MathUtils.vectorComponents(orthogonalVelocity.normalize(), physicsComponent.getGravity(), null, V3F_15);
-            orthogonalVelocity.set(V3F_15);
+            MathUtils.vectorComponents(orthogonalVelocity.normalize(), physicsComponent.getGravity(), null, V3F_9);
+            orthogonalVelocity.set(V3F_9);
             if(orthogonalVelocity.lengthSquared() != 0) {
                 orthogonalVelocity.normalize().mul(orthogonalSpeed);
             }
@@ -122,8 +116,8 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Reproject deflected normal velocity onto gravity
         float normalSpeed = normalVelocity.length();
         if(normalSpeed > MathUtils.EPSILON) {
-            MathUtils.vectorComponents(normalVelocity.normalize(), physicsComponent.getGravity(), V3F_16, null);
-            normalVelocity.set(V3F_16);
+            MathUtils.vectorComponents(normalVelocity.normalize(), physicsComponent.getGravity(), V3F_10, null);
+            normalVelocity.set(V3F_10);
             if(normalVelocity.lengthSquared() != 0) {
                 normalVelocity.normalize().mul(normalSpeed);
             }
@@ -131,13 +125,13 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
 
 
         if(physicsComponent.isOnGround()) {
-            //Keep player on ground if climbing down slopes
-            if(normalVelocity.y < 0) {
-                float downAmount = .01f;
-                SweepResult sweepResult = entity.sweep(V3F_16.set(physicsComponent.getGravity()).mul(downAmount), physicsComponent.getSolidEntity());
+            //Keep player on ground if climbing down slopes (only when traveling downward)
+            if(normalVelocity.dot(physicsComponent.getGravity()) > 0) {
+                float downAmount = 1f * delta/1000f;
+                SweepResult sweepResult = entity.sweep(V3F_10.set(physicsComponent.getGravity()).mul(downAmount), physicsComponent.getSolidEntity());
                 if (sweepResult.collides()) {
                     entity.move(sweepResult);
-                    normalVelocity.set(0, 0, 0);
+                    normalVelocity.set(0);
                 }
             }
 
@@ -149,7 +143,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                     orthogonalVelocity.normalize().mul(speed);
                 }
                 else {
-                    orthogonalVelocity.set(0, 0, 0);
+                    orthogonalVelocity.set(0);
                 }
             }
         }
@@ -191,7 +185,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
             if(result.collides()) {
                 //Handle special character movement
                 boolean hitWall = false;
-                Vector3f projNormGravity = V3F_10.set(physicsComponent.getGravity()).mul(result.getNormal().dot(physicsComponent.getGravity()) / physicsComponent.getGravity().lengthSquared());
+                Vector3f projNormGravity = MathUtils.vectorProjection(result.getNormal(), physicsComponent.getGravity(), V3F_5);
                 float floorAngle = getFloorAngle(physicsComponent.getGravity(), result.getNormal());
 
                 if (handlingMovement) {
@@ -216,13 +210,12 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
 
                 if(!hitWall && handlingMovement) {
                     nextDirection.mul(remainingSpeed);
-                    Vector3f planeNormal = V3F_19.set(result.getNormal());
-                    Vector3f lineDirection = V3F_21.set(physicsComponent.getGravity()).mul(-1).normalize();
+                    Vector3f planeNormal = V3F_11.set(result.getNormal());
+                    Vector3f lineDirection = V3F_12.set(physicsComponent.getGravity()).mul(-1).normalize();
 
                     if (planeNormal.dot(lineDirection) != 0) {
                         float t = -planeNormal.dot(nextDirection) / planeNormal.dot(lineDirection);
                         nextDirection.add(lineDirection.mul(t + MathUtils.EPSILON));
-                        //remainingSpeed = nextDirection.length();
                     }
                 }
                 else {
@@ -252,7 +245,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
 
         //Update original velocity
         if(nextDirection.lengthSquared() == 0) {
-            velocity.set(0, 0, 0);
+            velocity.set(0);
         }
         else {
             velocity.set(nextDirection).mul(speedPerSecond);
@@ -265,7 +258,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
     }
 
     public float getFloorAngle(Vector3f gravity, Vector3f floorNormal) {
-        float floorAngle = V3F_11.set(gravity).mul(-1).normalize().dot(floorNormal);
+        float floorAngle = V3F_6.set(gravity).mul(-1).normalize().dot(floorNormal);
         return (float) Math.acos(floorAngle);
     }
 }
