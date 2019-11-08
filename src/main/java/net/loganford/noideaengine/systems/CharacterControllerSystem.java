@@ -1,7 +1,6 @@
 package net.loganford.noideaengine.systems;
 
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.Input;
 import net.loganford.noideaengine.components.CharacterControllerComponent;
 import net.loganford.noideaengine.components.Component;
 import net.loganford.noideaengine.components.camera.AbstractCameraComponent;
@@ -42,19 +41,19 @@ public class CharacterControllerSystem extends ProcessEntitySystem {
         AbstractCameraComponent abstractCameraComponent = (AbstractCameraComponent) components.get(abstractCameraComponentIndex);
 
         float acceleration = characterControllerComponent.getAcceleration() + physicsComponent.getFriction();
-        if(game.getInput().keyDown(Input.KEY_W)) {
+        if(game.getInput().keyDown(characterControllerComponent.getUpKey())) {
             physicsComponent.getVelocity().add(V3F.set(1, 0, 0).rotateY(-abstractCameraComponent.getYaw()).mul(acceleration * delta/1000f));
         }
-        if(game.getInput().keyDown(Input.KEY_A)) {
+        if(game.getInput().keyDown(characterControllerComponent.getLeftKey())) {
             physicsComponent.getVelocity().add(V3F.set(1, 0, 0).rotateY((float)Math.PI/2f - abstractCameraComponent.getYaw()).mul(acceleration * delta/1000f));
         }
-        if(game.getInput().keyDown(Input.KEY_S)) {
+        if(game.getInput().keyDown(characterControllerComponent.getDownKey())) {
             physicsComponent.getVelocity().add(V3F.set(1, 0, 0).rotateY((float)Math.PI - abstractCameraComponent.getYaw()).mul(acceleration * delta/1000f));
         }
-        if(game.getInput().keyDown(Input.KEY_D)) {
+        if(game.getInput().keyDown(characterControllerComponent.getRightKey())) {
             physicsComponent.getVelocity().sub(V3F.set(1, 0, 0).rotateY((float)Math.PI/2f - abstractCameraComponent.getYaw()).mul(acceleration * delta/1000f));
         }
-        if(game.getInput().keyDown(Input.KEY_SPACE)) {
+        if(game.getInput().keyDown(characterControllerComponent.getJumpKey())) {
             if(physicsComponent.isOnGround()) {
                 physicsComponent.setOnGround(false);
                 physicsComponent.getVelocity().add(V3F.set(physicsComponent.getGravity()).mul(-characterControllerComponent.getJumpSpeed()));

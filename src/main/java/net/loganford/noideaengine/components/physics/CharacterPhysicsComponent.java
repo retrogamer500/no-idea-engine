@@ -22,6 +22,7 @@ public class CharacterPhysicsComponent extends AbstractPhysicsComponent {
     public CharacterPhysicsComponent(Argument[] args) {
         super(args);
 
+        AnnotationUtil.getArgumentOptional("friction", args).ifPresent((a) -> friction = a.floatValue());
         AnnotationUtil.getArgumentOptional("drag", args).ifPresent((a) -> drag = a.floatValue());
         AnnotationUtil.getArgumentOptional("floorAngle", args).ifPresent((a) -> floorAngle = a.floatValue());
         AnnotationUtil.getArgumentOptional("maxVerticalSpeed", args).ifPresent((a) -> maxVerticalSpeed = a.floatValue());
