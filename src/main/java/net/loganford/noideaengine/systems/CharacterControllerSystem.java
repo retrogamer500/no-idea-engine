@@ -2,12 +2,13 @@ package net.loganford.noideaengine.systems;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
+import net.loganford.noideaengine.components.CharacterControllerComponent;
+import net.loganford.noideaengine.components.Component;
 import net.loganford.noideaengine.components.camera.AbstractCameraComponent;
 import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
+import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.entity.Entity;
-import net.loganford.noideaengine.components.*;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import org.joml.Vector3f;
@@ -54,9 +55,10 @@ public class CharacterControllerSystem extends ProcessEntitySystem {
             physicsComponent.getVelocity().sub(V3F.set(1, 0, 0).rotateY((float)Math.PI/2f - abstractCameraComponent.getYaw()).mul(acceleration * delta/1000f));
         }
         if(game.getInput().keyDown(Input.KEY_SPACE)) {
-            /*if(physicsComponent.isOnGround()) {
+            if(physicsComponent.isOnGround()) {
+                physicsComponent.setOnGround(false);
                 physicsComponent.getVelocity().add(V3F.set(physicsComponent.getGravity()).mul(-characterControllerComponent.getJumpSpeed()));
-            }*/
+            }
         }
     }
 

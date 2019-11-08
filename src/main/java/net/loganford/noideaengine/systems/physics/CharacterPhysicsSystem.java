@@ -37,7 +37,6 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_15 = new Vector3f();
     private static Vector3f V3F_16 = new Vector3f();
     private static Vector3f V3F_17 = new Vector3f();
-
     private static Vector3f V3F_18 = new Vector3f();
     private static Vector3f V3F_19 = new Vector3f();
     private static Vector3f V3F_20 = new Vector3f();
@@ -66,6 +65,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         //Add gravity
         physicsComponent.getVelocity().add(V3F_6.set(physicsComponent.getGravity()).mul(delta / 1000f));
 
+        //Separate velocity components
         Vector3f normalVelocity = V3F_13;
         Vector3f orthogonalVelocity = V3F_14;
         MathUtils.vectorComponents(physicsComponent.getVelocity(), physicsComponent.getGravity(), normalVelocity, orthogonalVelocity);
@@ -80,8 +80,17 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
             orthogonalVelocity.normalize().mul(physicsComponent.getMaxHorizontalSpeed());
         }
 
-        physicsComponent.setOnGroundLast(physicsComponent.isOnGround());
+        //Check if we're on the ground
         physicsComponent.setOnGround(false);
+        float distance = .01f;
+        SweepResult result = entity.sweep(V3F_22.set(physicsComponent.getGravity()).normalize().mul(distance), physicsComponent.getSolidEntity());
+        if(result.collides()) {
+            float floorAngle = getFloorAngle(physicsComponent.getGravity(), result.getNormal());
+            if(floorAngle <= physicsComponent.getFloorAngle()) {
+                physicsComponent.setOnGround(true);
+            }
+        }
+
 
         handleMovement(entity,
                 physicsComponent,
@@ -121,17 +130,16 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         }
 
 
-        /*if(physicsComponent.isOnGroundLast()) {
-            float downAmount = .1f;
-            SweepResult sweepResult = entity.sweep(V3F_16.set(physicsComponent.getGravity()).mul(downAmount), physicsComponent.getSolidEntity());
-            if (sweepResult.collides()) {
-                entity.move(sweepResult);
-                //physicsComponent.setOnGround(true);
-            }
-        }*/
-
         if(physicsComponent.isOnGround()) {
-            //normalVelocity.set(0, 0, 0);
+            //Keep player on ground if climbing down slopes
+            if(normalVelocity.y < 0) {
+                float downAmount = .01f;
+                SweepResult sweepResult = entity.sweep(V3F_16.set(physicsComponent.getGravity()).mul(downAmount), physicsComponent.getSolidEntity());
+                if (sweepResult.collides()) {
+                    entity.move(sweepResult);
+                    normalVelocity.set(0, 0, 0);
+                }
+            }
 
             //Friction
             float speed = orthogonalVelocity.length();
@@ -146,6 +154,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
             }
         }
 
+        //Recombine velocity components
         physicsComponent.getVelocity().set(normalVelocity).add(orthogonalVelocity);
 
         //Drag
@@ -183,10 +192,10 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                 //Handle special character movement
                 boolean hitWall = false;
                 Vector3f projNormGravity = V3F_10.set(physicsComponent.getGravity()).mul(result.getNormal().dot(physicsComponent.getGravity()) / physicsComponent.getGravity().lengthSquared());
-                float floorAngle = V3F_11.set(physicsComponent.getGravity()).normalize().dot(result.getNormal());
+                float floorAngle = getFloorAngle(physicsComponent.getGravity(), result.getNormal());
 
                 if (handlingMovement) {
-                        if (floorAngle > -(1 - physicsComponent.getFloorAngle())) {
+                        if (floorAngle > physicsComponent.getFloorAngle()) {
                             result.getNormal().sub(projNormGravity).normalize();
                             hitWall = true;
                         }
@@ -195,7 +204,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                         }
                     }
                 else {
-                    if (floorAngle < -(1 - physicsComponent.getFloorAngle())) {
+                    if (floorAngle <= physicsComponent.getFloorAngle()) {
                         result.getNormal().set(projNormGravity.normalize());
                         physicsComponent.setOnGround(true);
                     }
@@ -253,5 +262,10 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
     @Override
     protected void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer) {
 
+    }
+
+    public float getFloorAngle(Vector3f gravity, Vector3f floorNormal) {
+        float floorAngle = V3F_11.set(gravity).mul(-1).normalize().dot(floorNormal);
+        return (float) Math.acos(floorAngle);
     }
 }

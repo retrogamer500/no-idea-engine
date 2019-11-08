@@ -93,7 +93,6 @@ public class PhysicsSystem extends ProcessEntitySystem {
             if(result.collides()) {
                 result.remainder(V3F_3);
                 remainingSpeed = V3F_3.length();
-                System.out.println("Remainder: " + remainingSpeed);
 
                 //Process interactive entities
                 if(result.getEntity() != null && ((Entity)result.getEntity()).getPhysicsComponent() != null &&
