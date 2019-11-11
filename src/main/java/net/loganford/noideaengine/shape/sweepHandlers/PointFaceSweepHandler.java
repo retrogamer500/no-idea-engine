@@ -12,7 +12,6 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
     private static Vector3d V3D_2 = new Vector3d();
     private static Vector3d V3D_3 = new Vector3d();
     private static Vector3d V3D_4 = new Vector3d();
-    private static Vector3d V3D_5 = new Vector3d();
 
     private static Vector3d velocityD = new Vector3d();
 

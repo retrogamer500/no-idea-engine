@@ -8,7 +8,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public class PointEllipsoidSweepHandler implements SweepHandler<Point, Ellipsoid> {
-    private static PointUnitSphereSweepHandler handler = new PointUnitSphereSweepHandler();
+    private static PointUnitSphereSweepHandler HANDLER = new PointUnitSphereSweepHandler();
     private static Point POINT = new Point(0, 0, 0);
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
@@ -21,7 +21,7 @@ public class PointEllipsoidSweepHandler implements SweepHandler<Point, Ellipsoid
         POINT.setPosition(V3F.set(point.getPosition()).div(ellipsoid.getRadius()));
         V3F_2.set(velocity).div(ellipsoid.getRadius());
         UNIT_SPHERE.setPosition(V3F_3.set(ellipsoid.getPosition()).div(ellipsoid.getRadius()));
-        handler.sweep(result, POINT, V3F_2, UNIT_SPHERE);
+        HANDLER.sweep(result, POINT, V3F_2, UNIT_SPHERE);
 
         if(result.getShape() != null) {
             result.setShape(ellipsoid);
