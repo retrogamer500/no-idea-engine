@@ -10,6 +10,7 @@ import org.joml.Vector3f;
 public class CharacterControllerComponent extends Component {
     @Getter @Setter private Vector3f velocity = new Vector3f();
     @Getter @Setter private float acceleration = 30f;
+    @Getter @Setter private float airAcceleration = 15f;
     @Getter @Setter private float jumpSpeed = 30f;
 
     @Getter @Setter private int upKey = Input.KEY_W;
@@ -22,6 +23,7 @@ public class CharacterControllerComponent extends Component {
         super(args);
 
         AnnotationUtil.getArgumentOptional("acceleration", args).ifPresent((a) -> acceleration = a.floatValue());
+        AnnotationUtil.getArgumentOptional("airAcceleration", args).ifPresent((a) -> airAcceleration = a.floatValue());
         AnnotationUtil.getArgumentOptional("jumpSpeed", args).ifPresent((a) -> jumpSpeed = a.floatValue());
 
         AnnotationUtil.getArgumentOptional("upKey", args).ifPresent((a) -> upKey = a.intValue());

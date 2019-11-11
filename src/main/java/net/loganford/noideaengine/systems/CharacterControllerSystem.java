@@ -40,7 +40,13 @@ public class CharacterControllerSystem extends ProcessEntitySystem {
         CharacterControllerComponent characterControllerComponent = (CharacterControllerComponent) components.get(characterControllerComponentIndex);
         AbstractCameraComponent abstractCameraComponent = (AbstractCameraComponent) components.get(abstractCameraComponentIndex);
 
-        float acceleration = characterControllerComponent.getAcceleration() + physicsComponent.getFriction();
+        float acceleration;
+        if(physicsComponent.isOnGround()) {
+            acceleration = characterControllerComponent.getAcceleration() + physicsComponent.getFriction();
+        }
+        else {
+            acceleration = characterControllerComponent.getAcceleration();
+        }
         if(game.getInput().keyDown(characterControllerComponent.getUpKey())) {
             physicsComponent.getVelocity().add(V3F.set(1, 0, 0).rotateY(-abstractCameraComponent.getYaw()).mul(acceleration * delta/1000f));
         }
