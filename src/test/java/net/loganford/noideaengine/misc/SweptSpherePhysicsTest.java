@@ -2,18 +2,19 @@ package net.loganford.noideaengine.misc;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
+import net.loganford.noideaengine.components.CharacterControllerComponent;
+import net.loganford.noideaengine.components.camera.FirstPersonCameraComponent;
+import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
+import net.loganford.noideaengine.components.physics.PhysicsComponent;
+import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Model;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
-import net.loganford.noideaengine.entity.Entity;
-import net.loganford.noideaengine.components.CharacterControllerComponent;
-import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
-import net.loganford.noideaengine.components.physics.PhysicsComponent;
-import net.loganford.noideaengine.components.camera.ThirdPersonCameraComponent;
-import net.loganford.noideaengine.systems.*;
+import net.loganford.noideaengine.systems.CharacterControllerSystem;
+import net.loganford.noideaengine.systems.FreeMovementSystem;
+import net.loganford.noideaengine.systems.camera.FirstPersonCameraSystem;
 import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
-import net.loganford.noideaengine.systems.camera.ThirdPersonCameraSystem;
 import net.loganford.noideaengine.systems.physics.CharacterPhysicsSystem;
 import net.loganford.noideaengine.systems.physics.PhysicsSystem;
 import net.loganford.noideaengine.utils.annotations.*;
@@ -30,7 +31,7 @@ public class SweptSpherePhysicsTest {
             @Argument(name = "cellSize", intValue = 4),
             @Argument(name = "bucketCount", intValue = 1024)
     })
-    @RegisterSystem(ThirdPersonCameraSystem.class)
+    @RegisterSystem(FirstPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)
     @RegisterSystem(CharacterPhysicsSystem.class)
@@ -51,10 +52,10 @@ public class SweptSpherePhysicsTest {
         }
     }
 
-    @RegisterComponent(ThirdPersonCameraComponent.class)
+    @RegisterComponent(FirstPersonCameraComponent.class)
     @RegisterComponent(value = CharacterPhysicsComponent.class, arguments = {
             @Argument(name = "solidEntity", classValue = SolidInterface.class),
-            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -10f)),
+            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -25f)),
             @Argument(name = "friction", floatValue = 30f)
     })
     @RegisterComponent(value = CharacterControllerComponent.class, arguments = {
@@ -92,9 +93,9 @@ public class SweptSpherePhysicsTest {
         @Override
         public void render(Game game, Scene scene, Renderer renderer) {
             super.render(game, scene, renderer);
-            renderer.pushShader(renderer.getShaderForwardOpaque());
-            model.render(renderer, getPosMatrix());
-            renderer.popShader();
+            //renderer.pushShader(renderer.getShaderForwardOpaque());
+            //model.render(renderer, getPosMatrix());
+            //renderer.popShader();
         }
     }
 

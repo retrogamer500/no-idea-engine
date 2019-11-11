@@ -190,7 +190,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
 
                 if (handlingMovement) {
                         if (floorAngle > physicsComponent.getFloorAngle()) {
-                            result.getNormal().sub(projNormGravity).normalize();
+                            //result.getNormal().sub(projNormGravity).normalize();
                             hitWall = true;
                         }
                         else {

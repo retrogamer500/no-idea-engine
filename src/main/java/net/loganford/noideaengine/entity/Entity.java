@@ -446,7 +446,11 @@ public class Entity {
      */
     @Scriptable
     public void move(SweepResult result) {
-        move(V3F.set(result.getVelocity()).mul(Math.max(0, result.getDistance() - 0.01f)));
+        V3F_2.set(0);
+        if(result.collides()) {
+            V3F_2.set(result.getNormal()).mul(MathUtils.EPSILON);
+        }
+        move(V3F.set(result.getVelocity()).mul(Math.max(0, result.getDistance() - MathUtils.EPSILON)).add(V3F_2));
     }
 
     /**
