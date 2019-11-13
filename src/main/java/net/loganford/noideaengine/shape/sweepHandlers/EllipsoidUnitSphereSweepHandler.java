@@ -24,6 +24,7 @@ public class EllipsoidUnitSphereSweepHandler implements SweepHandler<Ellipsoid, 
         HANDLER.sweep(result, POINT, velocity, ELLIPSOID);
 
         if(result.getShape() != null) {
+            //Todo: need to handle normals
             result.setShape(ellipsoid);
         }
     }

@@ -49,6 +49,12 @@
       {
         "filename": "glob:data/models/*.{obj}",
         "key": "{1}"
+      },
+      {
+        "filename": "data/models/cs_italy.obj",
+        "key": "cs_italy_fixed",
+        "swapZY": true,
+        "scale": 0.07
       }
     ]
   }

@@ -172,7 +172,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         }
 
         SweepResult result;
-        for(int i = 0; i < 8 && remainingSpeed != 0; i++) {
+        for(int i = 0; i < 3 && remainingSpeed != 0; i++) {
             result = entity.sweep(V3F_2.set(nextDirection).mul(remainingSpeed), physicsComponent.getSolidEntity());
 
             if(remainingSpeed > MathUtils.EPSILON) {
@@ -190,11 +190,12 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
 
                 if (handlingMovement) {
                         if (floorAngle > physicsComponent.getFloorAngle()) {
-                            //result.getNormal().sub(projNormGravity).normalize();
+                            result.getNormal().sub(projNormGravity).normalize();
                             hitWall = true;
                         }
                         else {
                             physicsComponent.setOnGround(true);
+                            System.out.println(result.getNormal());
                         }
                     }
                 else {

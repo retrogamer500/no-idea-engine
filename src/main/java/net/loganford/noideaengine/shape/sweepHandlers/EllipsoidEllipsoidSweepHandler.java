@@ -24,6 +24,7 @@ public class EllipsoidEllipsoidSweepHandler implements SweepHandler<Ellipsoid, E
 
         if(result.getShape() != null) {
             result.setShape(ellipsoid2);
+            //Todo: need to handle normals
         }
     }
 }

@@ -13,6 +13,7 @@ public class EllipsoidFaceSweepHandler implements SweepHandler<Ellipsoid, Face> 
 
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
+    private static Vector3f V3F_3 = new Vector3f();
     private static UnitSphere UNIT_SPHERE = new UnitSphere(0, 0, 0);
     private static Face FACE = new Face(new Vector3f(), new Vector3f(), new Vector3f());
 
@@ -32,7 +33,7 @@ public class EllipsoidFaceSweepHandler implements SweepHandler<Ellipsoid, Face> 
         if(result.getShape() != null) {
             result.setShape(face);
             result.getVelocity().mul(ellipsoid.getRadius());
-            result.getNormal().mul(ellipsoid.getRadius()).normalize();
+            result.getNormal().div(V3F_3.set(ellipsoid.getRadius()).mul(ellipsoid.getRadius())).normalize();
         }
     }
 }

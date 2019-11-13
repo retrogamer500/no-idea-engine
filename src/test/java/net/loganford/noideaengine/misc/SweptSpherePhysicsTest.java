@@ -9,6 +9,7 @@ import net.loganford.noideaengine.components.physics.PhysicsComponent;
 import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Model;
 import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.shape.Ellipsoid;
 import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.systems.CharacterControllerSystem;
@@ -42,7 +43,7 @@ public class SweptSpherePhysicsTest {
         public void beginState(Game game) {
             super.beginState(game);
             add(new Level());
-            add(new Player(), 0, 10, 0);
+            add(new Player(), 0, 100, 0);
 
             /*for(int i = 0; i < 5; i++) {
                 for(int j = 0; j < 5; j++) {
@@ -69,7 +70,8 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             model = game.getModelManager().get("unitSphere");
-            setShape(new UnitSphere());
+            setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.3f, 0.9f, .3f)));
+            //setShape(new UnitSphere());
         }
 
         @Override
@@ -82,7 +84,7 @@ public class SweptSpherePhysicsTest {
 
                 AbstractCameraComponent cameraComponent = getComponent(AbstractCameraComponent.class);
                 entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));*/
-                setPos(0, 10, 0);
+                setPos(0, 100, 0);
                 getComponent(CharacterPhysicsComponent.class).getVelocity().set(0, 0, 0);
             }
             if(game.getInput().mousePressed(Input.MOUSE_2)) {
@@ -108,7 +110,8 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
 
-            model = game.getModelManager().get("level2");
+            model = game.getModelManager().get("cs_italy_fixed");
+            //model = game.getModelManager().get("level2");
             setShape(model.getShape());
         }
 
