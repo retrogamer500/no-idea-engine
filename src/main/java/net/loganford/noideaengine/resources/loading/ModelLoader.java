@@ -4,10 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Window;
 import net.loganford.noideaengine.config.json.ModelConfig;
-import net.loganford.noideaengine.graphics.Face;
-import net.loganford.noideaengine.graphics.Material;
-import net.loganford.noideaengine.graphics.Mesh;
-import net.loganford.noideaengine.graphics.Model;
+import net.loganford.noideaengine.graphics.*;
 import net.loganford.noideaengine.utils.file.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2f;
@@ -66,7 +63,7 @@ public class ModelLoader extends ResourceLoader {
         DataSource location = modelConfig.getResourceMapper().get(modelConfig.getFilename());
         String locationName = location.toString();
         String[] split = locationName.split("\\.");
-        String phint = split[split.length-1]; //Todo: verify that this is working
+        String phint = split[split.length-1];
 
         AIScene aiScene = Assimp.aiImportFileFromMemory(location.loadBytes(), Assimp.aiProcessPreset_TargetRealtime_MaxQuality |
                 Assimp.aiProcess_Triangulate |
@@ -99,8 +96,19 @@ public class ModelLoader extends ResourceLoader {
             Assimp.aiGetMaterialTexture(aiMaterial, Assimp.aiTextureType_DIFFUSE, 0, path, (IntBuffer) null, null, null, null, null, null);
             String data = path.dataString();
             path.free();
+
+            //Since we are atlassing textures, we need to store offsets and multipliers for UV coordinates
+            float imageU = 0; //U offset
+            float imageV = 0; //V offset
+            float imageUW = 0; //U multiplier
+            float imageVH = 0; //V multiplier
             if(StringUtils.isNotBlank(data)) {
-                mesh.getMaterial().setDiffuse(game.getTextureManager().get(data));
+                Image image = game.getImageManager().get(data);
+                imageU = image.getU0();
+                imageV = image.getV0();
+                imageUW = image.getU1() - image.getU0();
+                imageVH = image.getV1() - image.getV0();
+                mesh.getMaterial().setDiffuse(image);
             }
 
 
@@ -140,7 +148,9 @@ public class ModelLoader extends ResourceLoader {
 
                 Vector2f uvCoord;
                 if(aiMesh.mTextureCoords(0) != null) {
-                    uvCoord = new Vector2f(aiMesh.mTextureCoords(0).get(j).x(), aiMesh.mTextureCoords(0).get(j).y());
+                    uvCoord = new Vector2f(
+                            imageU + imageUW * aiMesh.mTextureCoords(0).get(j).x(),
+                            imageV + imageVH * aiMesh.mTextureCoords(0).get(j).y());
                 }
                 else {
                     uvCoord = new Vector2f(0, 0);
@@ -244,7 +254,7 @@ public class ModelLoader extends ResourceLoader {
 
     private Material getDefaultMaterial() {
         Material material = new Material();
-        material.setDiffuse(getGame().getRenderer().getTextureWhite());
+        material.setDiffuse(getGame().getRenderer().getTextureWhite().getImage());
         return material;
     }
 }

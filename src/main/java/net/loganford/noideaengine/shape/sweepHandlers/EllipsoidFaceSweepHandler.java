@@ -33,7 +33,7 @@ public class EllipsoidFaceSweepHandler implements SweepHandler<Ellipsoid, Face> 
         if(result.getShape() != null) {
             result.setShape(face);
             result.getVelocity().mul(ellipsoid.getRadius());
-            result.getNormal().div(V3F_3.set(ellipsoid.getRadius()).mul(ellipsoid.getRadius())).normalize();
+            result.getNormal().div(V3F_3.set(ellipsoid.getRadius())).normalize();
         }
     }
 }

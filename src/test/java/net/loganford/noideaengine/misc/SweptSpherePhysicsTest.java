@@ -84,7 +84,7 @@ public class SweptSpherePhysicsTest {
 
                 AbstractCameraComponent cameraComponent = getComponent(AbstractCameraComponent.class);
                 entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));*/
-                setPos(0, 100, 0);
+                setPos(0, 5, 0);
                 getComponent(CharacterPhysicsComponent.class).getVelocity().set(0, 0, 0);
             }
             if(game.getInput().mousePressed(Input.MOUSE_2)) {
@@ -110,7 +110,8 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
 
-            model = game.getModelManager().get("cs_italy_fixed");
+            model = game.getModelManager().get("test");
+            //model = game.getModelManager().get("cs_italy_fixed");
             //model = game.getModelManager().get("level2");
             setShape(model.getShape());
         }
