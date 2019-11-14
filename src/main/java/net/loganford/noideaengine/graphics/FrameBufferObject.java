@@ -146,6 +146,12 @@ public class FrameBufferObject implements UnsafeMemory {
     public void renderToScreen(Game game, GameState gameState, Renderer renderer) {
         renderer.getTextureBatch().flush(renderer);
 
+        boolean popShader = false;
+        if(renderer.getShader() == null) {
+            renderer.pushShader(renderer.getImageShader());
+            popShader = true;
+        }
+
         GL33.glDisable(GL33.GL_DEPTH_TEST);
 
         projectionMatrix.identity().ortho(0, game.getWindow().getWidth(), game.getWindow().getHeight(), 0, -100f, 100f);
@@ -167,6 +173,10 @@ public class FrameBufferObject implements UnsafeMemory {
         //Render
         GL33.glDrawArrays(GL33.GL_TRIANGLES, 0, 6);
         shader.resetBoundTextures(renderer);
+
+        if(popShader) {
+            renderer.popShader();
+        }
     }
 
     public Image getImage() {

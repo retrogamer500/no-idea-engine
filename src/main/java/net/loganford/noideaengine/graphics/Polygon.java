@@ -90,8 +90,10 @@ class Polygon implements UnsafeMemory {
     public void render(Renderer renderer, float x, float y) {
         renderer.getTextureBatch().flush(renderer);
 
-        if(renderer.getShaderSolid() != null) {
-            renderer.pushShader(renderer.getShaderSolid());
+        boolean popShader = false;
+        if(renderer.getShader() == null) {
+            renderer.pushShader(renderer.getPrimitiveShader());
+            popShader = true;
         }
 
         GL33.glDisable(GL33.GL_CULL_FACE);
@@ -114,13 +116,13 @@ class Polygon implements UnsafeMemory {
         GL33.glEnable(GL33.GL_CULL_FACE);
         shader.resetBoundTextures(renderer);
 
-        if(renderer.getShaderSolid() != null) {
+        if(popShader) {
             renderer.popShader();
         }
     }
 
     public void renderOutline(Renderer renderer, float x, float y) {
-        renderer.pushShader(renderer.getShaderSolid());
+        renderer.pushShader(renderer.getPrimitiveShader());
         GL33.glDisable(GL33.GL_CULL_FACE);
         GL33.glDisable(GL33.GL_DEPTH_TEST);
 

@@ -111,6 +111,12 @@ public class TextureBatch implements UnsafeMemory {
 
     public void flush(Renderer renderer) {
         if(quads != 0) {
+            boolean popShader = false;
+            if(renderer.getShader() == null) {
+                renderer.pushShader(renderer.getImageShader());
+                popShader = true;
+            }
+
             boolean cullingBackface = renderer.isCullingBackface();
             renderer.setCullingBackface(false);
             vao.flipAndUpdate(0);
@@ -142,6 +148,10 @@ public class TextureBatch implements UnsafeMemory {
             vao.clear();
             currentTexture = null;
             renderer.setCullingBackface(cullingBackface);
+
+            if(popShader) {
+                renderer.popShader();
+            }
         }
     }
 

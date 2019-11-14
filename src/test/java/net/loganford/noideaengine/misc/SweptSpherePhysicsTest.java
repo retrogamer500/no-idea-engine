@@ -119,10 +119,7 @@ public class SweptSpherePhysicsTest {
         @Override
         public void render(Game game, Scene scene, Renderer renderer) {
             super.render(game, scene, renderer);
-
-            renderer.pushShader(renderer.getShaderForwardOpaque());
             model.render(renderer, getPosMatrix());
-            renderer.popShader();
         }
     }
 
@@ -144,9 +141,7 @@ public class SweptSpherePhysicsTest {
         @Override
         public void render(Game game, Scene scene, Renderer renderer) {
             super.render(game, scene, renderer);
-            renderer.pushShader(renderer.getShaderForwardOpaque());
             model.render(renderer, getPosMatrix());
-            renderer.popShader();
         }
     }
 

@@ -126,8 +126,10 @@ public class TileLayer extends Entity implements UnsafeMemory {
             dirty = false;
         }
 
-        if(renderer.getShaderTile() != null) {
-            renderer.pushShader(renderer.getShaderTile());
+        boolean popShader = false;
+        if(renderer.getShader() == null) {
+            renderer.pushShader(renderer.getTileShader());
+            popShader = true;
         }
 
         renderer.getShader().setUniform(ShaderUniform.TEX_DIFFUSE, tileImage.getTexture());
@@ -140,7 +142,7 @@ public class TileLayer extends Entity implements UnsafeMemory {
         //Drawing the quad flushes the texture batch and resets the bound texture count
         renderer.drawQuad(getX(), getY(), width * tileWidth, height * tileHeight);
 
-        if(renderer.getShaderTile() != null) {
+        if(popShader) {
             renderer.popShader();
         }
     }

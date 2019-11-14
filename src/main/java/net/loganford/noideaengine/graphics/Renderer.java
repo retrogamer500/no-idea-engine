@@ -45,10 +45,10 @@ public class Renderer {
     @Getter private Model model2Cube;
 
     //Default shaders
-    @Getter @Setter private ShaderProgram shaderDefault;
-    @Getter @Setter private ShaderProgram shaderForwardOpaque;
-    @Getter @Setter private ShaderProgram shaderSolid;
-    @Getter @Setter private ShaderProgram shaderTile;
+    @Getter @Setter private ShaderProgram imageShader;
+    @Getter @Setter private ShaderProgram modelShader;
+    @Getter @Setter private ShaderProgram primitiveShader;
+    @Getter @Setter private ShaderProgram tileShader;
 
     //Render state
     private Stack<ShaderProgram> shaderStack = new Stack<>();
@@ -71,7 +71,6 @@ public class Renderer {
         loadBuildInShaders();
         loadBuildInPolygons();
 
-        resetShader();
         setCullingBackface(true);
 
         textureBatch = new TextureBatch();
@@ -120,10 +119,10 @@ public class Renderer {
     private void loadBuildInShaders() {
         ShaderLoader shaderLoader = new ShaderLoader(game);
         JarResourceMapper jarResourceMapper = new JarResourceMapper(getClass().getClassLoader());
-        shaderDefault = shaderLoader.load("SHADER_DEFAULT", jarResourceMapper.get("default.vert"), jarResourceMapper.get("default.frag"));
-        shaderSolid = shaderLoader.load("SHADER_SOLID", jarResourceMapper.get("solid.vert"), jarResourceMapper.get("solid.frag"));
-        shaderForwardOpaque = shaderLoader.load("SHADER_OPAQUE", jarResourceMapper.get("phong.vert"), jarResourceMapper.get("phong.frag"));
-        shaderTile = shaderLoader.load("SHADER_TILE", jarResourceMapper.get("tile.vert"), jarResourceMapper.get("tile.frag"));
+        imageShader = shaderLoader.load("SHADER_DEFAULT", jarResourceMapper.get("image.vert"), jarResourceMapper.get("image.frag"));
+        primitiveShader = shaderLoader.load("SHADER_SOLID", jarResourceMapper.get("primitive.vert"), jarResourceMapper.get("primitive.frag"));
+        modelShader = shaderLoader.load("SHADER_OPAQUE", jarResourceMapper.get("model.vert"), jarResourceMapper.get("model.frag"));
+        tileShader = shaderLoader.load("SHADER_TILE", jarResourceMapper.get("tile.vert"), jarResourceMapper.get("tile.frag"));
     }
 
     private void loadBuildInPolygons() {
@@ -139,13 +138,13 @@ public class Renderer {
 
     public ShaderProgram popShader() {
         ShaderProgram oldShader = shaderStack.pop();
-        ShaderProgram newShader = shaderStack.peek();
+        ShaderProgram newShader = shaderStack.empty() ? null : shaderStack.peek();
         swapShaders(oldShader, newShader);
         return oldShader;
     }
 
     public void pushShader(ShaderProgram shader) {
-        ShaderProgram oldShader = shaderStack.peek();
+        ShaderProgram oldShader = shaderStack.empty() ? null : shaderStack.peek();
         ShaderProgram newShader = shaderStack.push(shader);
         swapShaders(oldShader, newShader);
     }
@@ -162,16 +161,12 @@ public class Renderer {
     }
 
     private void swapShaders(ShaderProgram oldProgram, ShaderProgram newProgram) {
-        if(!Objects.equals(oldProgram, newProgram)) {
+        if(newProgram != null && !Objects.equals(oldProgram, newProgram)) {
             if(getTextureBatch() != null) {
                 getTextureBatch().flush(this);
             }
             GL33.glUseProgram(newProgram.getProgramId());
         }
-    }
-
-    public void resetShader() {
-        setShader(shaderDefault);
     }
 
     public void clear(float r, float g, float b) {

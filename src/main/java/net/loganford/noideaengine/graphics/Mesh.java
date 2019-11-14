@@ -103,6 +103,12 @@ public class Mesh implements UnsafeMemory {
 	private void render(Renderer renderer, AbstractViewProjection viewProjection, Matrix4f modelMatrix) {
 		renderer.getTextureBatch().flush(renderer);
 
+		boolean popShader = false;
+		if(renderer.getShader() == null) {
+			renderer.pushShader(renderer.getModelShader());
+			popShader = true;
+		}
+
 		//Populate uniforms
 		ShaderProgram shader = renderer.getShader();
 		shader.setUniform(ShaderUniform.COLOR, ShaderProgram.DEFAULT_COLOR);
@@ -124,6 +130,10 @@ public class Mesh implements UnsafeMemory {
 		//Render
 		GL33.glDrawArrays(GL33.GL_TRIANGLES, 0, vertexCount);
 		shader.resetBoundTextures(renderer);
+
+		if(popShader) {
+			renderer.popShader();
+		}
 	}
 
 	@Override

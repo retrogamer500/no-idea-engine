@@ -30,20 +30,50 @@ public class Model extends Resource implements UnsafeMemory {
     }
 
     public void render(Renderer renderer, Matrix4fc matrix) {
+        boolean popShader = false;
+        if(renderer.getShader() == null) {
+            renderer.pushShader(renderer.getModelShader());
+            popShader = true;
+        }
+
         for(Mesh mesh: meshes) {
             mesh.render(renderer, matrix);
+        }
+
+        if(popShader) {
+            renderer.popShader();
         }
     }
 
     public void render(Renderer renderer, float x, float y) {
+        boolean popShader = false;
+        if(renderer.getShader() == null) {
+            renderer.pushShader(renderer.getModelShader());
+            popShader = true;
+        }
+
         for(Mesh mesh: meshes) {
             mesh.render(renderer, x, y);
+        }
+
+        if(popShader) {
+            renderer.popShader();
         }
     }
 
     public void render(Renderer renderer, float x, float y, float z) {
+        boolean popShader = false;
+        if(renderer.getShader() == null) {
+            renderer.pushShader(renderer.getModelShader());
+            popShader = true;
+        }
+
         for(Mesh mesh: meshes) {
             mesh.render(renderer, x, y, z);
+        }
+
+        if(popShader) {
+            renderer.popShader();
         }
     }
 
