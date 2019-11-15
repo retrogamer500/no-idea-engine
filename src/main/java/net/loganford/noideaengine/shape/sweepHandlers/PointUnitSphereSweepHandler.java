@@ -11,13 +11,12 @@ public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphe
     private static Vector3d V3D = new Vector3d();
     private static Vector3d V3D_1 = new Vector3d();
     private static Vector3d V3D_2 = new Vector3d();
-
-    private static Vector3d velocityD = new Vector3d();
+    private static Vector3d V3D_3 = new Vector3d();
 
     @Override
     public void sweep(SweepResult result, Point point, Vector3fc velocity, UnitSphere unitSphere) {
         result.clear();
-        velocityD.set(velocity);
+        Vector3d velocityD = V3D_3.set(velocity);
 
         Vector3d oc = V3D.set(point.getPosition()).sub(unitSphere.getPosition());
         double a = velocityD.lengthSquared();
@@ -25,7 +24,7 @@ public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphe
         double c = oc.dot(oc) - 1.0;
         double t = MathUtils.getLowestRoot(a, b, c);
 
-        if(Double.isNaN(t) || t < -1.0/velocityD.length() || t > 1) {
+        if(Double.isNaN(t) || 1 < - t * t * a || t > 1) {
             return;
         }
 

@@ -12,13 +12,12 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
     private static Vector3d V3D_1 = new Vector3d();
     private static Vector3d V3D_2 = new Vector3d();
     private static Vector3d V3D_3 = new Vector3d();
-
-    private static Vector3d velocityD = new Vector3d();
+    private static Vector3d V3D_4 = new Vector3d();
 
     @Override
     public void sweep(SweepResult result, Point point, Vector3fc velocity, Cylinder cylinder) {
         result.clear();
-        velocityD.set(velocity);
+        Vector3d velocityD = V3D_4.set(velocity);
 
         Vector3d edge = V3D.set(cylinder.getV1()).sub(cylinder.getV0());
         Vector3d v = V3D_1.set(cylinder.getV0()).sub(point.getPosition());
@@ -27,7 +26,7 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
         double edgeDotVel = edge.dot(velocityD);
         double edgeDotSphereVert = edge.dot(v);
 
-        double a = edgeSqrLen * - velocity.lengthSquared() + edgeDotVel * edgeDotVel;
+        double a = edgeSqrLen * - velocityD.lengthSquared() + edgeDotVel * edgeDotVel;
 
         if(a == 0) {
             return;
@@ -37,7 +36,7 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
         double c = edgeSqrLen * (1.0 - v.lengthSquared()) + edgeDotSphereVert * edgeDotSphereVert;
         double t = MathUtils.getLowestRoot(a, b, c);
 
-        if(Double.isNaN(t) || t < -1.0/velocityD.length() || t > 1) {
+        if(Double.isNaN(t) || 1 < - t * t * velocityD.lengthSquared() || t > 1) {
             return;
         }
 
