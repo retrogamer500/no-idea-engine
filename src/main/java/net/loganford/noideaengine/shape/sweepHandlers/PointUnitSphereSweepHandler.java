@@ -23,17 +23,9 @@ public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphe
         double a = velocityD.lengthSquared();
         double b = 2.0 * oc.dot(velocityD);
         double c = oc.dot(oc) - 1.0;
-        double discriminant = b * b - 4.0 * a * c;
-        if(discriminant < 0) {
-            return;
-        }
+        double t = MathUtils.getLowestRoot(a, b, c);
 
-        double disSqrt = Math.sqrt(discriminant);
-        double t1 = (-b - disSqrt) / (2f * a);
-        double t2 = (-b + disSqrt) / (2f * a);
-        double t = Math.min(t1, t2);
-
-        if( t < -MathUtils.EPSILON || t > 1) {
+        if(Double.isNaN(t) || t < -1.0/velocityD.length() || t > 1) {
             return;
         }
 

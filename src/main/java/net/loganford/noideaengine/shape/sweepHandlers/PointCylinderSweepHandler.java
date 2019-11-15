@@ -33,21 +33,11 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
             return;
         }
 
-        double b = edgeSqrLen * (2f * velocityD.dot(v)) - 2f * edgeDotVel * edgeDotSphereVert;
-        double c = edgeSqrLen * (1f - v.lengthSquared()) + edgeDotSphereVert * edgeDotSphereVert;
+        double b = edgeSqrLen * (2.0 * velocityD.dot(v)) - 2.0 * edgeDotVel * edgeDotSphereVert;
+        double c = edgeSqrLen * (1.0 - v.lengthSquared()) + edgeDotSphereVert * edgeDotSphereVert;
+        double t = MathUtils.getLowestRoot(a, b, c);
 
-        double discriminant = b * b - 4f * a *c;
-
-        if(discriminant < 0) {
-            return;
-        }
-
-        double disSqrt = (float)Math.sqrt(discriminant);
-        double t1 = (-b - disSqrt) / (2f * a);
-        double t2 = (-b + disSqrt) / (2f * a);
-        double t = Math.min(t1, t2);
-
-        if( t < -MathUtils.EPSILON || t > 1) {
+        if(Double.isNaN(t) || t < -1.0/velocityD.length() || t > 1) {
             return;
         }
 

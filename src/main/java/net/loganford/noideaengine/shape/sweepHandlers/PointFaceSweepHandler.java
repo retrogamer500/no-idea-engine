@@ -3,7 +3,6 @@ package net.loganford.noideaengine.shape.sweepHandlers;
 import net.loganford.noideaengine.graphics.Face;
 import net.loganford.noideaengine.shape.Point;
 import net.loganford.noideaengine.shape.SweepResult;
-import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
@@ -32,7 +31,7 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
             return;
         }
 
-        double invDet = 1f / det;
+        double invDet = 1.0 / det;
         Vector3d s = V3D_3.set(V3D_4.set(point.getPosition())).sub(face.getV0());
         double u = invDet * (s.dot(h));
 
@@ -49,7 +48,7 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
 
         double t = invDet * edge2.dot(q);
 
-        if(t < -MathUtils.EPSILON || t > 1) {
+        if(t < 0 || t > 1) {
             return;
         }
 

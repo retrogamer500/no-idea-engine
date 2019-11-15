@@ -111,6 +111,12 @@ public class MathUtils {
             t2 = 2.0 * c / (-b + disSqrt);
         }
 
-        return Math.min(t1, t2);
+        double t = Math.min(t1, t2);
+
+        if(t1 < 0 && t2 < 0) {
+            return Double.NaN;
+        }
+
+        return t;
     }
 }
