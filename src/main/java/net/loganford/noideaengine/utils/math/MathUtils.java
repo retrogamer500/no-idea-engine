@@ -1,6 +1,7 @@
 package net.loganford.noideaengine.utils.math;
 
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -83,6 +84,11 @@ public class MathUtils {
             orthogonalComponent.set(V3F_2.set(vector).sub(vectorProjNormal));
         }
     }
+
+    public static Vector3d vectorProjection(Vector3dc vector, Vector3dc onto, Vector3d result) {
+            result.set(V3D.set(onto).mul(vector.dot(onto) / onto.lengthSquared()));
+            return result;
+        }
 
     public static Vector3f vectorProjection(Vector3fc vector, Vector3fc onto, Vector3f result) {
         result.set(V3F.set(onto).mul(vector.dot(onto) / onto.lengthSquared()));
