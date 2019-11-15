@@ -3,6 +3,7 @@ package net.loganford.noideaengine.shape.sweepHandlers;
 import net.loganford.noideaengine.shape.Point;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.shape.UnitSphere;
+import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
@@ -32,7 +33,7 @@ public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphe
         double t2 = (-b + disSqrt) / (2f * a);
         double t = Math.min(t1, t2);
 
-        if( t < 0 || t > 1) {
+        if( t < -MathUtils.EPSILON || t > 1) {
             return;
         }
 

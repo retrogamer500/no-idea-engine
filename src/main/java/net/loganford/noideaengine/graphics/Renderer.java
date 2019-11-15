@@ -18,7 +18,6 @@ import org.joml.*;
 import org.lwjgl.opengl.GL33;
 
 import java.lang.Math;
-import java.util.Objects;
 import java.util.Stack;
 
 @Log4j2
@@ -52,6 +51,7 @@ public class Renderer {
 
     //Render state
     private Stack<ShaderProgram> shaderStack = new Stack<>();
+    private int shaderProgramId;
     @Getter @Setter private View view;
     @Getter @Setter private Camera camera;
     private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
@@ -161,11 +161,12 @@ public class Renderer {
     }
 
     private void swapShaders(ShaderProgram oldProgram, ShaderProgram newProgram) {
-        if(newProgram != null && !Objects.equals(oldProgram, newProgram)) {
+        if(newProgram != null && shaderProgramId != newProgram.getProgramId()) {
             if(getTextureBatch() != null) {
                 getTextureBatch().flush(this);
             }
             GL33.glUseProgram(newProgram.getProgramId());
+            shaderProgramId = newProgram.getProgramId();
         }
     }
 

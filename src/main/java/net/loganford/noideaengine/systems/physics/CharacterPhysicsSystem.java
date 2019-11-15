@@ -195,7 +195,6 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                         }
                         else {
                             physicsComponent.setOnGround(true);
-                            System.out.println(result.getNormal());
                         }
                     }
                 else {

@@ -88,4 +88,29 @@ public class MathUtils {
         result.set(V3F.set(onto).mul(vector.dot(onto) / onto.lengthSquared()));
         return result;
     }
+
+    public static double getLowestRoot(double a, double b, double c) {
+        double discriminant = b * b - 4f * a *c;
+
+        if(discriminant < 0) {
+            return Double.NaN;
+        }
+
+        double disSqrt = (float)Math.sqrt(discriminant);
+        double t1, t2;
+        if(b == 0) {
+            t1 = Math.sqrt(c / a);
+            t2 = -t1;
+        }
+        else if(Math.abs(4 * a * c) > Math.abs(b)) {
+            t1 = (-b - disSqrt) / (2f * a);
+            t2 = (-b + disSqrt) / (2f * a);
+        }
+        else {
+            t1 = 2.0 * c / (-b - disSqrt);
+            t2 = 2.0 * c / (-b + disSqrt);
+        }
+
+        return Math.min(t1, t2);
+    }
 }

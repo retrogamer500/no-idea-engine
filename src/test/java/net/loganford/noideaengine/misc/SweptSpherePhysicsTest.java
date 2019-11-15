@@ -43,7 +43,7 @@ public class SweptSpherePhysicsTest {
         public void beginState(Game game) {
             super.beginState(game);
             add(new Level());
-            add(new Player(), 0, 100, 0);
+            add(new Player(), 6.47f, 0f, 86.34f);
 
             /*for(int i = 0; i < 5; i++) {
                 for(int j = 0; j < 5; j++) {
@@ -84,7 +84,7 @@ public class SweptSpherePhysicsTest {
 
                 AbstractCameraComponent cameraComponent = getComponent(AbstractCameraComponent.class);
                 entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));*/
-                setPos(0, 5, 0);
+                setPos(6.47f, 0f, 86.34f);
                 getComponent(CharacterPhysicsComponent.class).getVelocity().set(0, 0, 0);
             }
             if(game.getInput().mousePressed(Input.MOUSE_2)) {
@@ -110,8 +110,8 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
 
-            model = game.getModelManager().get("test");
-            //model = game.getModelManager().get("cs_italy_fixed");
+            //model = game.getModelManager().get("test");
+            model = game.getModelManager().get("cs_italy_fixed");
             //model = game.getModelManager().get("level2");
             setShape(model.getShape());
         }
@@ -148,7 +148,6 @@ public class SweptSpherePhysicsTest {
     @Test
     public void testSweptSpherePhysics() {
         Game game = new Game(new TestScene());
-        //game.setFps(30, 30);
         game.run();
     }
 }

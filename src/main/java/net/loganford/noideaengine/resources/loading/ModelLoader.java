@@ -100,8 +100,8 @@ public class ModelLoader extends ResourceLoader {
             //Since we are atlassing textures, we need to store offsets and multipliers for UV coordinates
             float imageU = 0; //U offset
             float imageV = 0; //V offset
-            float imageUW = 0; //U multiplier
-            float imageVH = 0; //V multiplier
+            float imageUW = 1; //U multiplier
+            float imageVH = 1; //V multiplier
             if(StringUtils.isNotBlank(data)) {
                 Image image = game.getImageManager().get(data);
                 imageU = image.getU0();
