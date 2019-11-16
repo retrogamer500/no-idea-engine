@@ -9,6 +9,7 @@ public class SweepResult<E> {
     private static Vector3f V3F = new Vector3f();
     private static Vector3f V3F_2 = new Vector3f();
     private static Vector3f V3F_3 = new Vector3f();
+    private static Vector3f V3F_4 = new Vector3f();
 
     @Getter(onMethod = @__({@Scriptable})) @Setter private float distance = 1f;
     @Getter @Setter private Vector3f normal = new Vector3f();
