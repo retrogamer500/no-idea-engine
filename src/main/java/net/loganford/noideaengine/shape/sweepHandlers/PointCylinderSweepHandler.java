@@ -36,7 +36,7 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
         double c = edgeSqrLen * (1.0 - v.lengthSquared()) + edgeDotSphereVert * edgeDotSphereVert;
         double t = MathUtils.getLowestRoot(a, b, c);
 
-        if(Double.isNaN(t) || 1 < - t * t * velocityD.lengthSquared() || t > 1) {
+        if(Double.isNaN(t) || t < -1.0/velocity.length() || t > 1) {
             return;
         }
 

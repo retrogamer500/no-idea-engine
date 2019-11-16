@@ -24,7 +24,7 @@ public class PointUnitSphereSweepHandler implements SweepHandler<Point, UnitSphe
         double c = oc.dot(oc) - 1.0;
         double t = MathUtils.getLowestRoot(a, b, c);
 
-        if(Double.isNaN(t) || 1 < - t * t * a || t > 1) {
+        if(Double.isNaN(t) || t < -1.0/velocity.length() || t > 1) {
             return;
         }
 

@@ -41,6 +41,10 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
 
         float side = velocity.dot(normal);
 
+        if(Float.isNaN(side)) { //Polygon has zero area
+            return;
+        }
+
         Face extrudedFace = FACE;
         if(side < 0) {
             //Front side

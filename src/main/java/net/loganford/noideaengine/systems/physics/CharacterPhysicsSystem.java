@@ -38,6 +38,10 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
     private static Vector3f V3F_11 = new Vector3f();
     private static Vector3f V3F_12 = new Vector3f();
     private static Vector3f V3F_13 = new Vector3f();
+    private static Vector3f V3F_14 = new Vector3f();
+    private static Vector3f V3F_15 = new Vector3f();
+    private static Vector3f V3F_16 = new Vector3f();
+    private static Vector3f V3F_17 = new Vector3f();
 
     public CharacterPhysicsSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);
@@ -172,7 +176,8 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         }
 
         SweepResult result;
-        for(int i = 0; i < 3 && remainingSpeed != 0; i++) {
+        Vector3f firstSlidingPlane = V3F_14;
+        for(int i = 0; i < 2 && remainingSpeed != 0; i++) {
             result = entity.sweep(V3F_2.set(nextDirection).mul(remainingSpeed), physicsComponent.getSolidEntity());
 
             if(remainingSpeed > MathUtils.EPSILON) {
@@ -238,7 +243,21 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
                     remainingSpeed = 0;
                 }
                 else {
+                    //This is just temporary
+                    if(i == 1 && firstSlidingPlane != null) {
+                        float dot = result.getNormal().dot(firstSlidingPlane);
+                        if(dot < -.5) {
+                            float factor = Math.min(Math.max(15 * -dot, 0), 15);
+                            V3F_17.set(firstSlidingPlane).add(result.getNormal()).normalize().mul(MathUtils.EPSILON * factor);
+                            entity.move(V3F_17);
+                        }
+                    }
+
                     nextDirection.normalize();
+                }
+
+                if(i == 0) {
+                    firstSlidingPlane.set(result.getNormal());
                 }
             }
         }
