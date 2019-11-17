@@ -113,7 +113,7 @@ public class TextureBatch implements UnsafeMemory {
         if(quads != 0) {
             boolean popShader = false;
             if(renderer.getShader() == null) {
-                renderer.pushShader(renderer.getImageShader());
+                renderer.pushShader(renderer.getImageShader(), false);
                 popShader = true;
             }
 

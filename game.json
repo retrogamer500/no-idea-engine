@@ -2,13 +2,20 @@
   "resources": {
     "images": [
       {
-        "filename": "glob:data/images/*.png",
+        "filename": "glob:data/images/*.{png}",
         "key": "{1}"
       },
       {
         "filename": "data/images/sprite_sheet.png",
         "key": "group_1_test_image",
         "group": 1
+      }
+    ],
+    "textures": [
+      {
+        "filename": "glob:data/images/*.{tga}",
+        "key": "{1}.tga",
+        "flipVertically": true
       }
     ],
     "sprites": [
@@ -51,7 +58,7 @@
         "key": "{1}"
       },
       {
-        "filename": "data/models/cs_italy.obj",
+        "filename": "data/models/cs_italy.dae",
         "key": "cs_italy_fixed",
         "swapZY": true,
         "scale": 0.07

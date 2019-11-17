@@ -11,5 +11,5 @@ in vec3 wNormal;
 
 void main(void) {
     vec3 illumination = ambientLightColor + lightColor * clamp(dot(wNormal, -normalize(lightDirection)), .2, 1);
-	gl_FragColor = abs(vec4(wNormal, 1.0));
+	gl_FragColor = texture(texDiffuse, texCoord);
 }

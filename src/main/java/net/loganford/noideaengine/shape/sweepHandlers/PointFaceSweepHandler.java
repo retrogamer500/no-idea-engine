@@ -32,7 +32,7 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
             return;
         }
 
-        double invDet = 1f / det;
+        double invDet = 1.0 / det;
         Vector3d s = V3D_3.set(V3D_4.set(point.getPosition())).sub(face.getV0());
         double u = invDet * (s.dot(h));
 
@@ -49,7 +49,7 @@ public class PointFaceSweepHandler implements SweepHandler<Point, Face> {
 
         double t = invDet * edge2.dot(q);
 
-        if(t < -MathUtils.EPSILON || t > 1) {
+        if(t < -MathUtils.EPSILON * 10 || t > 1) {
             return;
         }
 

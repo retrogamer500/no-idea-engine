@@ -8,4 +8,6 @@ import lombok.EqualsAndHashCode;
 public class ModelConfig extends SingleFileConfig {
     private boolean swapZY = false;
     private float scale = 1;
+    private String imagePrefix = "";
+    private String imageSuffix = "";
 }

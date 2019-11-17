@@ -117,7 +117,7 @@ public class Mesh implements UnsafeMemory {
 		shader.setUniform(ShaderUniform.PROJECTION, viewProjection.getProjectionMatrix());
 
 		if(material != null) {
-			shader.setUniform(ShaderUniform.TEX_DIFFUSE, material.getDiffuse().getTexture());
+			shader.setUniform(ShaderUniform.TEX_DIFFUSE, material.getDiffuse());
 		}
 
         shader.setUniform(ShaderUniform.LIGHT_COLOR, renderer.getLightColor());

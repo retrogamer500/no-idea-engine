@@ -12,13 +12,12 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
     private static Vector3d V3D_1 = new Vector3d();
     private static Vector3d V3D_2 = new Vector3d();
     private static Vector3d V3D_3 = new Vector3d();
-
-    private static Vector3d velocityD = new Vector3d();
+    private static Vector3d V3D_4 = new Vector3d();
 
     @Override
     public void sweep(SweepResult result, Point point, Vector3fc velocity, Cylinder cylinder) {
         result.clear();
-        velocityD.set(velocity);
+        Vector3d velocityD = V3D_4.set(velocity);
 
         Vector3d edge = V3D.set(cylinder.getV1()).sub(cylinder.getV0());
         Vector3d v = V3D_1.set(cylinder.getV0()).sub(point.getPosition());
@@ -27,27 +26,17 @@ public class PointCylinderSweepHandler implements SweepHandler<Point, Cylinder> 
         double edgeDotVel = edge.dot(velocityD);
         double edgeDotSphereVert = edge.dot(v);
 
-        double a = edgeSqrLen * - velocity.lengthSquared() + edgeDotVel * edgeDotVel;
+        double a = edgeSqrLen * - velocityD.lengthSquared() + edgeDotVel * edgeDotVel;
 
         if(a == 0) {
             return;
         }
 
-        double b = edgeSqrLen * (2f * velocityD.dot(v)) - 2f * edgeDotVel * edgeDotSphereVert;
-        double c = edgeSqrLen * (1f - v.lengthSquared()) + edgeDotSphereVert * edgeDotSphereVert;
+        double b = edgeSqrLen * (2.0 * velocityD.dot(v)) - 2.0 * edgeDotVel * edgeDotSphereVert;
+        double c = edgeSqrLen * (1.0 - v.lengthSquared()) + edgeDotSphereVert * edgeDotSphereVert;
+        double t = MathUtils.getLowestRoot(a, b, c);
 
-        double discriminant = b * b - 4f * a *c;
-
-        if(discriminant < 0) {
-            return;
-        }
-
-        double disSqrt = (float)Math.sqrt(discriminant);
-        double t1 = (-b - disSqrt) / (2f * a);
-        double t2 = (-b + disSqrt) / (2f * a);
-        double t = Math.min(t1, t2);
-
-        if( t < -MathUtils.EPSILON || t > 1) {
+        if(Double.isNaN(t) || t < -MathUtils.EPSILON || t > 1) {
             return;
         }
 

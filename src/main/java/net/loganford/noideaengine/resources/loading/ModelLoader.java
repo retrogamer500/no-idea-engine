@@ -103,12 +103,9 @@ public class ModelLoader extends ResourceLoader {
             float imageUW = 1; //U multiplier
             float imageVH = 1; //V multiplier
             if(StringUtils.isNotBlank(data)) {
-                Image image = game.getImageManager().get(data);
-                imageU = image.getU0();
-                imageV = image.getV0();
-                imageUW = image.getU1() - image.getU0();
-                imageVH = image.getV1() - image.getV0();
-                mesh.getMaterial().setDiffuse(image);
+                String textureKey = modelConfig.getImagePrefix() + data + modelConfig.getImageSuffix();
+                Texture texture = game.getTextureManager().get(textureKey);
+                mesh.getMaterial().setDiffuse(texture);
             }
 
 
@@ -254,7 +251,7 @@ public class ModelLoader extends ResourceLoader {
 
     private Material getDefaultMaterial() {
         Material material = new Material();
-        material.setDiffuse(getGame().getRenderer().getTextureWhite().getImage());
+        material.setDiffuse(getGame().getRenderer().getTextureWhite());
         return material;
     }
 }

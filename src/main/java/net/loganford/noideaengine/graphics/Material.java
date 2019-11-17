@@ -4,5 +4,5 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class Material  {
-    @Getter @Setter private Image diffuse;
+    @Getter @Setter private Texture diffuse;
 }

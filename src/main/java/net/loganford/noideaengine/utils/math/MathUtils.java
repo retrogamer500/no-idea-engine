@@ -1,6 +1,7 @@
 package net.loganford.noideaengine.utils.math;
 
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -84,6 +85,11 @@ public class MathUtils {
         }
     }
 
+    public static Vector3d vectorProjection(Vector3dc vector, Vector3dc onto, Vector3d result) {
+            result.set(V3D.set(onto).mul(vector.dot(onto) / onto.lengthSquared()));
+            return result;
+        }
+
     public static Vector3f vectorProjection(Vector3fc vector, Vector3fc onto, Vector3f result) {
         result.set(V3F.set(onto).mul(vector.dot(onto) / onto.lengthSquared()));
         return result;
@@ -111,6 +117,12 @@ public class MathUtils {
             t2 = 2.0 * c / (-b + disSqrt);
         }
 
-        return Math.min(t1, t2);
+        double t = Math.min(t1, t2);
+
+        if(t1 < 0 && t2 < 0) {
+            return Double.NaN;
+        }
+
+        return t;
     }
 }

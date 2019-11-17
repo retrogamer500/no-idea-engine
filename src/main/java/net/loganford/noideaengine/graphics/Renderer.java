@@ -139,14 +139,18 @@ public class Renderer {
     public ShaderProgram popShader() {
         ShaderProgram oldShader = shaderStack.pop();
         ShaderProgram newShader = shaderStack.empty() ? null : shaderStack.peek();
-        swapShaders(oldShader, newShader);
+        swapShaders(oldShader, newShader, true);
         return oldShader;
     }
 
     public void pushShader(ShaderProgram shader) {
+        this.pushShader(shader, true);
+    }
+
+    void pushShader(ShaderProgram shader, boolean flushTextureBatch) {
         ShaderProgram oldShader = shaderStack.empty() ? null : shaderStack.peek();
         ShaderProgram newShader = shaderStack.push(shader);
-        swapShaders(oldShader, newShader);
+        swapShaders(oldShader, newShader, flushTextureBatch);
     }
 
 
@@ -157,12 +161,12 @@ public class Renderer {
         } else {
             shaderStack.set(shaderStack.size() - 1, shader);
         }
-        swapShaders(oldShader, shader);
+        swapShaders(oldShader, shader, true);
     }
 
-    private void swapShaders(ShaderProgram oldProgram, ShaderProgram newProgram) {
+    private void swapShaders(ShaderProgram oldProgram, ShaderProgram newProgram, boolean flushTextureBatch) {
         if(newProgram != null && shaderProgramId != newProgram.getProgramId()) {
-            if(getTextureBatch() != null) {
+            if(flushTextureBatch && getTextureBatch() != null) {
                 getTextureBatch().flush(this);
             }
             GL33.glUseProgram(newProgram.getProgramId());
