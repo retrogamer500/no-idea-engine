@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class Resources {
     private List<ImageConfig> images;
+    private List<TextureConfig> textures;
     private List<ShaderConfig> shaders;
     private List<ModelConfig> models;
     private List<SpriteConfig> sprites;

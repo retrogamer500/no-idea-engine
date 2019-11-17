@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ImageAtlasPacker extends ResourceLoader {
 
     public static final int MIN_REQUIRED_TEXTURE_SIZE = 2048;
-    public static final int MAX_TEXTURE_SIZE = 8192;
+    public static final int MAX_TEXTURE_SIZE = 2048;
     public static final int IMAGES_PER_TEXTURE = 65536;
 
     private static int atlasNumber = 0;
@@ -121,7 +121,7 @@ public class ImageAtlasPacker extends ResourceLoader {
                     ByteBuffer imageBuffer = image.getData();
 
                     //Copy full row from image into atlas
-                    imageBuffer.clear().position(4 * (int)image.getWidth() * y).mark().limit(4 * (int)image.getWidth() * (y+1));
+                    imageBuffer.clear().position(4 * (int)image.getWidth() * (y - y1)).mark().limit(4 * (int)image.getWidth() * (y - y1 +1));
                     atlasBuffer.clear().position(4 * (y * textureSize + x1)).mark().limit(4 * (y * textureSize + x2));
                     atlasBuffer.put(imageBuffer);
                 }

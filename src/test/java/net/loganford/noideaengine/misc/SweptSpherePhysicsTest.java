@@ -51,6 +51,13 @@ public class SweptSpherePhysicsTest {
                 }
             }*/
         }
+
+        @Override
+        public void render(Game game, Renderer renderer) {
+            super.render(game, renderer);
+            //game.getTextureManager().get("_atlas_0").getImage().render(renderer, 0, 0);
+            //game.getImageManager().get("cs_italy_material_78.tga").render(renderer, 0, 0);
+        }
     }
 
     @RegisterComponent(FirstPersonCameraComponent.class)
@@ -70,7 +77,7 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             model = game.getModelManager().get("unitSphere");
-            setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.3f, 0.9f, .3f)));
+            setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.6f, 1.8f, .6f)));
             //setShape(new UnitSphere());
         }
 
