@@ -54,7 +54,10 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
             int location = GL33.glGetUniformBlockIndex(programId, name);
             log.debug("UBO found. Name: " + name + " Location: " + location);
             cachedUboLocations[i] = location;
-            GL33.glUniformBlockBinding(programId, location, i);
+
+            if(location != -1) {
+                GL33.glUniformBlockBinding(programId, location, i);
+            }
         }
 	}
 
