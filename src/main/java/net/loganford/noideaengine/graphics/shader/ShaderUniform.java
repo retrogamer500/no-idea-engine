@@ -7,6 +7,7 @@ public enum ShaderUniform {
     TEX_DIFFUSE("texDiffuse"),
     TEX_NORMAL("texNormal"),
     TEX_SPECULAR("texSpecular"),
+    TEX_SKYBOX("texSkybox"),
     TEX_TILE_LOOKUP("texTileLookup"),
 
     MODEL("model"),

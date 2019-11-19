@@ -15,4 +15,5 @@ public class Resources {
     private List<AudioConfig> audio;
     private List<ScriptConfig> scripts;
     private List<EntityConfig> entities;
+    private List<CubeMapConfig> cubeMaps;
 }

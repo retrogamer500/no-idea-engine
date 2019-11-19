@@ -132,7 +132,7 @@ public class CharacterPhysicsSystem extends ProcessEntitySystem {
         if(physicsComponent.isOnGround()) {
             //Keep player on ground if climbing down slopes (only when traveling downward)
             if(normalVelocity.dot(physicsComponent.getGravity()) > 0) {
-                float downAmount = 1f * delta/1000f;
+                float downAmount = 2f * delta/1000f;
                 SweepResult sweepResult = entity.sweep(V3F_10.set(physicsComponent.getGravity()).mul(downAmount), physicsComponent.getSolidEntity());
                 if (sweepResult.collides()) {
                     entity.move(sweepResult);

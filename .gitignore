@@ -26,3 +26,9 @@ hs_err_pid*
 noideaengine.iml
 .svn/
 target/
+
+
+# Test data which I don't have licenses for
+data/cubeMaps/*
+data/models/cs_italy.dae
+data/textures/cs_italy_*
