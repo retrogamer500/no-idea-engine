@@ -48,6 +48,7 @@ public class Renderer {
     @Getter @Setter private ShaderProgram modelShader;
     @Getter @Setter private ShaderProgram primitiveShader;
     @Getter @Setter private ShaderProgram tileShader;
+    @Getter @Setter private ShaderProgram skyboxShader;
 
     //Render state
     private Stack<ShaderProgram> shaderStack = new Stack<>();
@@ -103,17 +104,9 @@ public class Renderer {
                 new float[]{0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1,
                         0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
                         -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0});
-        model2Cube = modelLoader.load(new float[]{-1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f,
-                        1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f,
-                        1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f,
-                        -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f,
-                        1.0f, -1.0f, -1.0f, 1.0f, 1.0f},
-                new float[]{0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1,
-                        1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1},
-                new float[]{0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1,
-                        0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-                        -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0});
+        model2Cube = modelLoader.load(new float[]{-1f,-1f,1f,1f,-1f,1f,-1f,1f,1f,-1f,1f,1f,1f,-1f,1f,1f,1f,1f,-1f,1f,1f,1f,1f,1f,-1f,1f,-1f,-1f,1f,-1f,1f,1f,1f,1f,1f,-1f,-1f,1f,-1f,1f,1f,-1f,-1f,-1f,-1f,-1f,-1f,-1f,1f,1f,-1f,1f,-1f,-1f,-1f,-1f,-1f,1f,-1f,-1f,-1f,-1f,1f,-1f,-1f,1f,1f,-1f,-1f,1f,-1f,1f,1f,-1f,1f,1f,-1f,-1f,1f,1f,1f,1f,1f,1f,1f,-1f,-1f,1f,1f,-1f,-1f,-1f,-1f,-1f,-1f,1f,-1f,1f,-1f,-1f,1f,-1f,-1f,-1f,1f,-1f,1f,1f},
+                new float[]{0f,0f,1f,0f,0f,1f,0f,1f,1f,0f,1f,1f,0f,0f,1f,0f,0f,1f,0f,1f,1f,0f,1f,1f,1f,1f,0f,1f,1f,0f,1f,0f,0f,1f,0f,0f,0f,0f,1f,0f,0f,1f,0f,1f,1f,0f,1f,1f,0f,0f,1f,0f,0f,1f,0f,1f,1f,0f,1f,1f,0f,0f,1f,0f,0f,1f,0f,1f,1f,0f,1f,1f},
+                new float[]{0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f,-1f,0f,0f});
     }
 
     private void loadBuildInShaders() {
@@ -123,6 +116,7 @@ public class Renderer {
         primitiveShader = shaderLoader.load("SHADER_SOLID", jarResourceMapper.get("primitive.vert"), jarResourceMapper.get("primitive.frag"));
         modelShader = shaderLoader.load("SHADER_OPAQUE", jarResourceMapper.get("model.vert"), jarResourceMapper.get("model.frag"));
         tileShader = shaderLoader.load("SHADER_TILE", jarResourceMapper.get("tile.vert"), jarResourceMapper.get("tile.frag"));
+        skyboxShader = shaderLoader.load("SHADER_SKYBOX", jarResourceMapper.get("skybox.vert"), jarResourceMapper.get("skybox.frag"));
     }
 
     private void loadBuildInPolygons() {

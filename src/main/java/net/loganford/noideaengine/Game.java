@@ -87,6 +87,7 @@ public class Game {
     //Resource managers
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Image> imageManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Texture> textureManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<CubeMap> cubeMapManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<ShaderProgram> shaderManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Model> modelManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Sprite> spriteManager = new ResourceManager<>();
@@ -319,6 +320,7 @@ public class Game {
         resourceLoaders.add(new ShaderLoader(this));
         resourceLoaders.add(new ImageLoader(this));
         resourceLoaders.add(new TextureLoader(this));
+        resourceLoaders.add(new CubeMapLoader(this));
         resourceLoaders.add(new ImageAtlasPacker(this));
         resourceLoaders.add(new ModelLoader(this));
         resourceLoaders.add(new SpriteLoader(this));

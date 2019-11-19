@@ -7,6 +7,7 @@ import net.loganford.noideaengine.components.camera.FirstPersonCameraComponent;
 import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
 import net.loganford.noideaengine.components.physics.PhysicsComponent;
 import net.loganford.noideaengine.entity.Entity;
+import net.loganford.noideaengine.graphics.CubeMap;
 import net.loganford.noideaengine.graphics.Model;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.Ellipsoid;
@@ -39,36 +40,36 @@ public class SweptSpherePhysicsTest {
     @RegisterSystem(CharacterControllerSystem.class)
     public class TestScene extends Scene {
 
+        private CubeMap cubeMap;
+
         @Override
         public void beginState(Game game) {
             super.beginState(game);
             add(new Level());
             add(new Player(), 6.47f, 0f, 86.34f);
-
-            /*for(int i = 0; i < 5; i++) {
-                for(int j = 0; j < 5; j++) {
-                    add(new UnitSphereEntity(), 4*i - 10, 10, 4*j - 10);
-                }
-            }*/
+            cubeMap = game.getCubeMapManager().get("plains");
         }
 
         @Override
         public void render(Game game, Renderer renderer) {
+            cubeMap.render(renderer);
             super.render(game, renderer);
-            //game.getTextureManager().get("_atlas_0").getImage().render(renderer, 0, 0);
-            //game.getImageManager().get("cs_italy_material_78.tga").render(renderer, 0, 0);
+
         }
     }
 
     @RegisterComponent(FirstPersonCameraComponent.class)
     @RegisterComponent(value = CharacterPhysicsComponent.class, arguments = {
             @Argument(name = "solidEntity", classValue = SolidInterface.class),
-            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -25f)),
-            @Argument(name = "friction", floatValue = 30f)
+            @Argument(name = "gravity", vectorValue = @Vector3fa(y = -45f)),
+            @Argument(name = "friction", floatValue = 40f),
+            @Argument(name = "maxVerticalSpeed", floatValue = 20f),
+            @Argument(name = "maxHorizontalSpeed", floatValue = 20f),
+            @Argument(name = "floorAngle", floatValue = 1.2f)
     })
     @RegisterComponent(value = CharacterControllerComponent.class, arguments = {
-            @Argument(name = "acceleration", floatValue = 30f),
-            @Argument(name = "jumpSpeed", floatValue = 30f)
+            @Argument(name = "acceleration", floatValue = 40f),
+            @Argument(name = "jumpSpeed", floatValue = 50f)
     })
     public class Player extends Entity {
         private Model model;
@@ -77,8 +78,7 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             model = game.getModelManager().get("unitSphere");
-            setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.6f, 1.8f, .6f)));
-            //setShape(new UnitSphere());
+            setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.8f, 2.5f, .8f)));
         }
 
         @Override
@@ -86,25 +86,14 @@ public class SweptSpherePhysicsTest {
             super.step(game, scene, delta);
 
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
-                /*UnitSphereEntity entity = new UnitSphereEntity();
-                scene.add(entity, getPos());
-
-                AbstractCameraComponent cameraComponent = getComponent(AbstractCameraComponent.class);
-                entity.getComponent(PhysicsComponent.class).getVelocity().set(V3F.set(cameraComponent.getDirection()).mul(6f));*/
                 setPos(6.47f, 0f, 86.34f);
                 getComponent(CharacterPhysicsComponent.class).getVelocity().set(0, 0, 0);
-            }
-            if(game.getInput().mousePressed(Input.MOUSE_2)) {
-                //scene.with(UnitSphereEntity.class, Entity::destroy);
             }
         }
 
         @Override
         public void render(Game game, Scene scene, Renderer renderer) {
             super.render(game, scene, renderer);
-            //renderer.pushShader(renderer.getShaderForwardOpaque());
-            //model.render(renderer, getPosMatrix());
-            //renderer.popShader();
         }
     }
 
@@ -117,9 +106,7 @@ public class SweptSpherePhysicsTest {
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
 
-            //model = game.getModelManager().get("test");
             model = game.getModelManager().get("cs_italy_fixed");
-            //model = game.getModelManager().get("level2");
             setShape(model.getShape());
         }
 

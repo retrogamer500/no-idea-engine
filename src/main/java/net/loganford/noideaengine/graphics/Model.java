@@ -7,9 +7,7 @@ import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Matrix4fc;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Model extends Resource implements UnsafeMemory {
@@ -20,6 +18,8 @@ public class Model extends Resource implements UnsafeMemory {
         for(Mesh mesh: meshes) {
             mesh.init(false);
         }
+
+        meshes.sort(Comparator.comparing(Mesh::getMaterial));
     }
 
     @Override

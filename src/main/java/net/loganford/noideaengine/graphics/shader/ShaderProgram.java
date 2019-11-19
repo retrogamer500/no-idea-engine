@@ -2,6 +2,7 @@ package net.loganford.noideaengine.graphics.shader;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.noideaengine.graphics.CubeMap;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Texture;
 import net.loganford.noideaengine.resources.Resource;
@@ -71,6 +72,10 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
         setUniform(getLocation(uniform), texture);
     }
 
+    public void setUniform(ShaderUniform uniform, CubeMap cubeMap) {
+        setUniform(getLocation(uniform), cubeMap);
+    }
+
     //setUniforms
 
     public void setUniform(int location, Vector2f vector) {
@@ -93,6 +98,13 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
     public void setUniform(int location, Texture texture) {
         GL33.glActiveTexture(GL33.GL_TEXTURE0 + boundTextures);
         GL33.glBindTexture(GL33.GL_TEXTURE_2D, texture.getTextureId());
+        GL33.glUniform1i(location, boundTextures);
+        boundTextures++;
+    }
+
+    public void setUniform(int location, CubeMap cubeMap) {
+        GL33.glActiveTexture(GL33.GL_TEXTURE0 + boundTextures);
+        GL33.glBindTexture(GL33.GL_TEXTURE_CUBE_MAP, cubeMap.getTextureId());
         GL33.glUniform1i(location, boundTextures);
         boundTextures++;
     }
