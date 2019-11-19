@@ -18,6 +18,16 @@ public class UniformBufferObject implements UnsafeMemory {
     private ByteBuffer buffer;
     @Getter private int id;
 
+    public enum UboType {
+        SCENE("scene");
+
+        @Getter private final String uboName;
+
+        UboType(String uboName) {
+            this.uboName = uboName;
+        }
+    }
+
     UniformBufferObject(List<Pair<Integer, Object>> bufferedUniforms, int size) {
         UnsafeMemoryTracker.track(this);
         this.bufferedUniforms = bufferedUniforms;
