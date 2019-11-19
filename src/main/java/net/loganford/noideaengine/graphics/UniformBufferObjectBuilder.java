@@ -36,23 +36,23 @@ public class UniformBufferObjectBuilder {
     }
 
     public UniformBufferObjectBuilder putBoolean(Boolean bool) {
-        align(inArray ? 16 : 4);
+        align(4);
         put(index, bool);
-        index += inArray ? 16 : 4;
+        index += 4;
         return this;
     }
 
     public UniformBufferObjectBuilder putFloat(Float value) {
-        align(inArray ? 16 : 4);
+        align(4);
         put(index, value);
-        index += inArray ? 16 : 4;
+        index += 4;
         return this;
     }
 
     public UniformBufferObjectBuilder putInteger(Integer value) {
-        align(inArray ? 16 : 4);
+        align(4);
         put(index, value);
-        index += inArray ? 16 : 4;
+        index += 4;
         return this;
     }
 
@@ -74,6 +74,7 @@ public class UniformBufferObjectBuilder {
 
     public UniformBufferObjectBuilder endArrayElement() {
         inArray = false;
+        align(16);
         return this;
     }
 
