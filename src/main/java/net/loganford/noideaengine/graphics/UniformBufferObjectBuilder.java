@@ -16,7 +16,6 @@ public class UniformBufferObjectBuilder {
     private int index = 0;
     private boolean inArray = false;
     private boolean inStruct = false;
-    private boolean structInArray = false;
 
     public UniformBufferObjectBuilder() {
         reset();
@@ -37,23 +36,23 @@ public class UniformBufferObjectBuilder {
     }
 
     public UniformBufferObjectBuilder putBoolean(Boolean bool) {
-        align(inArray && !structInArray ? 16 : 4);
+        align(inArray ? 16 : 4);
         put(index, bool);
-        index += inArray && !structInArray ? 16 : 4;
+        index += inArray ? 16 : 4;
         return this;
     }
 
     public UniformBufferObjectBuilder putFloat(Float value) {
-        align(inArray && !structInArray ? 16 : 4);
+        align(inArray ? 16 : 4);
         put(index, value);
-        index += inArray && !structInArray ? 16 : 4;
+        index += inArray ? 16 : 4;
         return this;
     }
 
     public UniformBufferObjectBuilder putInteger(Integer value) {
-        align(inArray && !structInArray ? 16 : 4);
+        align(inArray ? 16 : 4);
         put(index, value);
-        index += inArray && !structInArray ? 16 : 4;
+        index += inArray ? 16 : 4;
         return this;
     }
 
@@ -82,9 +81,6 @@ public class UniformBufferObjectBuilder {
         if(inStruct) {
             throw new GameEngineException("Nested structs are not supported for UBOs");
         }
-        if(inArray) {
-            structInArray = true;
-        }
         inStruct = true;
         align(16);
         return this;
@@ -92,9 +88,6 @@ public class UniformBufferObjectBuilder {
 
     public UniformBufferObjectBuilder endStruct() {
         inStruct = false;
-        if(inArray) {
-            structInArray = false;
-        }
         align(16);
         return this;
     }
@@ -111,7 +104,7 @@ public class UniformBufferObjectBuilder {
     }
 
     private void put(int location, Object object) {
-        bufferedUniforms.add(new MutablePair<>(location, object));
+        bufferedUniforms.add(new MutablePair<Integer, Object>(location, object));
     }
 
     private void align(int amount) {
