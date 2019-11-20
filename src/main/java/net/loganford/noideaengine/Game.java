@@ -95,6 +95,7 @@ public class Game {
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Audio> audioManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Script> scriptManager = new ResourceManager<>();
     @Getter(onMethod = @__({@Scriptable})) private ResourceManager<ScriptedEntity> entityManager = new ResourceManager<>();
+    @Getter(onMethod = @__({@Scriptable})) private ResourceManager<Property> propertyManager = new ResourceManager<>();
 
     //Measure fps and performance of engine
     private FramerateMonitor framerateMonitor;
@@ -318,6 +319,7 @@ public class Game {
     public List<ResourceLoader> getResourceLoaders() {
         List<ResourceLoader> resourceLoaders = new ArrayList<>();
         resourceLoaders.add(new ShaderLoader(this));
+        resourceLoaders.add(new PropertyLoader(this));
         resourceLoaders.add(new ImageLoader(this));
         resourceLoaders.add(new TextureLoader(this));
         resourceLoaders.add(new CubeMapLoader(this));

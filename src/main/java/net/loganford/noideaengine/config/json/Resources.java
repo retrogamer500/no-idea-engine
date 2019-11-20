@@ -16,4 +16,5 @@ public class Resources {
     private List<ScriptConfig> scripts;
     private List<EntityConfig> entities;
     private List<CubeMapConfig> cubeMaps;
+    private List<PropertyConfig> properties;
 }

@@ -83,6 +83,18 @@
         "rightFilename": "data/cubeMaps/plains-of-abraham_rt.tga",
         "upFilename": "data/cubeMaps/plains-of-abraham_up.tga"
       }
+    ],
+    "properties": [
+      {
+        "key": "sceneUbo",
+        "filename": "config/sceneUbo.txt"
+      },
+      {
+        "key": "sceneUbo",
+        "stringValue": "123",
+        "intValue": 123,
+        "floatValue": 123.1
+      }
     ]
   }
 }
