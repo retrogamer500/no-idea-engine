@@ -144,7 +144,7 @@ public class FrameBufferObject implements UnsafeMemory {
     }
 
     public void renderToScreen(Game game, GameState gameState, Renderer renderer) {
-        renderer.getTextureBatch().flush(renderer);
+        renderer.getRenderBatcher().flush(renderer);
 
         boolean popShader = false;
         if(renderer.getShader() == null) {

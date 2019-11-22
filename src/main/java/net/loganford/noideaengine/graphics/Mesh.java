@@ -101,7 +101,7 @@ public class Mesh implements UnsafeMemory {
 	}
 
 	private void render(Renderer renderer, AbstractViewProjection viewProjection, Matrix4f modelMatrix) {
-		renderer.getTextureBatch().flush(renderer);
+		renderer.getRenderBatcher().flush(renderer);
 
 		boolean popShader = false;
 		if(renderer.getShader() == null) {

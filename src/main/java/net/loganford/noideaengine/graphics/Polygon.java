@@ -88,7 +88,7 @@ class Polygon implements UnsafeMemory {
      * @param y
      */
     public void render(Renderer renderer, float x, float y) {
-        renderer.getTextureBatch().flush(renderer);
+        renderer.getRenderBatcher().flush(renderer);
 
         boolean popShader = false;
         if(renderer.getShader() == null) {

@@ -21,7 +21,7 @@ public class CubeMap extends Resource implements UnsafeMemory {
             popShader = true;
         }
 
-        renderer.getTextureBatch().flush(renderer);
+        renderer.getRenderBatcher().flush(renderer);
 
         boolean cullingBackface = renderer.isCullingBackface();
         renderer.setCullingBackface(false);
