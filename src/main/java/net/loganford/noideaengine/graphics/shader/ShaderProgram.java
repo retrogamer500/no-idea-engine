@@ -27,8 +27,7 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
 	@Getter private VertexShader vertexShader;
 	@Getter private FragmentShader fragmentShader;
 
-	private int[] cachedUniformLocations = new int[ShaderUniform.values().length];
-	private int[] cachedUboLocations = new int[UniformBufferObject.UboType.values().length];
+	private int[] cachedUniformLocations = new int[ShaderUniform.getCachedUniforms().size()];
 	private int boundTextures = 0;
 
 	public ShaderProgram(int programId, String key, VertexShader vertexShader, FragmentShader fragmentShader) {
@@ -40,25 +39,18 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
 		log.debug("Processing shader uniforms for: " + key);
 
 		for(int i = 0; i < cachedUniformLocations.length; i++) {
-            ShaderUniform uniform = ShaderUniform.values()[i];
-            String name = uniform.getUniformName();
-            int location = GL33.glGetUniformLocation(programId, name);
+            ShaderUniform uniform = ShaderUniform.getCachedUniforms().get(i);
+            String name = uniform.getName();
+            int location = -1;
+            if(uniform.isUniformBufferObject()) {
+                location = GL33.glGetUniformBlockIndex(programId, name);
+            }
+            else {
+                location = GL33.glGetUniformLocation(programId, name);
+            }
             log.debug("Uniform found. Name: " + name + " Location: " + location);
             cachedUniformLocations[i] = location;
 		}
-
-		//Cache UBO locations
-        for(int i = 0; i < cachedUboLocations.length; i++) {
-            UniformBufferObject.UboType uboType = UniformBufferObject.UboType.values()[i];
-            String name = uboType.getUboName();
-            int location = GL33.glGetUniformBlockIndex(programId, name);
-            log.debug("UBO found. Name: " + name + " Location: " + location);
-            cachedUboLocations[i] = location;
-
-            if(location != -1) {
-                GL33.glUniformBlockBinding(programId, location, i);
-            }
-        }
 	}
 
     public int getUniformLocation(String name) {
@@ -91,8 +83,8 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
         setUniform(getLocation(uniform), cubeMap);
     }
 
-    public void setUniform(UniformBufferObject.UboType uboType, UniformBufferObject ubo) {
-        setUniformBufferObject(getLocation(uboType), ubo);
+    public void setUniform(ShaderUniform uniform, UniformBufferObject ubo) {
+        setUniformBufferObject(getLocation(uniform), ubo);
     }
 
     //setUniforms
@@ -142,11 +134,7 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
     }
 
     private int getLocation(ShaderUniform uniform) {
-	    return cachedUniformLocations[uniform.ordinal()];
-    }
-
-    private int getLocation(UniformBufferObject.UboType uboType) {
-	    return cachedUboLocations[uboType.ordinal()];
+	    return cachedUniformLocations[uniform.getIndex()];
     }
 
 	@Override

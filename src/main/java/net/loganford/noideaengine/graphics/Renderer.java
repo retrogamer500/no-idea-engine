@@ -137,7 +137,7 @@ public class Renderer {
         return oldShader;
     }
 
-    void pushShader(ShaderProgram shader) {
+    public void pushShader(ShaderProgram shader) {
         ShaderProgram oldShader = shaderStack.empty() ? null : shaderStack.peek();
         ShaderProgram newShader = shaderStack.push(shader);
         swapShaders(oldShader, newShader);
