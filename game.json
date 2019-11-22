@@ -85,16 +85,7 @@
       }
     ],
     "properties": [
-      {
-        "key": "sceneUbo",
-        "filename": "config/sceneUbo.txt"
-      },
-      {
-        "key": "sceneUbo",
-        "stringValue": "123",
-        "intValue": 123,
-        "floatValue": 123.1
-      }
+
     ]
   }
 }

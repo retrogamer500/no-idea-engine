@@ -139,7 +139,7 @@ public class ShaderLoader extends ResourceLoader {
     private String preprocess(String input) {
         Pattern includeRegex = Pattern.compile("#include \"([^\"]+)\"");
         Matcher matcher = includeRegex.matcher(input);
-        String output = null;
+        String output = input;
         while(matcher.find()) {
             output = matcher.replaceFirst(getGame().getPropertyManager().get(matcher.group()).getStringValue());
             matcher.reset(output);

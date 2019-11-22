@@ -35,7 +35,7 @@ public class PropertyLoader extends ResourceLoader {
         Property property = load(config);
         populateResource(property, config);
         log.info("Property loaded: " + config.getKey() + "!");
-        game.getPropertyManager().put(config.getKey(), property);
+        game.getPropertyManager().replace(config.getKey(), property);
     }
 
     public Property load(PropertyConfig config) {
