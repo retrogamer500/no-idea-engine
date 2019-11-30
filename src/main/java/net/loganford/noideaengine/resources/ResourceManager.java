@@ -24,6 +24,18 @@ public class ResourceManager<T extends Resource> {
         }
     }
 
+    public void replace(String key, T resource) {
+        if(resources.containsKey(key)) {
+            T old = get(key);
+            if(old instanceof UnsafeMemory) {
+                ((UnsafeMemory)old).freeMemory();
+            }
+        }
+        else {
+            resources.put(key, resource);
+        }
+    }
+
     @Scriptable
     @SuppressWarnings("unchecked")
     public T get(String key) {

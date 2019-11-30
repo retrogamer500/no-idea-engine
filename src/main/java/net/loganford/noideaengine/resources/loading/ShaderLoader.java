@@ -13,6 +13,8 @@ import org.lwjgl.opengl.GL33;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -70,6 +72,7 @@ public class ShaderLoader extends ResourceLoader {
         }
         else {
             int vertexShaderId = GL33.glCreateShader(GL33.GL_VERTEX_SHADER);
+            vertexShaderData = preprocess(vertexShaderData);
             GL33.glShaderSource(vertexShaderId, vertexShaderData);
             GL33.glCompileShader(vertexShaderId);
             validateShader(vertexShaderId);
@@ -84,6 +87,7 @@ public class ShaderLoader extends ResourceLoader {
         }
         else {
             int fragmentShaderId = GL33.glCreateShader(GL33.GL_FRAGMENT_SHADER);
+            fragmentShaderData = preprocess(fragmentShaderData);
             GL33.glShaderSource(fragmentShaderId, fragmentShaderData);
             GL33.glCompileShader(fragmentShaderId);
             validateShader(fragmentShaderId);
@@ -130,5 +134,16 @@ public class ShaderLoader extends ResourceLoader {
         } else {
             log.info("Program is valid");
         }
+    }
+
+    private String preprocess(String input) {
+        Pattern includeRegex = Pattern.compile("#include \"([^\"]+)\"");
+        Matcher matcher = includeRegex.matcher(input);
+        String output = input;
+        while(matcher.find()) {
+            output = matcher.replaceFirst(getGame().getPropertyManager().get(matcher.group()).getStringValue());
+            matcher.reset(output);
+        }
+        return output;
     }
 }

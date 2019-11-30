@@ -11,7 +11,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
-public class TextureBatch implements UnsafeMemory {
+public class RenderBatcher implements UnsafeMemory {
 
     private static Vector3f v3 = new Vector3f();
     private static Matrix4f identity = new Matrix4f();
@@ -32,7 +32,7 @@ public class TextureBatch implements UnsafeMemory {
     private Texture currentTexture;
 
     @SuppressWarnings("PointlessArithmeticExpression")
-    public TextureBatch() {
+    public RenderBatcher() {
         vao = new VertexArrayObject();
         positionVbo = vao.addVertexBufferObject(3, MAX_VERTICES, GL33.GL_STREAM_DRAW);
         normalVbo = vao.addVertexBufferObject(3, MAX_VERTICES, GL33.GL_STREAM_DRAW);
@@ -111,10 +111,11 @@ public class TextureBatch implements UnsafeMemory {
 
     public void flush(Renderer renderer) {
         if(quads != 0) {
-            boolean popShader = false;
             if(renderer.getShader() == null) {
-                renderer.pushShader(renderer.getImageShader(), false);
-                popShader = true;
+                if(renderer.shaderProgramId != renderer.getImageShader().getProgramId()) {
+                    GL33.glUseProgram(renderer.getImageShader().getProgramId());
+                    renderer.shaderProgramId = renderer.getImageShader().getProgramId();
+                }
             }
 
             boolean cullingBackface = renderer.isCullingBackface();
@@ -148,10 +149,6 @@ public class TextureBatch implements UnsafeMemory {
             vao.clear();
             currentTexture = null;
             renderer.setCullingBackface(cullingBackface);
-
-            if(popShader) {
-                renderer.popShader();
-            }
         }
     }
 

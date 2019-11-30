@@ -83,6 +83,9 @@
         "rightFilename": "data/cubeMaps/plains-of-abraham_rt.tga",
         "upFilename": "data/cubeMaps/plains-of-abraham_up.tga"
       }
+    ],
+    "properties": [
+
     ]
   }
 }

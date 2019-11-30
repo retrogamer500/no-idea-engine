@@ -144,12 +144,12 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
         if(renderDepth == -1) {
             render(game, renderer);
         }
-        renderer.getTextureBatch().flush(renderer);
+        renderer.getRenderBatcher().flush(renderer);
 
         //Render UI
         getView().getViewMatrix().pushMatrix().identity();
         renderUI(game, renderer);
-        renderer.getTextureBatch().flush(renderer);
+        renderer.getRenderBatcher().flush(renderer);
         getView().getViewMatrix().popMatrix();
 
         //Render FBO

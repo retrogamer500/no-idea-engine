@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.graphics.CubeMap;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Texture;
+import net.loganford.noideaengine.graphics.UniformBufferObject;
 import net.loganford.noideaengine.resources.Resource;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Matrix4f;
@@ -26,7 +27,7 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
 	@Getter private VertexShader vertexShader;
 	@Getter private FragmentShader fragmentShader;
 
-	private int[] cachedUniformLocations = new int[ShaderUniform.values().length];
+	private int[] cachedUniformLocations = new int[ShaderUniform.getCachedUniforms().size()];
 	private int boundTextures = 0;
 
 	public ShaderProgram(int programId, String key, VertexShader vertexShader, FragmentShader fragmentShader) {
@@ -38,9 +39,15 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
 		log.debug("Processing shader uniforms for: " + key);
 
 		for(int i = 0; i < cachedUniformLocations.length; i++) {
-            ShaderUniform uniform = ShaderUniform.values()[i];
-            String name = uniform.getUniformName();
-            int location = GL33.glGetUniformLocation(programId, name);
+            ShaderUniform uniform = ShaderUniform.getCachedUniforms().get(i);
+            String name = uniform.getName();
+            int location = -1;
+            if(uniform.isUniformBufferObject()) {
+                location = GL33.glGetUniformBlockIndex(programId, name);
+            }
+            else {
+                location = GL33.glGetUniformLocation(programId, name);
+            }
             log.debug("Uniform found. Name: " + name + " Location: " + location);
             cachedUniformLocations[i] = location;
 		}
@@ -76,6 +83,10 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
         setUniform(getLocation(uniform), cubeMap);
     }
 
+    public void setUniform(ShaderUniform uniform, UniformBufferObject ubo) {
+        setUniformBufferObject(getLocation(uniform), ubo);
+    }
+
     //setUniforms
 
     public void setUniform(int location, Vector2f vector) {
@@ -109,13 +120,21 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
         boundTextures++;
     }
 
+    public void setUniformBufferObject(int location, UniformBufferObject uniformBufferObject) {
+        GL33.glBindBufferBase(GL33.GL_UNIFORM_BUFFER, location, uniformBufferObject.getId());
+    }
+
 
     public void resetBoundTextures(Renderer renderer) {
         boundTextures = 0;
     }
 
+    public int getLocation(String uniformName) {
+	    return GL33.glGetUniformLocation(programId, uniformName);
+    }
+
     private int getLocation(ShaderUniform uniform) {
-	    return cachedUniformLocations[uniform.ordinal()];
+	    return cachedUniformLocations[uniform.getIndex()];
     }
 
 	@Override

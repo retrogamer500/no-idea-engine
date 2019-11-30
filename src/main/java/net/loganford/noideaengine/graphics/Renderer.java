@@ -24,7 +24,7 @@ import java.util.Stack;
 public class Renderer {
     private Game game;
     private Matrix4f matrix4f = new Matrix4f();
-    @Getter private TextureBatch textureBatch;
+    @Getter private RenderBatcher renderBatcher;
 
     //Polygons for rendering shapes, private as they are stateful
     private Polygon polygonSquare;
@@ -52,7 +52,7 @@ public class Renderer {
 
     //Render state
     private Stack<ShaderProgram> shaderStack = new Stack<>();
-    private int shaderProgramId;
+    protected int shaderProgramId;
     @Getter @Setter private View view;
     @Getter @Setter private Camera camera;
     private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
@@ -74,7 +74,7 @@ public class Renderer {
 
         setCullingBackface(true);
 
-        textureBatch = new TextureBatch();
+        renderBatcher = new RenderBatcher();
     }
 
     private void loadBuiltInTextures() {
@@ -133,18 +133,14 @@ public class Renderer {
     public ShaderProgram popShader() {
         ShaderProgram oldShader = shaderStack.pop();
         ShaderProgram newShader = shaderStack.empty() ? null : shaderStack.peek();
-        swapShaders(oldShader, newShader, true);
+        swapShaders(oldShader, newShader);
         return oldShader;
     }
 
     public void pushShader(ShaderProgram shader) {
-        this.pushShader(shader, true);
-    }
-
-    void pushShader(ShaderProgram shader, boolean flushTextureBatch) {
         ShaderProgram oldShader = shaderStack.empty() ? null : shaderStack.peek();
         ShaderProgram newShader = shaderStack.push(shader);
-        swapShaders(oldShader, newShader, flushTextureBatch);
+        swapShaders(oldShader, newShader);
     }
 
 
@@ -155,13 +151,13 @@ public class Renderer {
         } else {
             shaderStack.set(shaderStack.size() - 1, shader);
         }
-        swapShaders(oldShader, shader, true);
+        swapShaders(oldShader, shader);
     }
 
-    private void swapShaders(ShaderProgram oldProgram, ShaderProgram newProgram, boolean flushTextureBatch) {
+    private void swapShaders(ShaderProgram oldProgram, ShaderProgram newProgram) {
         if(newProgram != null && shaderProgramId != newProgram.getProgramId()) {
-            if(flushTextureBatch && getTextureBatch() != null) {
-                getTextureBatch().flush(this);
+            if(getRenderBatcher() != null) {
+                getRenderBatcher().flush(this);
             }
             GL33.glUseProgram(newProgram.getProgramId());
             shaderProgramId = newProgram.getProgramId();
@@ -169,7 +165,7 @@ public class Renderer {
     }
 
     public void clear(float r, float g, float b) {
-        getTextureBatch().flush(this);
+        getRenderBatcher().flush(this);
         GL33.glClearColor(r, g, b, 1f);
         GL33.glClear(GL33.GL_COLOR_BUFFER_BIT | GL33.GL_DEPTH_BUFFER_BIT);
     }
@@ -203,7 +199,7 @@ public class Renderer {
     }
 
     public void setColor(float r, float g, float b, float alpha) {
-        getTextureBatch().flush(this);
+        getRenderBatcher().flush(this);
         color.set(r, g, b, alpha);
     }
 
@@ -260,7 +256,7 @@ public class Renderer {
      * @param height height of quad
      */
     public void drawQuad(float x, float y, float width, float height) {
-        getTextureBatch().flush(this);
+        getRenderBatcher().flush(this);
 
         matrix4f = matrix4f.identity()
                 .translate(x, y, 0)

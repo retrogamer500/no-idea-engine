@@ -9,11 +9,13 @@ uniform vec3 ambientLightColor;
 in vec2 texCoord;
 in vec3 wNormal;
 
+layout(location=0) out vec4 fragColor;
+
 void main(void) {
     vec3 illumination = ambientLightColor + lightColor * clamp(dot(wNormal, -normalize(lightDirection)), .2, 1);
     vec4 color = texture(texDiffuse, texCoord);
     if(color.a < .5) {
         discard;
     }
-	gl_FragColor = color;
+	fragColor = color;
 }

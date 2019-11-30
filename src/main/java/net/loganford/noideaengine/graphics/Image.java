@@ -111,6 +111,6 @@ public class Image extends PrototypeResource {
     }
 
     public void render(Renderer renderer, float x, float y, float width, float height, float u0, float v0, float u1, float v1) {
-        renderer.getTextureBatch().put(renderer, this, x, y, width, height, u0, v0, u1, v1);
+        renderer.getRenderBatcher().put(renderer, this, x, y, width, height, u0, v0, u1, v1);
     }
 }
