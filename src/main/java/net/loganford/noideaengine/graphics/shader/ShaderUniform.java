@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShaderUniform {
+    //Static values used to keep track of shader uniforms
+    private static List<ShaderUniform> CACHED_UNIFORMS = new ArrayList<ShaderUniform>();
+
     //Predefined list of shader uniforms used with the engine
     public static ShaderUniform TEX_DIFFUSE = new ShaderUniform("texDiffuse");
     public static ShaderUniform TEX_NORMAL = new ShaderUniform("texNormal");
@@ -29,9 +32,6 @@ public class ShaderUniform {
 
     //Predefined list of UBOs
     public static ShaderUniform SCENE_UBO = new ShaderUniform("sceneUbo", true);
-
-    //Static values used to keep track of shader uniforms
-    private static List<ShaderUniform> CACHED_UNIFORMS = new ArrayList<ShaderUniform>();
 
     /**Name of shader uniform in shader files*/
     @Getter private String name;
