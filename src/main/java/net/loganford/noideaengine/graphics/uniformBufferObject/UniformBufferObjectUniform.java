@@ -1,5 +1,6 @@
 package net.loganford.noideaengine.graphics.uniformBufferObject;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.GameEngineException;
@@ -9,7 +10,7 @@ import org.joml.Vector4f;
 
 public class UniformBufferObjectUniform<O> {
     private O o;
-    @Getter @Setter private int location = -1;
+    @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED) private int location = -1;
 
     UniformBufferObjectUniform(O o) {
         this.location = location;

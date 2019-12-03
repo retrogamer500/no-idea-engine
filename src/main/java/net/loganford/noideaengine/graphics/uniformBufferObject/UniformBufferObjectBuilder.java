@@ -16,8 +16,7 @@ public class UniformBufferObjectBuilder {
         reset();
     }
 
-    public UniformBufferObjectBuilder put(Object object) {
-        UniformBufferObjectUniform ubou = new UniformBufferObjectUniform(object);
+    public UniformBufferObjectBuilder put(UniformBufferObjectUniform ubou) {
         align(ubou.getAlignment());
         ubou.setLocation(index);
         bufferedUniforms.add(ubou);
