@@ -47,6 +47,7 @@ public class ShaderUniform {
     public ShaderUniform(String name, boolean uniformBufferObject) {
         this.name = name;
         this.index = CACHED_UNIFORMS.size();
+        this.uniformBufferObject = uniformBufferObject;
         CACHED_UNIFORMS.add(this);
     }
 
