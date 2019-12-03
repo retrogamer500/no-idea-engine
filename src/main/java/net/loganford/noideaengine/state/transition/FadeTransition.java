@@ -4,7 +4,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.FrameBufferObject;
 import net.loganford.noideaengine.graphics.Renderer;
 
-public class FadeTransition<G extends Game> extends Transition<G> {
+public class FadeTransition<G extends Game> extends Transition {
     private long duration;
     private long timer;
 
@@ -13,7 +13,7 @@ public class FadeTransition<G extends Game> extends Transition<G> {
     }
 
     @Override
-    public void beginState(G game) {
+    public void beginState(Game game) {
         super.beginState(game);
         getPreviousState().renderState(game, game.getRenderer());
         getNextState().renderState(game, game.getRenderer());
@@ -21,7 +21,7 @@ public class FadeTransition<G extends Game> extends Transition<G> {
     }
 
     @Override
-    public void step(G game, float delta) {
+    public void step(Game game, float delta) {
         super.step(game, delta);
         timer+= delta;
 
@@ -32,7 +32,7 @@ public class FadeTransition<G extends Game> extends Transition<G> {
     }
 
     @Override
-    public void render(G game, Renderer renderer) {
+    public void render(Game game, Renderer renderer) {
         super.render(game, renderer);
 
         getPreviousState().getFrameBufferObject().renderToScreen(game, getPreviousState(), renderer);

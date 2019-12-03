@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public abstract class GameState<G extends Game> implements UnsafeMemory {
+public abstract class GameState implements UnsafeMemory {
     /**The state's camera object, which controls how 3D objects are rendered.*/
     @Getter @Setter private Camera camera;
     /**The state's view object, controls how 2D objects are rendered.*/
@@ -41,14 +41,14 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
     /**The background color of the state.*/
     @Getter @Setter private Vector4f backgroundColor;
 
-    private G game;
+    private Game game;
 
     /**
      * Called to initialize the state when the game switches to it. Override to add custom logic, but be sure to
      * call super.
      * @param game the game
      */
-    public void beginState(G game) {
+    public void beginState(Game game) {
         this.game = game;
         view = new View(game, this, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale));
         width = view.getWidth();
@@ -64,14 +64,14 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * Called after beginState has been called.
      * @param game the game
      */
-    public void postBeginState(G game) {}
+    public void postBeginState(Game game) {}
 
     /**
      * Steps the state. This method handles stepping any UI layers and typically should only be called by the engine.
      * @param game the game
      * @param delta time since last frame, in milliseconds
      */
-    public final void stepState(G game, float delta) {
+    public final void stepState(Game game, float delta) {
         int stepDepth = getStepDepth();
         int inputDepth = getInputDepth();
 
@@ -87,7 +87,6 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
             if(i == inputDepth) {
                 game.getInput().enable();
             }
-            //noinspection unchecked
             uiLayers.get(i).step(game, this, delta);
         }
 
@@ -108,7 +107,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param game the game
      * @param delta time since last frame, in milliseconds
      */
-    public void step(G game, float delta) {
+    public void step(Game game, float delta) {
         view.step();
         camera.step();
         alarms.step(delta);
@@ -120,7 +119,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param game the game
      * @param renderer the renderer
      */
-    public final void renderState(G game, Renderer renderer) {
+    public final void renderState(Game game, Renderer renderer) {
         //Calculate viewMatrix
         view.beforeRender(this);
         camera.beforeRender(this);
@@ -163,7 +162,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param game the game
      * @param renderer the renderer
      */
-    public void render(G game, Renderer renderer) {
+    public void render(Game game, Renderer renderer) {
 
     }
 
@@ -173,10 +172,9 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * @param game the game
      * @param renderer the renderer
      */
-    public void renderUI(G game, Renderer renderer) {
+    public void renderUI(Game game, Renderer renderer) {
         int renderDepth = getRenderDepth();
         for(int i = Math.max(0, renderDepth); i < uiLayers.size(); i++) {
-            //noinspection unchecked
             uiLayers.get(i).render(game, this, renderer);
         }
     }
@@ -186,7 +184,7 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * memory being leaked!
      * @param game the game
      */
-    public void endState(G game) {
+    public void endState(Game game) {
         freeMemory();
     }
 
@@ -263,7 +261,6 @@ public abstract class GameState<G extends Game> implements UnsafeMemory {
      * Adds a UI Layer to the UI stack.
      * @param layer
      */
-    @SuppressWarnings("unchecked")
     public void addUILayer(UILayer layer) {
         uiLayers.add(layer);
         layer.beginUILayer(game, this);
