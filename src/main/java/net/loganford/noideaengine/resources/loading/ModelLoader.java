@@ -24,6 +24,10 @@ public class ModelLoader extends ResourceLoader {
     private List<ModelConfig> modelsToLoad;
     private boolean loadMaterial;
 
+    private static Vector3f V3F = new Vector3f();
+    private static Vector3f V3F_2 = new Vector3f();
+    private static Vector3f V3F_3 = new Vector3f();
+
     public ModelLoader(Game game) {
         this(game, true);
     }
@@ -138,7 +142,6 @@ public class ModelLoader extends ResourceLoader {
                     normals.add(normal);
                 }
                 else {
-                    //Todo: autogenerate normals if ASSIMP fails to retrieve them
                     log.warn("Found point with no normals!");
                     normals.add(new Vector3f(0, 0, 0));
                 }
@@ -180,9 +183,24 @@ public class ModelLoader extends ResourceLoader {
 
                 //Normal
                 Vector3f[] faceNormals = new Vector3f[3];
-                faceNormals[0] = normals.get(aiFace.mIndices().get(0));
-                faceNormals[1] = normals.get(aiFace.mIndices().get(1));
-                faceNormals[2] = normals.get(aiFace.mIndices().get(2));
+
+                if(modelConfig.isGenerateNormals()) {
+                    Vector3f side01 = V3F_2;
+                    Vector3f side02 = V3F_3;
+
+                    side01.set(facePoints[1]).sub(facePoints[0]);
+                    side02.set(facePoints[2]).sub(facePoints[0]);
+                    Vector3f crossed = V3F.set(side01.cross(side02).normalize());
+
+                    faceNormals[0] = new Vector3f(crossed);
+                    faceNormals[1] = new Vector3f(crossed);
+                    faceNormals[2] = new Vector3f(crossed);
+                }
+                else {
+                    faceNormals[0] = normals.get(aiFace.mIndices().get(0));
+                    faceNormals[1] = normals.get(aiFace.mIndices().get(1));
+                    faceNormals[2] = normals.get(aiFace.mIndices().get(2));
+                }
                 face.setNormals(faceNormals);
 
                 //UV Coords

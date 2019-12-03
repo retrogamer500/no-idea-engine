@@ -12,8 +12,8 @@ in vec3 wNormal;
 layout(location=0) out vec4 fragColor;
 
 void main(void) {
-    vec3 illumination = ambientLightColor + lightColor * clamp(dot(wNormal, -normalize(lightDirection)), .2, 1);
-    vec4 color = texture(texDiffuse, texCoord);
+    vec3 illumination = ambientLightColor + clamp((1 - ambientLightColor) * lightColor * dot(wNormal, -normalize(lightDirection)), 0, 1);
+    vec4 color = vec4(illumination, 1) * texture(texDiffuse, texCoord);
     if(color.a < .5) {
         discard;
     }

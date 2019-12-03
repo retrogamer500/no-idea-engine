@@ -60,6 +60,7 @@
       {
         "filename": "data/models/cs_italy.dae",
         "key": "cs_italy_fixed",
+        "generateNormals": true,
         "swapZY": true,
         "scale": 0.07
       }

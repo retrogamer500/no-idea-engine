@@ -57,8 +57,8 @@ public class Renderer {
     @Getter @Setter private Camera camera;
     private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
     @Getter private Vector3f lightDirection = new Vector3f(2, -10, 2).normalize();
-    @Getter private Vector3f lightColor = new Vector3f(2, 2, 2);
-    @Getter private Vector3f ambientLightColor = new Vector3f(.1f, .1f, .1f);
+    @Getter private Vector3f lightColor = new Vector3f(1.5f, 1.5f, 1.5f);
+    @Getter private Vector3f ambientLightColor = new Vector3f(.3f, .3f, .3f);
     @Getter private boolean cullingBackface = true;
 
     public Renderer(Game game) {
