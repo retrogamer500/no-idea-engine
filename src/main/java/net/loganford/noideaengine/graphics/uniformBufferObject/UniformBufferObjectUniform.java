@@ -12,7 +12,7 @@ public class UniformBufferObjectUniform<O> {
     private O o;
     @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED) private int location = -1;
 
-    UniformBufferObjectUniform(O o) {
+    public UniformBufferObjectUniform(O o) {
         this.location = location;
         this.o = o;
     }
