@@ -105,7 +105,7 @@ public class UniformBufferObjectBuilder {
     }
 
     private void put(int location, Object object) {
-        bufferedUniforms.add(new MutablePair<Integer, Object>(location, object));
+        bufferedUniforms.add(new MutablePair<>(location, object));
     }
 
     private void align(int amount) {

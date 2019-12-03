@@ -829,7 +829,7 @@ public class Entity {
             for(Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
                 Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
                 Argument[] arguments = ((RegisterComponent)annotation).arguments();
-                componentClazzList.add(new MutablePair<Class<? extends Component>, Argument[]>(componentClazz, arguments));
+                componentClazzList.add(new MutablePair<>(componentClazz, arguments));
             }
         }
         return componentClazzList;

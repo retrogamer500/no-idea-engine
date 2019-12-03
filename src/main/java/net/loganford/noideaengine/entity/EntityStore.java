@@ -78,6 +78,7 @@ public abstract class EntityStore<T> implements Iterable<T> {
                 if(returnToPool && entity instanceof Poolable) {
                     Poolable poolable = (Poolable) entity;
                     ObjectPool pool = Pools.getPool(poolable.getClass());
+                    //noinspection unchecked
                     pool.put(poolable);
                 }
             }

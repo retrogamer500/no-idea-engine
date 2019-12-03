@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ShaderUniform {
     //Static values used to keep track of shader uniforms
-    private static List<ShaderUniform> CACHED_UNIFORMS = new ArrayList<ShaderUniform>();
+    private static List<ShaderUniform> CACHED_UNIFORMS = new ArrayList<>();
 
     //Predefined list of shader uniforms used with the engine
     public static ShaderUniform TEX_DIFFUSE = new ShaderUniform("texDiffuse");

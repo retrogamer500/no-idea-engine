@@ -31,7 +31,7 @@ public class LoadingContext {
      */
     public LoadingContext(Game game, GameState gameState) {
         List<Integer> existing = new ArrayList<>(game.getLoadedResourceGroups());
-        List<Integer> required = new ArrayList<Integer>(gameState.getRequiredResourceGroups());
+        List<Integer> required = new ArrayList<>(gameState.getRequiredResourceGroups());
 
         //Find existing resources that are not required
         for(int existingGroup : existing) {
