@@ -53,7 +53,7 @@ public class LightingSystem implements UnsafeMemory {
     }
 
     public void beforeRender(Renderer renderer) {
-        lights.sort(Comparator.comparingDouble(l -> l.getProminence(renderer.getCamera())));
+        lights.sort(Comparator.comparingDouble(l -> -l.getProminence(renderer.getCamera())));
 
         lightCount.set(Math.min(MAX_LIGHTS, lights.size()));
         for(int i = 0; i < lightCount.get(); i++) {
