@@ -5,7 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.graphics.CubeMap;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.Texture;
-import net.loganford.noideaengine.graphics.UniformBufferObject;
+import net.loganford.noideaengine.graphics.uniformBufferObject.UniformBufferObject;
 import net.loganford.noideaengine.resources.Resource;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Matrix4f;
