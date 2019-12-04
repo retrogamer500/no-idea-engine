@@ -3,6 +3,7 @@ package net.loganford.noideaengine.misc;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
 import net.loganford.noideaengine.components.CharacterControllerComponent;
+import net.loganford.noideaengine.components.LightingComponent;
 import net.loganford.noideaengine.components.camera.FirstPersonCameraComponent;
 import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
 import net.loganford.noideaengine.components.physics.PhysicsComponent;
@@ -89,19 +90,28 @@ public class SweptSpherePhysicsTest {
             @Argument(name = "acceleration", floatValue = 40f),
             @Argument(name = "jumpSpeed", floatValue = 50f)
     })
+    @RegisterComponent(LightingComponent.class)
     public class Player extends Entity {
         private Model model;
+        private PointLight light;
 
         @Override
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             model = game.getModelManager().get("unitSphere");
             setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.8f, 2.5f, .8f)));
+
+            light = new PointLight();
+            light.setRadius(256f);
+            light.setColor(new Vector3f(1f, 1f, 0f));
+            light.setPosition(new Vector3f(6.47f, 0f, 86.34f));
+            getComponent(LightingComponent.class).setLight(light);
         }
 
         @Override
         public void step(Game game, Scene scene, float delta) {
             super.step(game, scene, delta);
+            light.getPosition().set(getPos());
 
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
                 setPos(6.47f, 0f, 86.34f);
