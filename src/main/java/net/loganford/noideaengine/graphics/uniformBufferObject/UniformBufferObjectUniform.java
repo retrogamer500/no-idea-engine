@@ -41,7 +41,10 @@ public class UniformBufferObjectUniform<O> {
         if(o instanceof Boolean || o instanceof Float || o instanceof Integer) {
             return 4;
         }
-        else if(o instanceof Vector3f || o instanceof Vector4f) {
+        else if(o instanceof Vector3f) {
+            return 12;
+        }
+        else if(o instanceof Vector4f) {
             return 16;
         }
         else if(o instanceof Matrix4f) {

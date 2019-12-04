@@ -13,6 +13,7 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.Ellipsoid;
 import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.state.lighting.PointLight;
 import net.loganford.noideaengine.systems.CharacterControllerSystem;
 import net.loganford.noideaengine.systems.FreeMovementSystem;
 import net.loganford.noideaengine.systems.camera.FirstPersonCameraSystem;
@@ -41,6 +42,8 @@ public class SweptSpherePhysicsTest {
     public class TestScene extends Scene {
 
         private CubeMap cubeMap;
+        private PointLight light1 = new PointLight();
+        private PointLight light2 = new PointLight();
 
         @Override
         public void beginState(Game game) {
@@ -48,6 +51,21 @@ public class SweptSpherePhysicsTest {
             add(new Level());
             add(new Player(), 6.47f, 0f, 86.34f);
             cubeMap = game.getCubeMapManager().get("plains");
+
+            light1.setRadius(256f);
+            light1.setColor(new Vector3f(1f, 0f, 0f));
+            light1.setPosition(new Vector3f(6.47f, 0f, 86.34f));
+
+            light2.setRadius(32f);
+            light2.setColor(new Vector3f(0f, 0f, 1f));
+            light2.setPosition(new Vector3f(23.35507f, -8.139f, 126.54014f));
+        }
+
+        @Override
+        public void step(Game game, float delta) {
+            super.step(game, delta);
+            getLightingSystem().processLight(light1);
+            getLightingSystem().processLight(light2);
         }
 
         @Override
