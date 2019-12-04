@@ -1,13 +1,16 @@
 #version 330
 
 uniform sampler2D texDiffuse;
-
-uniform vec3 lightDirection;
-uniform vec3 lightColor;
-uniform vec3 ambientLightColor;
-
 in vec2 texCoord;
 in vec3 wNormal;
+
+layout (std140) uniform LightingUbo
+{
+    vec3 lightDirection;
+    vec3 lightColor;
+    vec3 ambientLightColor;
+    int lightCount;
+};
 
 layout(location=0) out vec4 fragColor;
 

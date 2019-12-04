@@ -4,15 +4,17 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
+import net.loganford.noideaengine.entity.*;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Scriptable;
-import net.loganford.noideaengine.entity.*;
-import net.loganford.noideaengine.systems.*;
-import net.loganford.noideaengine.systems.collision.CollisionSystem;
-import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
+import net.loganford.noideaengine.state.lighting.LightingSystem;
 import net.loganford.noideaengine.state.signals.EntityAddedIndexSignal;
 import net.loganford.noideaengine.state.signals.EntityAddedSignal;
+import net.loganford.noideaengine.systems.EntitySystem;
+import net.loganford.noideaengine.systems.StepRenderSystem;
+import net.loganford.noideaengine.systems.collision.CollisionSystem;
+import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.InheritSystems;
 import net.loganford.noideaengine.utils.annotations.RegisterSystem;
@@ -42,7 +44,8 @@ public class Scene extends GameState {
     //ECS Engine
     @Getter private EntitySystemEngine entitySystemEngine;
     //Cache of collision system. Move to Entity in the future?
-    @Getter(onMethod = @__({@Scriptable})) CollisionSystem collisionSystem;
+    @Getter(onMethod = @__({@Scriptable})) private CollisionSystem collisionSystem;
+    @Getter private LightingSystem lightingSystem;
 
     @Getter private EntityAddedSignal entityAddedSignal = new EntityAddedSignal();
     @Getter private EntityAddedIndexSignal entityAddedIndexSignal = new EntityAddedIndexSignal();
@@ -120,6 +123,7 @@ public class Scene extends GameState {
         this.game = game;
         entities = new SimpleEntityStore();
         entitySystemEngine = new EntitySystemEngine(game, this);
+        lightingSystem = new LightingSystem();
         loadSystems();
     }
 
@@ -164,6 +168,8 @@ public class Scene extends GameState {
     public void step(Game game, float delta) {
         super.step(game, delta);
 
+        lightingSystem.beforeStep();
+
         //Resort entities which have had their depth changed
         entities.resort();
 
@@ -182,6 +188,7 @@ public class Scene extends GameState {
     @SuppressWarnings("unchecked")
     @Override
     public void render(Game game, Renderer renderer) {
+        lightingSystem.beforeRender(renderer);
         entitySystemEngine.render(renderer);
     }
 

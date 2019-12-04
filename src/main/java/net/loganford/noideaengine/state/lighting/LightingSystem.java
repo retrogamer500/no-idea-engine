@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class LightingSystem implements UnsafeMemory {
-    public static int MAX_LIGHTS = 32;
+    public static int MAX_LIGHTS = 0;
 
     @Getter private UniformBufferObject uniformBufferObject;
 
@@ -61,6 +61,7 @@ public class LightingSystem implements UnsafeMemory {
         }
 
         uniformBufferObject.buffer();
+        renderer.setLightingUbo(uniformBufferObject);
     }
 
     @Override

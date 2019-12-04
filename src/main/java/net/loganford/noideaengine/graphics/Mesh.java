@@ -120,9 +120,7 @@ public class Mesh implements UnsafeMemory {
 			shader.setUniform(ShaderUniform.TEX_DIFFUSE, material.getDiffuse());
 		}
 
-        shader.setUniform(ShaderUniform.LIGHT_COLOR, renderer.getLightColor());
-        shader.setUniform(ShaderUniform.LIGHT_DIRECTION, renderer.getLightDirection());
-        shader.setUniform(ShaderUniform.AMBIENT_LIGHT_COLOR, renderer.getAmbientLightColor());
+        shader.setUniform(ShaderUniform.LIGHTING_UBO, renderer.getLightingUbo());
 
 		//Bind vertex array
 		GL33.glBindVertexArray(getVao().getId());

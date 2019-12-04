@@ -26,12 +26,8 @@ public class ShaderUniform {
     public static ShaderUniform TILE_UV_SIZE = new ShaderUniform("tileUvSize");
     public static ShaderUniform TILE_SIZE = new ShaderUniform("tileSize");
 
-    public static ShaderUniform LIGHT_DIRECTION = new ShaderUniform("lightDirection");
-    public static ShaderUniform LIGHT_COLOR = new ShaderUniform("lightColor");
-    public static ShaderUniform AMBIENT_LIGHT_COLOR = new ShaderUniform("ambientLightColor");
-
     //Predefined list of UBOs
-    public static ShaderUniform SCENE_UBO = new ShaderUniform("sceneUbo", true);
+    public static ShaderUniform LIGHTING_UBO = new ShaderUniform("LightingUbo", true);
 
     /**Name of shader uniform in shader files*/
     @Getter private String name;
