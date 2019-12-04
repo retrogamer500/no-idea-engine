@@ -18,7 +18,7 @@ public class PointLight extends Light {
 
     @Override
     public float getProminence(Camera camera) {
-        return 0;
+        return 1f/MathUtils.distance(position, camera.getPosition()) * radius;
     }
 
     @Override
