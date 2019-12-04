@@ -52,7 +52,7 @@ public class ConfigurationLoader {
         try {
             if(!configSource.exists()) {
                 //Load default configuration json
-                if(!overwriteConfig) {
+                if(overwriteConfig) {
                     log.warn("No configuration file exists. Creating one...");
                     JarResourceMapper jarResourceMapper = new JarResourceMapper(getClass().getClassLoader());
                     DataSource defaultConfigDataSource = jarResourceMapper.get("default.json");
