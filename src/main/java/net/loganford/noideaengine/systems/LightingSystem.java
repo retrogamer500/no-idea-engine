@@ -81,7 +81,7 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
 
         lightCount.set(Math.min(MAX_LIGHTS, lights.size()));
         for(int i = 0; i < lightCount.get(); i++) {
-            lights.get(i).populate(bufferedLights[i]);
+            lights.get(i).buffer(bufferedLights[i]);
         }
 
         uniformBufferObject.buffer();
@@ -95,7 +95,7 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
         LightingComponent lightingComponent = (LightingComponent) components.get(lightingComponentIndex);
 
         if(lightingComponent.getLight() != null) {
-            bufferLight(lightingComponent.getLight());
+            processLight(lightingComponent.getLight());
         }
     }
 
@@ -133,9 +133,8 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
         this.ambientLightColor.set(ambientLightColor);
     }
 
-    public void bufferLight(Light light) {
+    public void processLight(Light light) {
         lights.add(light);
-
     }
 
     public class BufferedLight {

@@ -22,7 +22,7 @@ public class PointLight extends Light {
     }
 
     @Override
-    public void populate(LightingSystem.BufferedLight bufferedLight) {
+    public void buffer(LightingSystem.BufferedLight bufferedLight) {
         bufferedLight.getType().set(0);
         bufferedLight.getColor().get().set(color);
         bufferedLight.getPosition().get().set(position);

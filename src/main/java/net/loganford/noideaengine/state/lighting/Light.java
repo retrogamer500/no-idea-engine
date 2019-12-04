@@ -5,5 +5,5 @@ import net.loganford.noideaengine.systems.LightingSystem;
 
 public abstract class Light {
     public abstract float getProminence(Camera camera);
-    public abstract void populate(LightingSystem.BufferedLight bufferedLight);
+    public abstract void buffer(LightingSystem.BufferedLight bufferedLight);
 }
