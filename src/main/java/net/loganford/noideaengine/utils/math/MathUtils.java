@@ -133,4 +133,18 @@ public class MathUtils {
 
         return t;
     }
+
+    public static float interpolate(float value, float[] input, float[] output) {
+        int index0 = 0;
+        while(value > input[index0] || index0 == input.length - 2) {
+            index0++;
+        }
+
+        int index1 = index0 + 1;
+
+        float m = (output[index1] - output[index0])/(input[index1] - input[index0]);
+        float diff = value - input[index0];
+        float result = output[index0] + m * diff;
+        return result;
+    }
 }
