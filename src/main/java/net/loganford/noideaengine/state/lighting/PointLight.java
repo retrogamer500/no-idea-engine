@@ -3,6 +3,7 @@ package net.loganford.noideaengine.state.lighting;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.state.Camera;
+import net.loganford.noideaengine.systems.LightingSystem;
 import net.loganford.noideaengine.utils.math.MathUtils;
 import org.joml.Vector3f;
 
@@ -21,11 +22,11 @@ public class PointLight extends Light {
     }
 
     @Override
-    protected void populate(LightingSystem.BufferedLight bufferedLight) {
-        bufferedLight.type.set(0);
-        bufferedLight.color.get().set(color);
-        bufferedLight.position.get().set(position);
-        bufferedLight.linear.set(MathUtils.interpolate(radius, LIGHT_DISTANCE, LINEAR_VALUE));
-        bufferedLight.quadratic.set(MathUtils.interpolate(radius, LIGHT_DISTANCE, QUADRATIC_VALUE));
+    public void populate(LightingSystem.BufferedLight bufferedLight) {
+        bufferedLight.getType().set(0);
+        bufferedLight.getColor().get().set(color);
+        bufferedLight.getPosition().get().set(position);
+        bufferedLight.getLinear().set(MathUtils.interpolate(radius, LIGHT_DISTANCE, LINEAR_VALUE));
+        bufferedLight.getQuadratic().set(MathUtils.interpolate(radius, LIGHT_DISTANCE, QUADRATIC_VALUE));
     }
 }

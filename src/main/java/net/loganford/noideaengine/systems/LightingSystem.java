@@ -1,18 +1,30 @@
-package net.loganford.noideaengine.state.lighting;
+package net.loganford.noideaengine.systems;
 
 import lombok.Getter;
+import net.loganford.noideaengine.Game;
+import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.components.LightingComponent;
+import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.graphics.uniformBufferObject.UniformBufferObject;
 import net.loganford.noideaengine.graphics.uniformBufferObject.UniformBufferObjectBuilder;
 import net.loganford.noideaengine.graphics.uniformBufferObject.UniformBufferObjectUniform;
+import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.state.lighting.Light;
+import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
-public class LightingSystem implements UnsafeMemory {
+@RegisterComponent(LightingComponent.class)
+public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory {
     public static final int MAX_LIGHTS = 32;
+
+    private int lightingComponentIndex;
 
     @Getter private UniformBufferObject uniformBufferObject;
 
@@ -24,7 +36,9 @@ public class LightingSystem implements UnsafeMemory {
     private BufferedLight[] bufferedLights = new BufferedLight[MAX_LIGHTS];
     private ArrayList<Light> lights = new ArrayList<>();
 
-    public LightingSystem() {
+    public LightingSystem(Game game, Scene scene, Argument[] args) {
+        super(game, scene, args);
+
         UniformBufferObjectBuilder builder = new UniformBufferObjectBuilder();
         builder.put(lightDirection);
         builder.put(lightColor);
@@ -48,13 +62,21 @@ public class LightingSystem implements UnsafeMemory {
         }
 
         uniformBufferObject = builder.build();
+
+        lightingComponentIndex = getComponentLocation(LightingComponent.class);
+
+        setPriority(Integer.MIN_VALUE);
     }
 
-    public void beforeStep() {
+    @Override
+    public void step(Game game, Scene scene, float delta) {
         lights.clear();
+
+        super.step(game, scene, delta);
     }
 
-    public void beforeRender(Renderer renderer) {
+    @Override
+    public void render(Game game, Scene scene, Renderer renderer) {
         lights.sort(Comparator.comparingDouble(l -> -l.getProminence(renderer.getCamera())));
 
         lightCount.set(Math.min(MAX_LIGHTS, lights.size()));
@@ -64,6 +86,22 @@ public class LightingSystem implements UnsafeMemory {
 
         uniformBufferObject.buffer();
         renderer.setLightingUbo(uniformBufferObject);
+
+        super.render(game, scene, renderer);
+    }
+
+    @Override
+    protected void processEntity(Entity entity, List<Component> components, Game game, Scene scene, float delta) {
+        LightingComponent lightingComponent = (LightingComponent) components.get(lightingComponentIndex);
+
+        if(lightingComponent.getLight() != null) {
+            bufferLight(lightingComponent.getLight());
+        }
+    }
+
+    @Override
+    protected void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer) {
+
     }
 
     @Override
@@ -95,16 +133,18 @@ public class LightingSystem implements UnsafeMemory {
         this.ambientLightColor.set(ambientLightColor);
     }
 
-    public void addLight(Light light) {
+    public void bufferLight(Light light) {
         lights.add(light);
 
     }
 
-    class BufferedLight {
-        UniformBufferObjectUniform<Integer> type = new UniformBufferObjectUniform<>(0);
-        UniformBufferObjectUniform<Vector3f> color = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
-        UniformBufferObjectUniform<Vector3f> position = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
-        UniformBufferObjectUniform<Float> linear = new UniformBufferObjectUniform<>(10f);
-        UniformBufferObjectUniform<Float> quadratic = new UniformBufferObjectUniform<>(10f);
+    public class BufferedLight {
+        private BufferedLight() {}
+
+        @Getter private UniformBufferObjectUniform<Integer> type = new UniformBufferObjectUniform<>(0);
+        @Getter private UniformBufferObjectUniform<Vector3f> color = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
+        @Getter private UniformBufferObjectUniform<Vector3f> position = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
+        @Getter private UniformBufferObjectUniform<Float> linear = new UniformBufferObjectUniform<>(10f);
+        @Getter private UniformBufferObjectUniform<Float> quadratic = new UniformBufferObjectUniform<>(10f);
     }
 }

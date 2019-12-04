@@ -8,7 +8,7 @@ import net.loganford.noideaengine.entity.*;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Scriptable;
-import net.loganford.noideaengine.state.lighting.LightingSystem;
+import net.loganford.noideaengine.systems.LightingSystem;
 import net.loganford.noideaengine.state.signals.EntityAddedIndexSignal;
 import net.loganford.noideaengine.state.signals.EntityAddedSignal;
 import net.loganford.noideaengine.systems.EntitySystem;
@@ -32,8 +32,9 @@ import java.util.Iterator;
 import java.util.List;
 
 @Log4j2
-@RegisterSystem(value = SpacialPartitionCollisionSystem.class)
+@RegisterSystem(SpacialPartitionCollisionSystem.class)
 @RegisterSystem(StepRenderSystem.class)
+@RegisterSystem(LightingSystem.class)
 public class Scene extends GameState {
     private Game game;
     private int currentEntity = 0;
@@ -55,7 +56,6 @@ public class Scene extends GameState {
      * @param entity the entity to add
      */
     @Scriptable
-    @SuppressWarnings("unchecked")
     public void add(Entity entity) {
         log.debug("Adding entity: " + entity.getClass().getName() + " Entity count: " + entities.size());
         entity.setScene(this);
@@ -123,7 +123,6 @@ public class Scene extends GameState {
         this.game = game;
         entities = new SimpleEntityStore();
         entitySystemEngine = new EntitySystemEngine(game, this);
-        lightingSystem = new LightingSystem();
         loadSystems();
     }
 
@@ -132,7 +131,6 @@ public class Scene extends GameState {
      * to add events that are triggered after entities are added to the room and their create method is called.
      * @param game the current game
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void postBeginState(Game game) {
         super.postBeginState(game);
@@ -163,12 +161,9 @@ public class Scene extends GameState {
      * @param game the game
      * @param delta time since last frame, in milliseconds
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void step(Game game, float delta) {
         super.step(game, delta);
-
-        lightingSystem.beforeStep();
 
         //Resort entities which have had their depth changed
         entities.resort();
@@ -185,10 +180,8 @@ public class Scene extends GameState {
      * @param game the game
      * @param renderer the renderer
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void render(Game game, Renderer renderer) {
-        lightingSystem.beforeRender(renderer);
         entitySystemEngine.render(renderer);
     }
 
@@ -214,7 +207,6 @@ public class Scene extends GameState {
      * super as the last line of the overridden method, otherwise all of the entities will have been destroyed.
      * @param game the game
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void endState(Game game) {
         super.endState(game);
@@ -404,6 +396,10 @@ public class Scene extends GameState {
 
                 if(system instanceof CollisionSystem) {
                     collisionSystem = (CollisionSystem)system;
+                }
+
+                if(system instanceof LightingSystem) {
+                    lightingSystem = (LightingSystem)system;
                 }
 
                 entitySystemEngine.addSystem(system);
