@@ -9,7 +9,7 @@
     "textures": [
       {
         "filename": "glob:data/textures/*.{jpg,jpeg,png,tga,bmp,psd,gif,hdr,pic,pnm}",
-        "key": "{1}.tga",
+        "key": "{1}.{2}",
         "flipVertically": true
       }
     ],
