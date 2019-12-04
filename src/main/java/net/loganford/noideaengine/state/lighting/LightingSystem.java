@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class LightingSystem implements UnsafeMemory {
-    public static int MAX_LIGHTS = 0;
+    public static final int MAX_LIGHTS = 32;
 
     @Getter private UniformBufferObject uniformBufferObject;
 
@@ -37,8 +37,10 @@ public class LightingSystem implements UnsafeMemory {
             builder.beginArrayElement();
             builder.beginStruct();
             builder.put(bufferedLight.type);
-            builder.put(bufferedLight.lightColor);
-            builder.put(bufferedLight.radius);
+            builder.put(bufferedLight.color);
+            builder.put(bufferedLight.position);
+            builder.put(bufferedLight.linear);
+            builder.put(bufferedLight.quadratic);
             builder.endStruct();
             builder.endArrayElement();
 
@@ -100,7 +102,9 @@ public class LightingSystem implements UnsafeMemory {
 
     class BufferedLight {
         UniformBufferObjectUniform<Integer> type = new UniformBufferObjectUniform<>(0);
-        UniformBufferObjectUniform<Vector3f> lightColor = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
-        UniformBufferObjectUniform<Float> radius = new UniformBufferObjectUniform<>(10f);
+        UniformBufferObjectUniform<Vector3f> color = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
+        UniformBufferObjectUniform<Vector3f> position = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
+        UniformBufferObjectUniform<Float> linear = new UniformBufferObjectUniform<>(10f);
+        UniformBufferObjectUniform<Float> quadratic = new UniformBufferObjectUniform<>(10f);
     }
 }
