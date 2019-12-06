@@ -63,6 +63,10 @@ public abstract class EntityStore<T> implements Iterable<T> {
         itemsToResort.clear();
     }
 
+    public void resort(Comparator<T> comparator) {
+        items.sort(comparator);
+    }
+
     public void removeDestroyed() {
         removeDestroyed(false);
     }

@@ -44,7 +44,7 @@ void main(void) {
 
     vec4 totalIllumination = clamp(vec4(ambientLightColor + directionalIllumination + lightIllumination, 1), 0, 1);
     vec4 color = totalIllumination * texture(texDiffuse, texCoord);
-    if(color.a < .5) {
+    if(color.a == 0) {
         discard;
     }
 	fragColor = color;

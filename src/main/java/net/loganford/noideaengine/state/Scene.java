@@ -8,11 +8,9 @@ import net.loganford.noideaengine.entity.*;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Scriptable;
-import net.loganford.noideaengine.systems.LightingSystem;
+import net.loganford.noideaengine.systems.*;
 import net.loganford.noideaengine.state.signals.EntityAddedIndexSignal;
 import net.loganford.noideaengine.state.signals.EntityAddedSignal;
-import net.loganford.noideaengine.systems.EntitySystem;
-import net.loganford.noideaengine.systems.StepRenderSystem;
 import net.loganford.noideaengine.systems.collision.CollisionSystem;
 import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
@@ -33,7 +31,8 @@ import java.util.List;
 
 @Log4j2
 @RegisterSystem(SpacialPartitionCollisionSystem.class)
-@RegisterSystem(StepRenderSystem.class)
+@RegisterSystem(StepSystem.class)
+@RegisterSystem(RenderSystem.class)
 @RegisterSystem(LightingSystem.class)
 public class Scene extends GameState {
     private Game game;
@@ -384,6 +383,8 @@ public class Scene extends GameState {
      * Loads and creates all the systems in the scene based off of the annotations.
      */
     private void loadSystems() {
+        log.info("Loading systems...");
+
         List<Pair<Class<? extends EntitySystem>, Argument[]>> systemClazzList = getSystemsForClass(getClass());
 
         for(Pair<Class<? extends EntitySystem>, Argument[]> systemAnnotation : systemClazzList) {
@@ -408,6 +409,8 @@ public class Scene extends GameState {
                 throw new GameEngineException("Unable to setup entity components", e);
             }
         }
+
+        log.info(entitySystemEngine);
     }
 
     private List<Pair<Class<? extends EntitySystem>, Argument[]>> getSystemsForClass(Class clazz) {

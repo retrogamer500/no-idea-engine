@@ -5,9 +5,7 @@ import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
-import net.loganford.noideaengine.components.AbstractPositionComponent;
-import net.loganford.noideaengine.components.BasicPositionComponent;
-import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.components.*;
 import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
 import net.loganford.noideaengine.components.collision.BasicCollisionComponent;
 import net.loganford.noideaengine.components.physics.AbstractPhysicsComponent;
@@ -36,6 +34,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+@RegisterComponent(StepComponent.class)
+@RegisterComponent(RenderComponent.class)
 @RegisterComponent(BasicPositionComponent.class)
 @RegisterComponent(BasicCollisionComponent.class)
 public class Entity {
