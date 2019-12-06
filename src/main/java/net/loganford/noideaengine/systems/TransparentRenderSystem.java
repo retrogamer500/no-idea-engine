@@ -2,15 +2,18 @@ package net.loganford.noideaengine.systems;
 
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.components.TransparentRenderComponent;
 import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.utils.annotations.Argument;
+import net.loganford.noideaengine.utils.annotations.RegisterComponent;
 import net.loganford.noideaengine.utils.math.MathUtils;
 
 import java.util.Comparator;
 import java.util.List;
 
+@RegisterComponent(TransparentRenderComponent.class)
 public class TransparentRenderSystem extends ProcessEntitySystem {
     public TransparentRenderSystem(Game game, Scene scene, Argument[] args) {
         super(game, scene, args);

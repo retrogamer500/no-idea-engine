@@ -101,11 +101,6 @@ public class ModelLoader extends ResourceLoader {
             String data = path.dataString();
             path.free();
 
-            //Since we are atlassing textures, we need to store offsets and multipliers for UV coordinates
-            float imageU = 0; //U offset
-            float imageV = 0; //V offset
-            float imageUW = 1; //U multiplier
-            float imageVH = 1; //V multiplier
             if(StringUtils.isNotBlank(data)) {
                 String textureKey = modelConfig.getImagePrefix() + data + modelConfig.getImageSuffix();
                 Texture texture = game.getTextureManager().get(textureKey);
@@ -149,8 +144,8 @@ public class ModelLoader extends ResourceLoader {
                 Vector2f uvCoord;
                 if(aiMesh.mTextureCoords(0) != null) {
                     uvCoord = new Vector2f(
-                            imageU + imageUW * aiMesh.mTextureCoords(0).get(j).x(),
-                            imageV + imageVH * aiMesh.mTextureCoords(0).get(j).y());
+                            aiMesh.mTextureCoords(0).get(j).x(),
+                            aiMesh.mTextureCoords(0).get(j).y());
                 }
                 else {
                     uvCoord = new Vector2f(0, 0);

@@ -1,4 +1,9 @@
 package net.loganford.noideaengine.components;
 
-public class TransparentRenderComponent {
+import net.loganford.noideaengine.utils.annotations.Argument;
+
+public class TransparentRenderComponent extends Component {
+    public TransparentRenderComponent(Argument[] args) {
+        super(args);
+    }
 }
