@@ -134,7 +134,7 @@ public class Cuboid extends Shape {
         return true;
     }
     
-    public boolean collidesWith(Cuboid other) {
+    public boolean cuboidCollision(Cuboid other) {
         if(other.getX() + other.getWidth() < this.getX()) {
             return false;
         }
@@ -157,7 +157,7 @@ public class Cuboid extends Shape {
         return true;
     }
 
-    public boolean collidesWith(Line line) {
+    public boolean lineCollision(Line line) {
         float deltaX = line.getX2() - line.getX1();
         float deltaY = line.getY2() - line.getY1();
         float deltaZ = line.getZ2() - line.getZ1();

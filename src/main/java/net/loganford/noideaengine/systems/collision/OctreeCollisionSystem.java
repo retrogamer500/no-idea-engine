@@ -6,10 +6,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.entity.signals.AfterMotionSignal;
 import net.loganford.noideaengine.entity.signals.BeforeMotionSignal;
-import net.loganford.noideaengine.shape.Cuboid;
-import net.loganford.noideaengine.shape.Line;
-import net.loganford.noideaengine.shape.Shape;
-import net.loganford.noideaengine.shape.SweepResult;
+import net.loganford.noideaengine.shape.*;
 import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.utils.annotations.AnnotationUtil;
 import net.loganford.noideaengine.utils.annotations.Argument;
@@ -120,6 +117,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
     @SuppressWarnings("unchecked")
     @Override
     public <E> void sweep(SweepResult result, Shape shape, Vector3fc velocity, Class<E> clazz) {
+        SET.clear();
         result.clear();
         result.getPosition().set(shape.getPosition());
         result.getVelocity().set(velocity);
@@ -128,6 +126,11 @@ public class OctreeCollisionSystem extends CollisionSystem {
 
         performOctreeAction(sweepMask, (shapes) -> {
             for (int i = 0; i < shapes.size(); i++) {
+                if(SET.contains(shape)) {
+                    continue;
+                }
+                SET.add(shape); //test these lines for performance, may wish to remove them
+
                 Shape otherShape = shapes.get(i);
                 if (otherShape != shape &&
                         clazz.isAssignableFrom(otherShape.getOwningEntity().getClass())) {
@@ -159,7 +162,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
     }
 
     private OctreeActionResult performOctreeActionWithLine(Line line, OctreeAction action, Node node) {
-        if(node.shape.collidesWith(line)) {
+        if(node.shape.lineCollision(line)) {
             if(node.hasChildNodes()) {
                 for(Node child : node.children) {
                     OctreeActionResult result = performOctreeActionWithLine(line, action, child);
@@ -177,7 +180,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
     }
 
     private OctreeActionResult performOctreeActionWithCuboid(Cuboid cuboid, OctreeAction action, Node node) {
-        if(node.shape.collidesWith(cuboid)) {
+        if(node.shape.cuboidCollision(cuboid)) {
             if(node.hasChildNodes()) {
                 for(Node child : node.children) {
                     OctreeActionResult result = performOctreeActionWithCuboid(cuboid, action, child);
@@ -237,9 +240,22 @@ public class OctreeCollisionSystem extends CollisionSystem {
     }
 
     private void handleEntityAddition(Entity entity) {
-        while(! root.shape.fullyContains(entity.getShape().getBoundingBox())) {
+        if(entity.getShape() instanceof AbstractCompoundShape) {
+            for(Shape shape : (AbstractCompoundShape) entity.getShape()) {
+                shape.setOwningEntity(entity);
+                handleShapeAddition(shape);
+            }
+        }
+        else {
+            entity.getShape().setOwningEntity(entity);
+            handleShapeAddition(entity.getShape());
+        }
+    }
+
+    private void handleShapeAddition(Shape shape) {
+        while(! root.shape.fullyContains(shape.getBoundingBox())) {
             Vector3f difference = V3F;
-            difference.set(entity.getShape().getPosition()).sub(root.position);
+            difference.set(shape.getPosition()).sub(root.position);
             boolean positiveX = difference.x > 0;
             boolean positiveY = difference.y > 0;
             boolean positiveZ = difference.z > 0;
@@ -248,16 +264,29 @@ public class OctreeCollisionSystem extends CollisionSystem {
             float newPosZ = root.position.z + (positiveZ ? 1: -1) * root.size;
             Node newRootNode = new Node(new Vector3f(newPosX, newPosY, newPosZ), root.size * 2, root.depth - 1);
             newRootNode.subdivide();
-            int index = (positiveX ? 0 : 4) + (positiveY ? 0 : 2) + (positiveZ ? 0 : 1);
+            int index = (positiveX ? 4 : 0) + (positiveY ? 2 : 0) + (positiveZ ? 1 : 0);
             newRootNode.children[index] = root;
             root = newRootNode;
         }
 
-        root.add(entity.getShape());
+        root.add(shape);
     }
 
     private void handleEntityRemoval(Entity entity) {
-        root.remove(entity.getShape());
+        if(entity.getShape() instanceof AbstractCompoundShape) {
+            for(Shape shape : (AbstractCompoundShape) entity.getShape()) {
+                shape.setOwningEntity(entity);
+                handleShapeRemoval(shape);
+            }
+        }
+        else {
+            entity.getShape().setOwningEntity(entity);
+            handleShapeRemoval(entity.getShape());
+        }
+    }
+
+    private void handleShapeRemoval(Shape shape) {
+        root.remove(shape);
     }
 
     private class Node {
@@ -319,7 +348,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
             else {
                 boolean childrenEmpty = true;
                 for(Node child : children) {
-                    if(child.shape.collidesWith(shape.getBoundingBox())) {
+                    if(child.shape.cuboidCollision(shape.getBoundingBox())) {
                         child.remove(shape);
                     }
                     if(child.contents.size() > 0) {
@@ -336,7 +365,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
 
         public void addShapeToChildrenIfAble(Shape shape) {
             for(Node child : children) {
-                if(child.shape.collidesWith(shape.getBoundingBox())) {
+                if(child.shape.cuboidCollision(shape.getBoundingBox())) {
                     child.add(shape);
                 }
             }
