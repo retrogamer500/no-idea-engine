@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("ForLoopReplaceableByForEach")
 public class OctreeCollisionSystem extends CollisionSystem {
     private static Vector3f V3F = new Vector3f();
     private static Set SET = new HashSet<>();
