@@ -170,39 +170,6 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         });
     }
 
-    private Shape getSweepMask(Shape shape, Vector3fc velocity) {
-        if(shape instanceof Point) {
-            Point point = (Point) shape;
-            LINE.setX1(point.getX());
-            LINE.setY1(point.getY());
-            LINE.setZ1(point.getZ());
-            LINE.setX2(point.getX() + velocity.x());
-            LINE.setY2(point.getY() + velocity.y());
-            LINE.setZ2(point.getZ() + velocity.z());
-            return LINE;
-        }
-        else {
-            shape.getBoundingBox(CUBE);
-
-            if(velocity.x() < 0) {
-                CUBE.setX(CUBE.getX() + velocity.x());
-            }
-            CUBE.setWidth(CUBE.getWidth() + Math.abs(velocity.x()));
-
-            if(velocity.y() < 0) {
-                CUBE.setY(CUBE.getY() + velocity.y());
-            }
-            CUBE.setHeight(CUBE.getHeight() + Math.abs(velocity.y()));
-
-            if(velocity.z() < 0) {
-                CUBE.setZ(CUBE.getZ() + velocity.z());
-            }
-            CUBE.setDepth(CUBE.getDepth() + Math.abs(velocity.z()));
-
-            return CUBE;
-        }
-    }
-
     @Override
     public void receive(Signal<Entity> signal, Entity entity) {
         super.receive(signal, entity);
@@ -282,11 +249,11 @@ public class SpacialPartitionCollisionSystem extends CollisionSystem {
         }
         else {
             shape.getBoundingBox(CUBE_2);
-            performBucketActionWithRect(CUBE_2, bucketAction);
+            performBucketActionWithCuboid(CUBE_2, bucketAction);
         }
     }
 
-    private void performBucketActionWithRect(Cuboid cube, BucketAction bucketAction) {
+    private void performBucketActionWithCuboid(Cuboid cube, BucketAction bucketAction) {
         int x1 = (int) (cube.getX() / cellSize);
         int y1 = (int) (cube.getY() / cellSize);
         int z1 = (int) (cube.getZ() / cellSize);
