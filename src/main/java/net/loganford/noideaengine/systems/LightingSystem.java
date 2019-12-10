@@ -65,7 +65,7 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
 
         lightingComponentIndex = getComponentLocation(LightingComponent.class);
 
-        setPriority(Integer.MIN_VALUE);
+        setPriority(-Float.MAX_VALUE);
     }
 
     @Override

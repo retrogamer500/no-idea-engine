@@ -18,6 +18,7 @@ import net.loganford.noideaengine.state.lighting.PointLight;
 import net.loganford.noideaengine.systems.CharacterControllerSystem;
 import net.loganford.noideaengine.systems.FreeMovementSystem;
 import net.loganford.noideaengine.systems.camera.FirstPersonCameraSystem;
+import net.loganford.noideaengine.systems.collision.OctreeCollisionSystem;
 import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.systems.physics.CharacterPhysicsSystem;
 import net.loganford.noideaengine.systems.physics.PhysicsSystem;
@@ -31,10 +32,11 @@ public class SweptSpherePhysicsTest {
     private static Vector3f V3F = new Vector3f();
 
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
-    @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {
+    /*@RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {
             @Argument(name = "cellSize", intValue = 4),
             @Argument(name = "bucketCount", intValue = 1024)
-    })
+    })*/
+    @RegisterSystem(OctreeCollisionSystem.class)
     @RegisterSystem(FirstPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)

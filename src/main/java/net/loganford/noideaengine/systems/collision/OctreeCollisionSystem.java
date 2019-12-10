@@ -126,12 +126,13 @@ public class OctreeCollisionSystem extends CollisionSystem {
 
         performOctreeAction(sweepMask, (shapes) -> {
             for (int i = 0; i < shapes.size(); i++) {
-                if(SET.contains(shape)) {
+                Shape otherShape = shapes.get(i);
+
+                if(SET.contains(otherShape)) {
                     continue;
                 }
-                SET.add(shape); //test these lines for performance, may wish to remove them
+                SET.add(otherShape);
 
-                Shape otherShape = shapes.get(i);
                 if (otherShape != shape &&
                         clazz.isAssignableFrom(otherShape.getOwningEntity().getClass())) {
 
@@ -240,15 +241,16 @@ public class OctreeCollisionSystem extends CollisionSystem {
     }
 
     private void handleEntityAddition(Entity entity) {
-        if(entity.getShape() instanceof AbstractCompoundShape) {
-            for(Shape shape : (AbstractCompoundShape) entity.getShape()) {
-                shape.setOwningEntity(entity);
-                handleShapeAddition(shape);
+        if(entity.getShape() != null) {
+            if (entity.getShape() instanceof AbstractCompoundShape) {
+                for (Shape shape : (AbstractCompoundShape) entity.getShape()) {
+                    shape.setOwningEntity(entity);
+                    handleShapeAddition(shape);
+                }
+            } else {
+                entity.getShape().setOwningEntity(entity);
+                handleShapeAddition(entity.getShape());
             }
-        }
-        else {
-            entity.getShape().setOwningEntity(entity);
-            handleShapeAddition(entity.getShape());
         }
     }
 
@@ -273,15 +275,16 @@ public class OctreeCollisionSystem extends CollisionSystem {
     }
 
     private void handleEntityRemoval(Entity entity) {
-        if(entity.getShape() instanceof AbstractCompoundShape) {
-            for(Shape shape : (AbstractCompoundShape) entity.getShape()) {
-                shape.setOwningEntity(entity);
-                handleShapeRemoval(shape);
+        if(entity.getShape() != null) {
+            if (entity.getShape() instanceof AbstractCompoundShape) {
+                for (Shape shape : (AbstractCompoundShape) entity.getShape()) {
+                    shape.setOwningEntity(entity);
+                    handleShapeRemoval(shape);
+                }
+            } else {
+                entity.getShape().setOwningEntity(entity);
+                handleShapeRemoval(entity.getShape());
             }
-        }
-        else {
-            entity.getShape().setOwningEntity(entity);
-            handleShapeRemoval(entity.getShape());
         }
     }
 
@@ -351,7 +354,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
                     if(child.shape.cuboidCollision(shape.getBoundingBox())) {
                         child.remove(shape);
                     }
-                    if(child.contents.size() > 0) {
+                    if(child.contents.size() > 0 || child.hasChildNodes()) {
                         childrenEmpty = false;
                     }
                 }
@@ -369,6 +372,19 @@ public class OctreeCollisionSystem extends CollisionSystem {
                     child.add(shape);
                 }
             }
+        }
+
+        public int countAllContents() {
+            int result = 0;
+            if(hasChildNodes()) {
+                for(Node child : children) {
+                    result += child.countAllContents();
+                }
+            }
+            else {
+                result += contents.size();
+            }
+            return result;
         }
     }
 }

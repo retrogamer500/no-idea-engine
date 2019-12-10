@@ -82,13 +82,12 @@ public class EntitySystemEngine implements Listener<EntitySystem> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Current systems (system name - priority):\n");
-        builder.append("=========================================\n");
+        builder.append("Current systems (system name | priority):");
         for(int i = 0; i < systems.size(); i ++) {
-            builder.append(StringUtils.rightPad(systems.get(i).getClass().getName(), 32));
-            builder.append(" - ");
-            builder.append(systems.get(i).getPriority());
             builder.append("\n");
+            builder.append(StringUtils.rightPad(systems.get(i).getClass().getSimpleName(), 32));
+            builder.append(" | ");
+            builder.append(systems.get(i).getPriority());
         }
         return builder.toString();
     }
