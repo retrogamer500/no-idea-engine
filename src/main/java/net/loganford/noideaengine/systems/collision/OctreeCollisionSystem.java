@@ -26,7 +26,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
     private static List LIST = new ArrayList<>();
 
     @Getter @Setter private int maxDepth = 12;
-    @Getter @Setter private int maxSize = 8;
+    @Getter @Setter private int maxContents = 8;
     @Getter @Setter private float initialSize = 1024f;
     private Node root;
 
@@ -34,7 +34,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
         super(game, scene, args);
 
         AnnotationUtil.getArgumentOptional("maxDepth", args).ifPresent((a) -> maxDepth = a.intValue());
-        AnnotationUtil.getArgumentOptional("maxSize", args).ifPresent((a) -> maxSize = a.intValue());
+        AnnotationUtil.getArgumentOptional("maxContents", args).ifPresent((a) -> maxContents = a.intValue());
         AnnotationUtil.getArgumentOptional("initialSize", args).ifPresent((a) -> initialSize = a.floatValue());
 
         root = new Node(new Vector3f(), initialSize, 0);
@@ -326,7 +326,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
 
         public void add(Shape shape) {
             if(!hasChildNodes()) {
-                if(contents.size() >= maxSize && depth < maxDepth) {
+                if(contents.size() >= maxContents && depth < maxDepth) {
                     subdivide();
 
                     for(Shape existingShape : contents) {
