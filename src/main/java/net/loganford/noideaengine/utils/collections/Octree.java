@@ -12,9 +12,9 @@ import java.util.ArrayList;
 public class Octree<S extends Shape> {
     private static Vector3f V3F = new Vector3f();
     
-    @Getter @Setter private int maxDepth = 12;
-    @Getter @Setter private int maxContents = 8;
-    @Getter @Setter private float initialSize = 1024f;
+    @Getter @Setter private int maxDepth;
+    @Getter @Setter private int maxContents;
+    @Getter @Setter private float initialSize;
 
     @Getter private Node<S> root;
 
@@ -23,7 +23,11 @@ public class Octree<S extends Shape> {
     }
 
     public Octree(int maxDepth, int maxContents, float initialSize) {
-        root = new Node<S>(this, new Vector3f(), initialSize, 0);
+        this.maxDepth = maxDepth;
+        this.maxContents = maxContents;
+        this.initialSize = initialSize;
+
+        root = new Node<>(this, new Vector3f(), initialSize, 0);
     }
 
     public void add(S shape) {
@@ -36,7 +40,7 @@ public class Octree<S extends Shape> {
             float newPosX = root.position.x + (positiveX ? 1: -1) * root.size;
             float newPosY = root.position.y + (positiveY ? 1: -1) * root.size;
             float newPosZ = root.position.z + (positiveZ ? 1: -1) * root.size;
-            Node newRootNode = new Node(this, new Vector3f(newPosX, newPosY, newPosZ), root.size * 2, root.depth - 1);
+            Node<S> newRootNode = new Node<>(this, new Vector3f(newPosX, newPosY, newPosZ), root.size * 2, root.depth - 1);
             newRootNode.subdivide();
             int index = (positiveX ? 4 : 0) + (positiveY ? 2 : 0) + (positiveZ ? 1 : 0);
             newRootNode.children[index] = root;
@@ -50,7 +54,7 @@ public class Octree<S extends Shape> {
         root.remove(shape);
     }
 
-    public void performAction(Shape shape, OctreeAction action) {
+    public void performAction(Shape shape, OctreeAction<S> action) {
         if (shape instanceof Line) {
             Line testLine = (Line) shape;
             performOctreeActionWithLine(testLine, action, root);
@@ -64,7 +68,7 @@ public class Octree<S extends Shape> {
     private ActionResult performOctreeActionWithLine(Line line, OctreeAction<S> action, Node<S> node) {
         if(node.shape.lineCollision(line)) {
             if(node.hasChildNodes()) {
-                for(Node child : node.children) {
+                for(Node<S> child : node.children) {
                     ActionResult result = performOctreeActionWithLine(line, action, child);
                     if(result == ActionResult.EXIT_EARLY) {
                         return ActionResult.EXIT_EARLY;
@@ -82,7 +86,7 @@ public class Octree<S extends Shape> {
     private ActionResult performOctreeActionWithCuboid(Cuboid cuboid, OctreeAction<S> action, Node<S> node) {
         if(node.shape.cuboidCollision(cuboid)) {
             if(node.hasChildNodes()) {
-                for(Node child : node.children) {
+                for(Node<S> child : node.children) {
                     ActionResult result = performOctreeActionWithCuboid(cuboid, action, child);
                     if(result == ActionResult.EXIT_EARLY) {
                         return ActionResult.EXIT_EARLY;
@@ -108,7 +112,7 @@ public class Octree<S extends Shape> {
          * @param node the current node to perform the action with
          * @return - OctreeActionResult.EXIT_EARLY to stop, or OctreeActionResult.CONTINUE to keep performing node actions
          */
-        ActionResult perform(Node node);
+        ActionResult perform(Node<S> node);
     }
 
     public static class Node<S extends Shape> {
@@ -139,14 +143,14 @@ public class Octree<S extends Shape> {
          * Subdivide the node, creating 8 children and shifting the contents back down to the new child nodes
          */
         public void subdivide() {
-            children[0] = new Node(octree, new Vector3f(position.x + size/2, position.y + size/2, position.z + size/2), size / 2, depth + 1);
-            children[1] = new Node(octree, new Vector3f(position.x + size/2, position.y + size/2, position.z - size/2), size / 2, depth + 1);
-            children[2] = new Node(octree, new Vector3f(position.x + size/2, position.y - size/2, position.z + size/2), size / 2, depth + 1);
-            children[3] = new Node(octree, new Vector3f(position.x + size/2, position.y - size/2, position.z - size/2), size / 2, depth + 1);
-            children[4] = new Node(octree, new Vector3f(position.x - size/2, position.y + size/2, position.z + size/2), size / 2, depth + 1);
-            children[5] = new Node(octree, new Vector3f(position.x - size/2, position.y + size/2, position.z - size/2), size / 2, depth + 1);
-            children[6] = new Node(octree, new Vector3f(position.x - size/2, position.y - size/2, position.z + size/2), size / 2, depth + 1);
-            children[7] = new Node(octree, new Vector3f(position.x - size/2, position.y - size/2, position.z - size/2), size / 2, depth + 1);
+            children[0] = new Node<>(octree, new Vector3f(position.x + size/2, position.y + size/2, position.z + size/2), size / 2, depth + 1);
+            children[1] = new Node<>(octree, new Vector3f(position.x + size/2, position.y + size/2, position.z - size/2), size / 2, depth + 1);
+            children[2] = new Node<>(octree, new Vector3f(position.x + size/2, position.y - size/2, position.z + size/2), size / 2, depth + 1);
+            children[3] = new Node<>(octree, new Vector3f(position.x + size/2, position.y - size/2, position.z - size/2), size / 2, depth + 1);
+            children[4] = new Node<>(octree, new Vector3f(position.x - size/2, position.y + size/2, position.z + size/2), size / 2, depth + 1);
+            children[5] = new Node<>(octree, new Vector3f(position.x - size/2, position.y + size/2, position.z - size/2), size / 2, depth + 1);
+            children[6] = new Node<>(octree, new Vector3f(position.x - size/2, position.y - size/2, position.z + size/2), size / 2, depth + 1);
+            children[7] = new Node<>(octree, new Vector3f(position.x - size/2, position.y - size/2, position.z - size/2), size / 2, depth + 1);
 
             for(S existingShape : contents) {
                 addShapeToChildrenIfAble(existingShape);
@@ -175,7 +179,7 @@ public class Octree<S extends Shape> {
             }
             else {
                 boolean childrenEmpty = true;
-                for(Node child : children) {
+                for(Node<S> child : children) {
                     if(child.shape.cuboidCollision(shape.getBoundingBox())) {
                         child.remove(shape);
                     }
@@ -192,7 +196,7 @@ public class Octree<S extends Shape> {
         }
 
         private void addShapeToChildrenIfAble(S shape) {
-            for(Node child : children) {
+            for(Node<S> child : children) {
                 if(child.shape.cuboidCollision(shape.getBoundingBox())) {
                     child.add(shape);
                 }
