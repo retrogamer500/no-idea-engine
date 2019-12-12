@@ -12,6 +12,7 @@ public class AmbientLight extends Light {
 
     @Override
     public void buffer(LightingSystem.BufferedLight bufferedLight) {
-
+        bufferedLight.getType().set(1);
+        bufferedLight.getColor().get().set(getColor());
     }
 }

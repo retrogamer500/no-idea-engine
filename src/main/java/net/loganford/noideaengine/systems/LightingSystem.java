@@ -27,10 +27,6 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
     private int lightingComponentIndex;
 
     @Getter private UniformBufferObject uniformBufferObject;
-
-    private UniformBufferObjectUniform<Vector3f> lightDirection = new UniformBufferObjectUniform<>(new Vector3f(2, -10, 2).normalize());
-    private UniformBufferObjectUniform<Vector3f> lightColor = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
-    private UniformBufferObjectUniform<Vector3f> ambientLightColor = new UniformBufferObjectUniform<>(new Vector3f(.3f, .3f, .3f));
     private UniformBufferObjectUniform<Integer> lightCount = new UniformBufferObjectUniform<>(0);
 
     private BufferedLight[] bufferedLights = new BufferedLight[MAX_LIGHTS];
@@ -40,9 +36,6 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
         super(game, scene, args);
 
         UniformBufferObjectBuilder builder = new UniformBufferObjectBuilder();
-        builder.put(lightDirection);
-        builder.put(lightColor);
-        builder.put(ambientLightColor);
         builder.put(lightCount);
 
         for(int i = 0; i < MAX_LIGHTS; i++) {
@@ -55,6 +48,7 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
             builder.put(bufferedLight.position);
             builder.put(bufferedLight.linear);
             builder.put(bufferedLight.quadratic);
+            builder.put(bufferedLight.direction);
             builder.endStruct();
             builder.endArrayElement();
 
@@ -109,30 +103,6 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
         uniformBufferObject.freeMemory();
     }
 
-    public Vector3f getLightDirection() {
-        return lightDirection.get();
-    }
-
-    public void setLightDirection(Vector3f lightDirection) {
-        this.lightDirection.set(lightDirection);
-    }
-
-    public Vector3f getLightColor() {
-        return lightColor.get();
-    }
-
-    public void setLightColor(Vector3f lightColor) {
-        this.lightColor.set(lightColor);
-    }
-
-    public Vector3f getAmbientLightColor() {
-        return ambientLightColor.get();
-    }
-
-    public void setAmbientLightColor(Vector3f ambientLightColor) {
-        this.ambientLightColor.set(ambientLightColor);
-    }
-
     public void processLight(Light light) {
         lights.add(light);
     }
@@ -145,5 +115,6 @@ public class LightingSystem extends ProcessEntitySystem implements UnsafeMemory 
         @Getter private UniformBufferObjectUniform<Vector3f> position = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
         @Getter private UniformBufferObjectUniform<Float> linear = new UniformBufferObjectUniform<>(10f);
         @Getter private UniformBufferObjectUniform<Float> quadratic = new UniformBufferObjectUniform<>(10f);
+        @Getter private UniformBufferObjectUniform<Vector3f> direction = new UniformBufferObjectUniform<>(new Vector3f(1f, 1f, 1f));
     }
 }

@@ -16,6 +16,8 @@ public class DirectionalLight extends Light {
 
     @Override
     public void buffer(LightingSystem.BufferedLight bufferedLight) {
-
+        bufferedLight.getType().set(2);
+        bufferedLight.getColor().get().set(getColor());
+        bufferedLight.getDirection().get().set(direction);
     }
 }

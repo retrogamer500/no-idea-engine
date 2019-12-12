@@ -6,15 +6,13 @@ struct Light {
     vec3 position;
     float linear;
     float quadratic;
+    vec3 direction;
 };
 
 
 uniform sampler2D texDiffuse;
 layout (std140) uniform LightingUbo
 {
-    vec3 lightDirection;
-    vec3 lightColor;
-    vec3 ambientLightColor;
     int lightCount;
 
     Light lights[32];
@@ -29,21 +27,25 @@ in vec3 wPosition;
 layout(location=0) out vec4 fragColor;
 
 void main(void) {
-    vec3 directionalIllumination = clamp((1 - ambientLightColor) * lightColor * dot(wNormal, -normalize(lightDirection)), 0, 1);
 
-    vec3 lightIllumination = vec3(0, 0, 0);
+    vec3 illumination = vec3(0, 0, 0);
     for(int i = 0; i < lightCount; i++) {
         Light light = lights[i];
-        if (light.type == 0) {
+        if (light.type == 0) { //Point
             vec3 direction = normalize(light.position - wPosition);
             float distance = length(wPosition - light.position);
             float attenuation = 1 / (1 + light.linear * distance + light.quadratic * (distance * distance));
-            lightIllumination += clamp((1 - ambientLightColor) * light.color * attenuation * dot(wNormal, direction), 0, 1);
+            illumination += clamp(light.color * attenuation * dot(wNormal, direction), 0, 1);
+        }
+        else if (light.type == 1) { //Ambient
+            illumination += light.color;
+        }
+        else if (light.type == 2) { //Directional
+            illumination += clamp(light.color * dot(wNormal, -normalize(light.direction)), 0, 1);
         }
     }
 
-    vec4 totalIllumination = clamp(vec4(ambientLightColor + directionalIllumination + lightIllumination, 1), 0, 1);
-    vec4 color = totalIllumination * texture(texDiffuse, texCoord);
+    vec4 color = illumination * texture(texDiffuse, texCoord);
     if(color.a == 0) {
         discard;
     }

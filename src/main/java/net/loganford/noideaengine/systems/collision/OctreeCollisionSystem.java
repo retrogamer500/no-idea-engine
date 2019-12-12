@@ -326,7 +326,7 @@ public class OctreeCollisionSystem extends CollisionSystem {
 
         public void add(Shape shape) {
             if(!hasChildNodes()) {
-                if(contents.size() >= maxContents && depth < maxDepth) {
+                if(contents.size() + 1 > maxContents && depth < maxDepth) {
                     subdivide();
 
                     for(Shape existingShape : contents) {
