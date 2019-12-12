@@ -16,7 +16,7 @@ public class Octree<S extends Shape> {
     @Getter @Setter private int maxContents = 8;
     @Getter @Setter private float initialSize = 1024f;
 
-    @Getter private Node root;
+    @Getter private Node<S> root;
 
     public Octree() {
         this(12, 8, 1024f);
@@ -118,7 +118,7 @@ public class Octree<S extends Shape> {
         @Getter private float size;
         @Getter private Cuboid shape = new Cuboid(0, 0, 0, 0, 0, 0);
         @Getter private int depth;
-        @Getter private Node[] children = new Node[8];
+        @Getter private Node<S>[] children = new Node[8];
         @Getter private ArrayList<S> contents = new ArrayList<>();
 
         private Node(Octree octree, Vector3f position, float size, int depth) {
