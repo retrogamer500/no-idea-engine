@@ -50,7 +50,7 @@ To create a game using this engine, add the following to your POM.xml:
     <dependency>
         <groupId>net.loganford.noideaengine</groupId>
         <artifactId>noideaengine</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```
