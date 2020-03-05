@@ -45,7 +45,7 @@ void main(void) {
         }
     }
 
-    vec4 color = illumination * texture(texDiffuse, texCoord);
+    vec4 color = vec4(illumination, 1) * texture(texDiffuse, texCoord);
     if(color.a == 0) {
         discard;
     }

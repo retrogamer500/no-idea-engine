@@ -121,7 +121,9 @@ public class ShaderProgram extends Resource implements UnsafeMemory {
     }
 
     public void setUniformBufferObject(int location, UniformBufferObject uniformBufferObject) {
-        GL33.glBindBufferBase(GL33.GL_UNIFORM_BUFFER, location, uniformBufferObject.getId());
+	    if(location != -1) {
+            GL33.glBindBufferBase(GL33.GL_UNIFORM_BUFFER, location, uniformBufferObject.getId());
+        }
     }
 
 

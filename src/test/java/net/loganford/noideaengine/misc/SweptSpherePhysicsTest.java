@@ -32,10 +32,6 @@ public class SweptSpherePhysicsTest {
     private static Vector3f V3F = new Vector3f();
 
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
-    /*@RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {
-            @Argument(name = "cellSize", intValue = 4),
-            @Argument(name = "bucketCount", intValue = 1024)
-    })*/
     @RegisterSystem(OctreeCollisionSystem.class)
     @RegisterSystem(FirstPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
@@ -46,7 +42,6 @@ public class SweptSpherePhysicsTest {
 
         private CubeMap cubeMap;
         private PointLight light1 = new PointLight();
-        private PointLight light2 = new PointLight();
 
         @Override
         public void beginState(Game game) {
@@ -55,20 +50,15 @@ public class SweptSpherePhysicsTest {
             add(new Player(), 6.47f, 0f, 86.34f);
             cubeMap = game.getCubeMapManager().get("plains");
 
-            light1.setRadius(256f);
+            light1.setRadius(50f);
             light1.setColor(new Vector3f(1f, 0f, 0f));
             light1.setPosition(new Vector3f(6.47f, 0f, 86.34f));
-
-            light2.setRadius(32f);
-            light2.setColor(new Vector3f(0f, 0f, 1f));
-            light2.setPosition(new Vector3f(23.35507f, -8.139f, 126.54014f));
         }
 
         @Override
         public void step(Game game, float delta) {
             super.step(game, delta);
             getLightingSystem().processLight(light1);
-            getLightingSystem().processLight(light2);
         }
 
         @Override
@@ -104,7 +94,7 @@ public class SweptSpherePhysicsTest {
             setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.8f, 2.5f, .8f)));
 
             light = new PointLight();
-            light.setRadius(256f);
+            light.setRadius(20f);
             light.setColor(new Vector3f(1f, 1f, 0f));
             light.setPosition(new Vector3f(6.47f, 0f, 86.34f));
             getComponent(LightingComponent.class).setLight(light);
@@ -113,6 +103,7 @@ public class SweptSpherePhysicsTest {
         @Override
         public void step(Game game, Scene scene, float delta) {
             super.step(game, scene, delta);
+            light.setRadius(light.getRadius() + 10 * delta/1000f);
             light.getPosition().set(getPos());
 
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
@@ -142,6 +133,7 @@ public class SweptSpherePhysicsTest {
 
         @Override
         public void render(Game game, Scene scene, Renderer renderer) {
+            //System.out.println(model.getMeshes().get(0).getBoundingBox().getPosition());
             super.render(game, scene, renderer);
             model.render(renderer, getPosMatrix());
         }

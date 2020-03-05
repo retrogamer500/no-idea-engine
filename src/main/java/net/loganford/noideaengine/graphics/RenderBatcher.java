@@ -111,11 +111,12 @@ public class RenderBatcher implements UnsafeMemory {
 
     public void flush(Renderer renderer) {
         if(quads != 0) {
-            if(renderer.getShader() == null) {
-                if(renderer.shaderProgramId != renderer.getImageShader().getProgramId()) {
-                    GL33.glUseProgram(renderer.getImageShader().getProgramId());
-                    renderer.shaderProgramId = renderer.getImageShader().getProgramId();
-                }
+            ShaderProgram shader = renderer.getShader();
+
+            if(shader == null) {
+                shader = renderer.getImageShader();
+                GL33.glUseProgram(shader.getProgramId());
+                renderer.shaderProgramId = shader.getProgramId();
             }
 
             boolean cullingBackface = renderer.isCullingBackface();
@@ -123,10 +124,7 @@ public class RenderBatcher implements UnsafeMemory {
             vao.flipAndUpdate(0);
 
             //Populate uniforms
-            ShaderProgram shader = renderer.getShader();
-
             shader.setUniform(ShaderUniform.COLOR, ShaderProgram.DEFAULT_COLOR);
-
             shader.setUniform(ShaderUniform.MODEL, identity);
             shader.setUniform(ShaderUniform.VIEW, renderer.getView().getViewMatrix());
             shader.setUniform(ShaderUniform.PROJECTION, renderer.getView().getProjectionMatrix());
