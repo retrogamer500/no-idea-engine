@@ -56,33 +56,6 @@
       {
         "filename": "glob:data/models/*.{obj}",
         "key": "{1}"
-      },
-      {
-        "filename": "data/models/cs_italy.dae",
-        "key": "cs_italy_fixed",
-        "generateNormals": true,
-        "swapZY": true,
-        "scale": 0.07
-      }
-    ],
-    "cubeMaps": [
-      {
-        "key": "hell",
-        "backFilename": "data/cubeMaps/hell_bk.tga",
-        "downFilename": "data/cubeMaps/hell_dn.tga",
-        "frontFilename": "data/cubeMaps/hell_ft.tga",
-        "leftFilename": "data/cubeMaps/hell_lf.tga",
-        "rightFilename": "data/cubeMaps/hell_rt.tga",
-        "upFilename": "data/cubeMaps/hell_up.tga"
-      },
-      {
-        "key": "plains",
-        "backFilename": "data/cubeMaps/plains-of-abraham_bk.tga",
-        "downFilename": "data/cubeMaps/plains-of-abraham_dn.tga",
-        "frontFilename": "data/cubeMaps/plains-of-abraham_ft.tga",
-        "leftFilename": "data/cubeMaps/plains-of-abraham_lf.tga",
-        "rightFilename": "data/cubeMaps/plains-of-abraham_rt.tga",
-        "upFilename": "data/cubeMaps/plains-of-abraham_up.tga"
       }
     ],
     "properties": [

@@ -9,18 +9,34 @@
     <version>0.5.0</version>
 
     <properties>
-        <lwjgl.version>3.2.2-SNAPSHOT</lwjgl.version>
+        <lwjgl.version>3.3.4-SNAPSHOT</lwjgl.version>
         <joml.version>1.9.10</joml.version>
-        <graalvm.version>19.2.0</graalvm.version>
-        <bytebuddy.version>1.10.1</bytebuddy.version>
-
-        <compiler.dir>${project.build.directory}/compiler</compiler.dir>
+        <graalvm.version>22.2.0</graalvm.version>
+        <bytebuddy.version>1.14.12</bytebuddy.version>
 
         <downloadSources>true</downloadSources>
         <downloadJavadocs>true</downloadJavadocs>
 
         <github.global.server>github</github.global.server>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-bom</artifactId>
+                <version>${lwjgl.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <profiles>
         <profile>
@@ -55,7 +71,7 @@
     <repositories>
         <repository>
             <id>central</id>
-            <url>http://repo1.maven.org/maven2/</url>
+            <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
             <id>sonatype-snapshots</id>
@@ -69,22 +85,18 @@
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
-            <version>${lwjgl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-glfw</artifactId>
-            <version>${lwjgl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-openal</artifactId>
-            <version>${lwjgl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-opengl</artifactId>
-            <version>${lwjgl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
@@ -145,17 +157,6 @@
             <version>${lwjgl.version}</version>
             <classifier>${lwjgl.natives}</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-bullet</artifactId>
-            <version>${lwjgl.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-bullet</artifactId>
-            <version>${lwjgl.version}</version>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
 
         <!-- Log4j -->
         <dependency>
@@ -188,7 +189,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -204,7 +205,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
 
@@ -262,8 +263,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -306,96 +307,6 @@
                         <phase>deploy</phase>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.graalvm.compiler</groupId>
-                                    <artifactId>compiler</artifactId>
-                                    <version>${graalvm.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <destFileName>compiler.jar</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.graalvm.truffle</groupId>
-                                    <artifactId>truffle-api</artifactId>
-                                    <version>${graalvm.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <destFileName>truffle-api.jar</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.graalvm.sdk</groupId>
-                                    <artifactId>graal-sdk</artifactId>
-                                    <version>${graalvm.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <destFileName>graal-sdk.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${compiler.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
-                    <execution>
-                        <id>default-cli</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>
-                                <argument>--module-path</argument>
-                                <!-- automatically creates the modulepath using all project dependencies, also adding the project build directory -->
-                                <modulepath/>
-                                <argument>-classpath</argument>
-                                <!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
-                                <classpath/>
-                                <argument>-XX:+UnlockExperimentalVMOptions</argument>
-                                <argument>-XX:+EnableJVMCI</argument>
-                                <argument>--upgrade-module-path=${compiler.dir}/compiler.jar</argument>
-                                <argument>com.mycompany.app.App</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>nograal</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>
-                                <argument>--module-path</argument>
-                                <!-- automatically creates the modulepath using all project dependencies, also adding the project build directory -->
-                                <modulepath/>
-                                <argument>-classpath</argument>
-                                <!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
-                                <classpath/>
-                                <argument>com.mycompany.app.App</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>${JAVA_HOME}/bin/java</executable>
-                </configuration>
             </plugin>
         </plugins>
     </build>
