@@ -23,6 +23,7 @@ public class ProjectLoader extends ResourceLoader {
         ProjectImporter importer = new ProjectImporter();
 
         if(StringUtils.isNoneEmpty(game.getConfig().getResources().getProject())) {
+            //Todo: be able to load resource from non-files
             importer.load(new File(game.getConfig().getResources().getProject()));
             game.setEditorProject(importer.getProject());
         }
