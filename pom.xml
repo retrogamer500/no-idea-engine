@@ -79,6 +79,10 @@
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -133,6 +137,12 @@
             <version>${lwjgl.version}</version>
             <classifier>${lwjgl.natives}</classifier>
         </dependency>
+        <dependency>
+            <groupId>com.github.retrogamer500</groupId>
+            <artifactId>nie-editor-importer </artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
 
 
         <!-- Apache Commons -->

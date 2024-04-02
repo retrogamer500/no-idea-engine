@@ -57,7 +57,7 @@ public class Entity {
     private Map<Class, Component> unmodifiableComponents;
     @Getter private Set<EntitySystem> systems;
 
-    //Entity'Scene sprite, when set gets drawn in the render method
+    //Entity's sprite, when set gets drawn in the render method
     @Getter(onMethod = @__({@Scriptable})) @Setter(onMethod = @__({@Scriptable})) private Sprite sprite;
 
     //Signals

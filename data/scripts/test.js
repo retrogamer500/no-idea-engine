@@ -7,6 +7,10 @@ function getClass() {
             Java.call();
             this.setPos(500 * Math.random(), 500 * Math.random());
             this.setSprite(game.getSpriteManager().get('test_sprite'));
+        },
+        step: function(game, scene, delta) {
+            Java.call();
+            this.setPos(500 * Math.random(), 500 * Math.random());
         }
     });
 }

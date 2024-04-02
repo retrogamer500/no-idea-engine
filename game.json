@@ -1,5 +1,6 @@
 {
   "resources": {
+    "project": "data/house.nep",
     "images": [
       {
         "filename": "glob:data/images/*.{png}",
