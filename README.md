@@ -20,10 +20,6 @@ View the wiki [here](https://github.com/retrogamer500/no-idea-engine/wiki) for m
 * 3D swept sphere physics and character controller
 * Level editor support via [nie-editor](https://github.com/retrogamer500/nie-editor)
 
-### Forking:
-
-This module is being developed with Java 11 in mind. This engine uses Project Lombok to cut down on boilerplate, so you will want to install a plugin for your IDE before making changes.
-
 ### Maven:
 
 To create a game using this engine, add the following to your POM.xml:
