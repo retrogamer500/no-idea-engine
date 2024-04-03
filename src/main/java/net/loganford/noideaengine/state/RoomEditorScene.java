@@ -59,6 +59,7 @@ public class RoomEditorScene extends Scene {
                 add(e);
             }
             catch(Exception e) {
+                //Todo: remove
                 //throw new GameEngineException(e);
             }
         });
