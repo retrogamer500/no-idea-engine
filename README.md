@@ -18,13 +18,7 @@ View the wiki [here](https://github.com/retrogamer500/no-idea-engine/wiki) for m
 * Store resources in directories, inside ZIP files, or within the JAR
 * Sandboxed Javascript scripting with ability to extend Java entities
 * 3D swept sphere physics and character controller
-
-### Future Features:
-* Improved 3D support
-* Skeletal animations
-* Navmesh generation
-* Box2D and Bullet Physics integration
-* Improved arbitrary 2D primitive rendering beyond lines, boxes, and circles
+* Level editor support via [nie-editor](https://github.com/retrogamer500/nie-editor)
 
 ### Forking:
 
