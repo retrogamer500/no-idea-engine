@@ -20,8 +20,11 @@ View the wiki [here](https://github.com/retrogamer500/no-idea-engine/wiki) for m
 
 ## Screenshots:
 
+### Running Starter Project:
+![image](https://github.com/retrogamer500/no-idea-engine/assets/48998885/b15381db-e116-4a0c-9377-446b0e2350cb)
+
 ### Level Editor:
 ![Level Editor](https://github.com/retrogamer500/no-idea-engine/assets/48998885/26d1d817-53d3-4f79-b3bf-b6af26ffbb93)
 
-### 3D Lighting:
+### 3D Rendering:
 ![3D Lighting](https://github.com/retrogamer500/no-idea-engine/assets/48998885/1b9a0a80-e3d9-45d1-ba5c-69b2c0f9bb8d)
