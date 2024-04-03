@@ -23,7 +23,7 @@ View the wiki [here](https://github.com/retrogamer500/no-idea-engine/wiki) for m
 ### Running Starter Project:
 ![image](https://github.com/retrogamer500/no-idea-engine/assets/48998885/b15381db-e116-4a0c-9377-446b0e2350cb)
 
-### Level Editor:
+### 2D Level Editor:
 ![Level Editor](https://github.com/retrogamer500/no-idea-engine/assets/48998885/26d1d817-53d3-4f79-b3bf-b6af26ffbb93)
 
 ### 3D Rendering:
