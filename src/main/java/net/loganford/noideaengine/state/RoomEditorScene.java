@@ -1,13 +1,17 @@
 package net.loganford.noideaengine.state;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.loganford.nieEditorImporter.Tile;
 import net.loganford.nieEditorImporter.json.Room;
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.graphics.Image;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
+@Log4j2
 public class RoomEditorScene extends Scene {
 
     @Getter private String levelName;
@@ -61,14 +65,34 @@ public class RoomEditorScene extends Scene {
                 e.setY(i.getY());
                 e.setDepth(i.getDepth());
 
-                //Todo: set custom properties
+                if(i.getCustomProperties() != null) {
+                    for (Map.Entry<String, String> entry : i.getCustomProperties().entrySet()) {
+                        setProperty(e, entry.getKey(), entry.getValue());
+                    }
+                }
 
                 add(e);
             }
             catch(Exception e) {
-                //Todo: remove
-                //throw new GameEngineException(e);
+                log.warn("Cannot instantiate object: " + i.getClassPath(), e);
             }
         });
+    }
+
+    private static void setProperty(Entity entity, String key, String value) {
+        Class<?> clazz = entity.getClass();
+        while (clazz != null) {
+            try {
+                Field field = clazz.getDeclaredField(key);
+                field.setAccessible(true);
+                field.set(entity, value);
+                return;
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        log.warn("Cannot set entity property with key: " + key);
     }
 }
