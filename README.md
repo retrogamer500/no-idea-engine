@@ -28,3 +28,8 @@ View the wiki [here](https://github.com/retrogamer500/no-idea-engine/wiki) for m
 
 ### 3D Rendering:
 ![3D Lighting](https://github.com/retrogamer500/no-idea-engine/assets/48998885/1b9a0a80-e3d9-45d1-ba5c-69b2c0f9bb8d)
+![Skybox](https://github.com/retrogamer500/no-idea-engine/assets/48998885/3e2e4ec7-e5bf-470f-89d5-77b4696d485f)
+
+### 3D Physics:
+![Physics](https://github.com/retrogamer500/no-idea-engine/assets/48998885/7a48dfab-7d74-4ba3-8f07-d18cb6e37657)
+
