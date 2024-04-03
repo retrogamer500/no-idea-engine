@@ -1,0 +1,40 @@
+{
+  "resources": {
+    "images": [
+      {
+        "filename": "glob:data/images/*.{jpg,jpeg,png,tga,bmp,psd,gif,hdr,pic,pnm}",
+        "key": "{1}"
+      }
+    ],
+    "textures": [
+      {
+        "filename": "glob:data/textures/*.{jpg,jpeg,png,tga,bmp,psd,gif,hdr,pic,pnm}",
+        "key": "{1}.{2}",
+        "flipVertically": true
+      }
+    ],
+    "sprites": [],
+    "fonts": [],
+    "audio": [
+      {
+        "filename": "glob:data/audio/*.ogg",
+        "key": "{1}"
+      }
+    ],
+    "scripts": [
+      {
+        "filename": "glob:data/scripts/*.js",
+        "key": "{1}"
+      }
+    ],
+    "entities": [],
+    "models": [
+      {
+        "filename": "glob:data/models/*.{fbx,obj,dae,blend,3ds}",
+        "key": "{1}"
+      }
+    ],
+    "cubeMaps": [],
+    "properties": []
+  }
+}

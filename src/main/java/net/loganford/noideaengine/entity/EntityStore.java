@@ -63,6 +63,10 @@ public abstract class EntityStore<T> implements Iterable<T> {
         itemsToResort.clear();
     }
 
+    public void resort(Comparator<T> comparator) {
+        items.sort(comparator);
+    }
+
     public void removeDestroyed() {
         removeDestroyed(false);
     }
@@ -78,6 +82,7 @@ public abstract class EntityStore<T> implements Iterable<T> {
                 if(returnToPool && entity instanceof Poolable) {
                     Poolable poolable = (Poolable) entity;
                     ObjectPool pool = Pools.getPool(poolable.getClass());
+                    //noinspection unchecked
                     pool.put(poolable);
                 }
             }

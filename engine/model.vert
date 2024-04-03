@@ -10,9 +10,11 @@ layout(location=2) in vec2 uv;
 
 out vec2 texCoord;
 out vec3 wNormal;
+out vec3 wPosition;
 
 void main(void) {
     texCoord = uv;
     wNormal = (model * vec4(normal, 0)).xyz;
+    wPosition = (model * vec4(position, 1.0)).xyz;
 	gl_Position = projection * view * model * vec4(position, 1.0);
 }

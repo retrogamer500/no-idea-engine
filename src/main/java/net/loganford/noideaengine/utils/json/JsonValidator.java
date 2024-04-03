@@ -31,31 +31,35 @@ public class JsonValidator {
         }
         try {
             Class clazz = object.getClass();
-            for (Field field : clazz.getDeclaredFields()) {
-                field.setAccessible(true);
-                Object value = field.get(object);
-                for (Annotation annotation : field.getDeclaredAnnotations()) {
-                    if (annotation instanceof Required) {
-                        if (value == null || (value instanceof String && ((String) value).isEmpty())) {
-                            result.getMissingRequiredFields().add(path + field.getName());
+
+            while(!clazz.equals(Object.class)) {
+                for (Field field : clazz.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    Object value = field.get(object);
+                    for (Annotation annotation : field.getDeclaredAnnotations()) {
+                        if (annotation instanceof Required) {
+                            if (value == null || (value instanceof String && ((String) value).isEmpty())) {
+                                result.getMissingRequiredFields().add(path + field.getName());
+                            }
                         }
+                    }
+
+                    if (value instanceof Iterable) {
+                        Iterator iter = ((Iterable) value).iterator();
+                        int index = 0;
+                        while (iter.hasNext()) {
+                            Object arrayObject = iter.next();
+                            if (!arrayObject.getClass().getName().startsWith("java.")) {
+                                validate(arrayObject, path + field.getName() + "[" + index + "]", result);
+                            }
+                            index++;
+                        }
+                    } else if (!"this$1".equals(field.getName()) && value != null && !value.getClass().getName().startsWith("java.")) {
+                        validate(value, path + field.getName(), result);
                     }
                 }
 
-                if(value instanceof Iterable) {
-                    Iterator iter = ((Iterable)value).iterator();
-                    int index = 0;
-                    while(iter.hasNext()) {
-                        Object arrayObject = iter.next();
-                        if(!arrayObject.getClass().getName().startsWith("java.")) {
-                            validate(arrayObject, path + field.getName() + "[" + index + "]", result);
-                        }
-                        index++;
-                    }
-                }
-                else if(!"this$1".equals(field.getName()) && value != null && !value.getClass().getName().startsWith("java.")) {
-                    validate(value, path + field.getName(), result);
-                }
+                clazz = clazz.getSuperclass();
             }
         }
         catch(Exception e) {

@@ -3,11 +3,11 @@ package net.loganford.noideaengine.systems;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.noideaengine.Game;
-import net.loganford.noideaengine.graphics.Renderer;
-import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.components.Component;
 import net.loganford.noideaengine.entity.Entity;
 import net.loganford.noideaengine.entity.EntityComponentStore;
-import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.graphics.Renderer;
+import net.loganford.noideaengine.state.Scene;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.messaging.Listener;
 import net.loganford.noideaengine.utils.messaging.Signal;
@@ -18,9 +18,9 @@ public abstract class ProcessEntitySystem extends EntitySystem {
 
     @Getter @Setter private boolean sorted = true;
     private int currentEntity = 0;
-    private boolean resort = false;
+    @Getter @Setter private boolean resort = false;
 
-    private EntityComponentStore entities;
+    @Getter private EntityComponentStore entities;
     private EntityDepthChangedListener entityDepthChangedListener = new EntityDepthChangedListener();
 
     public ProcessEntitySystem(Game game, Scene scene, Argument[] args) {
@@ -97,6 +97,22 @@ public abstract class ProcessEntitySystem extends EntitySystem {
     }
 
     protected abstract void renderEntity(Entity entity, List<Component> components, Game game, Scene scene, Renderer renderer);
+
+    protected EntityComponentStore.EntityComponent getFirstEntity() {
+        currentEntity = 0;
+        if(entities.size() > currentEntity) {
+            return entities.get(currentEntity);
+        }
+        return null;
+    }
+
+    protected EntityComponentStore.EntityComponent getNextEntity() {
+        currentEntity++;
+        if(entities.size() > currentEntity) {
+            return entities.get(currentEntity);
+        }
+        return null;
+    }
 
 
     private class EntityDepthChangedListener implements Listener<Entity> {

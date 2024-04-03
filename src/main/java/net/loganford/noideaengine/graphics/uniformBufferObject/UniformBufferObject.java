@@ -1,9 +1,8 @@
-package net.loganford.noideaengine.graphics;
+package net.loganford.noideaengine.graphics.uniformBufferObject;
 
 import lombok.Getter;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
-import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -14,11 +13,11 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 public class UniformBufferObject implements UnsafeMemory {
-    private List<Pair<Integer, Object>> bufferedUniforms;
+    private List<UniformBufferObjectUniform> bufferedUniforms;
     private ByteBuffer buffer;
     @Getter private int id;
 
-    UniformBufferObject(List<Pair<Integer, Object>> bufferedUniforms, int size) {
+    UniformBufferObject(List<UniformBufferObjectUniform> bufferedUniforms, int size) {
         UnsafeMemoryTracker.track(this);
         this.bufferedUniforms = bufferedUniforms;
         buffer = MemoryUtil.memAlloc(size);
@@ -27,9 +26,9 @@ public class UniformBufferObject implements UnsafeMemory {
     }
 
     public void buffer() {
-        for(Pair<Integer, Object> pair : bufferedUniforms) {
-            int location = pair.getLeft();
-            Object object = pair.getRight();
+        for(UniformBufferObjectUniform uniform : bufferedUniforms) {
+            int location = uniform.getLocation();
+            Object object = uniform.get();
 
             if(object instanceof Vector3f) {
                 Vector3f vector3f = (Vector3f) object;

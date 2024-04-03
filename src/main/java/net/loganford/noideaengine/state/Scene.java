@@ -4,15 +4,15 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
+import net.loganford.noideaengine.entity.*;
 import net.loganford.noideaengine.graphics.Image;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.scripting.Scriptable;
-import net.loganford.noideaengine.entity.*;
 import net.loganford.noideaengine.systems.*;
-import net.loganford.noideaengine.systems.collision.CollisionSystem;
-import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.state.signals.EntityAddedIndexSignal;
 import net.loganford.noideaengine.state.signals.EntityAddedSignal;
+import net.loganford.noideaengine.systems.collision.CollisionSystem;
+import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.InheritSystems;
 import net.loganford.noideaengine.utils.annotations.RegisterSystem;
@@ -30,8 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 
 @Log4j2
-@RegisterSystem(value = SpacialPartitionCollisionSystem.class)
-@RegisterSystem(StepRenderSystem.class)
+@RegisterSystem(SpacialPartitionCollisionSystem.class)
+@RegisterSystem(StepSystem.class)
+@RegisterSystem(RenderSystem.class)
+@RegisterSystem(LightingSystem.class)
 public class Scene extends GameState {
     private Game game;
     private int currentEntity = 0;
@@ -42,7 +44,8 @@ public class Scene extends GameState {
     //ECS Engine
     @Getter private EntitySystemEngine entitySystemEngine;
     //Cache of collision system. Move to Entity in the future?
-    @Getter(onMethod = @__({@Scriptable})) CollisionSystem collisionSystem;
+    @Getter(onMethod = @__({@Scriptable})) private CollisionSystem collisionSystem;
+    @Getter private LightingSystem lightingSystem;
 
     @Getter private EntityAddedSignal entityAddedSignal = new EntityAddedSignal();
     @Getter private EntityAddedIndexSignal entityAddedIndexSignal = new EntityAddedIndexSignal();
@@ -52,7 +55,6 @@ public class Scene extends GameState {
      * @param entity the entity to add
      */
     @Scriptable
-    @SuppressWarnings("unchecked")
     public void add(Entity entity) {
         log.debug("Adding entity: " + entity.getClass().getName() + " Entity count: " + entities.size());
         entity.setScene(this);
@@ -128,7 +130,6 @@ public class Scene extends GameState {
      * to add events that are triggered after entities are added to the room and their create method is called.
      * @param game the current game
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void postBeginState(Game game) {
         super.postBeginState(game);
@@ -159,7 +160,6 @@ public class Scene extends GameState {
      * @param game the game
      * @param delta time since last frame, in milliseconds
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void step(Game game, float delta) {
         super.step(game, delta);
@@ -179,7 +179,6 @@ public class Scene extends GameState {
      * @param game the game
      * @param renderer the renderer
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void render(Game game, Renderer renderer) {
         entitySystemEngine.render(renderer);
@@ -207,7 +206,6 @@ public class Scene extends GameState {
      * super as the last line of the overridden method, otherwise all of the entities will have been destroyed.
      * @param game the game
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void endState(Game game) {
         super.endState(game);
@@ -385,6 +383,8 @@ public class Scene extends GameState {
      * Loads and creates all the systems in the scene based off of the annotations.
      */
     private void loadSystems() {
+        log.info("Loading systems...");
+
         List<Pair<Class<? extends EntitySystem>, Argument[]>> systemClazzList = getSystemsForClass(getClass());
 
         for(Pair<Class<? extends EntitySystem>, Argument[]> systemAnnotation : systemClazzList) {
@@ -399,12 +399,18 @@ public class Scene extends GameState {
                     collisionSystem = (CollisionSystem)system;
                 }
 
+                if(system instanceof LightingSystem) {
+                    lightingSystem = (LightingSystem)system;
+                }
+
                 entitySystemEngine.addSystem(system);
             }
             catch(Exception e) {
                 throw new GameEngineException("Unable to setup entity components", e);
             }
         }
+
+        log.info(entitySystemEngine);
     }
 
     private List<Pair<Class<? extends EntitySystem>, Argument[]>> getSystemsForClass(Class clazz) {

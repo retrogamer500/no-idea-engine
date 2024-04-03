@@ -7,6 +7,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
+import net.loganford.noideaengine.graphics.uniformBufferObject.UniformBufferObject;
 import net.loganford.noideaengine.resources.loading.ModelLoader;
 import net.loganford.noideaengine.resources.loading.ShaderLoader;
 import net.loganford.noideaengine.resources.loading.TextureLoader;
@@ -14,10 +15,12 @@ import net.loganford.noideaengine.state.Camera;
 import net.loganford.noideaengine.state.View;
 import net.loganford.noideaengine.utils.file.JarResourceMapper;
 import net.loganford.noideaengine.utils.math.MathUtils;
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.lwjgl.opengl.GL33;
 
-import java.lang.Math;
 import java.util.Stack;
 
 @Log4j2
@@ -56,9 +59,7 @@ public class Renderer {
     @Getter @Setter private View view;
     @Getter @Setter private Camera camera;
     private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
-    @Getter private Vector3f lightDirection = new Vector3f(2, -10, 2).normalize();
-    @Getter private Vector3f lightColor = new Vector3f(2, 2, 2);
-    @Getter private Vector3f ambientLightColor = new Vector3f(.1f, .1f, .1f);
+    @Getter @Setter private UniformBufferObject lightingUbo;
     @Getter private boolean cullingBackface = true;
 
     public Renderer(Game game) {

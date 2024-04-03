@@ -26,12 +26,20 @@ public class MathUtils {
         return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
     }
 
+    public static float distanceSqr(Vector3fc v1, Vector3fc v2) {
+        return (v1.x() - v2.x()) * (v1.x() - v2.x()) + (v1.y() - v2.y()) * (v1.y() - v2.y()) + (v1.z() - v2.z()) * (v1.z() - v2.z());
+    }
+
     public static float distanceSqr(float x1, float y1, float z1, float x2, float y2, float z2) {
         return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2);
     }
 
     public static float distance(float x1, float y1, float x2, float y2) {
         return (float)Math.sqrt(distanceSqr(x1, y1, x2, y2));
+    }
+
+    public static float distance(Vector3fc v1, Vector3fc v2) {
+        return (float)Math.sqrt(distanceSqr(v1, v2));
     }
 
     public static float distance(float x1, float y1, float z1, float x2, float y2, float z2) {
@@ -124,5 +132,17 @@ public class MathUtils {
         }
 
         return t;
+    }
+
+    public static float interpolate(float value, float[] input, float[] output) {
+        int index1 = 1;
+        while(value > input[index1] && index1 < input.length - 1) {
+            index1++;
+        }
+        int index0 = index1 - 1;
+
+        float m = (output[index1] - output[index0])/(input[index1] - input[index0]);
+        float diff = value - input[index0];
+        return output[index0] + m * diff;
     }
 }

@@ -110,4 +110,88 @@ public class Cuboid extends Shape {
         setHeight(Math.max(getY() + getHeight(), other.getY() + other.getHeight()) - getY());
         setDepth(Math.max(getZ() + getDepth(), other.getZ() + other.getDepth()) - getZ());
     }
+
+    public boolean fullyContains(Cuboid other) {
+        if(getX() > other.getX()) {
+            return false;
+        }
+        if(getY() > other.getY()) {
+            return false;
+        }
+        if(getZ() > other.getZ()) {
+            return false;
+        }
+        if(getX() + getWidth() < other.getX() + other.getWidth()) {
+            return false;
+        }
+        if(getY() + getHeight() < other.getY() + other.getHeight()) {
+            return false;
+        }
+        if(getZ() + getDepth() < other.getZ() + other.getDepth()) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    public boolean cuboidCollision(Cuboid other) {
+        if(other.getX() + other.getWidth() < this.getX()) {
+            return false;
+        }
+        if(other.getX() > this.getX() + this.getWidth()) {
+            return false;
+        }
+        if(other.getY() + other.getHeight() < this.getY()) {
+            return false;
+        }
+        if(other.getY() > this.getY() + this.getHeight()) {
+            return false;
+        }
+        if(other.getZ() + other.getDepth() < this.getZ()) {
+            return false;
+        }
+        if(other.getZ() > this.getZ() + this.getDepth()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean lineCollision(Line line) {
+        float deltaX = line.getX2() - line.getX1();
+        float deltaY = line.getY2() - line.getY1();
+        float deltaZ = line.getZ2() - line.getZ1();
+        float scaleX = 1f / deltaX;
+        float scaleY = 1f / deltaY;
+        float scaleZ = 1f / deltaZ;
+        float signX = Math.signum(scaleX);
+        float signY = Math.signum(scaleY);
+        float signZ = Math.signum(scaleZ);
+        float halfX = .5f * getWidth();
+        float halfY = .5f * getHeight();
+        float halfZ = .5f * getDepth();
+        float posX = getX() + halfX;
+        float posY = getY() + halfY;
+        float posZ = getZ() + halfZ;
+
+        float nearTimeX = (posX - signX * halfX - line.getX1()) * scaleX;
+        float nearTimeY = (posY - signY * halfY - line.getY1()) * scaleY;
+        float nearTimeZ = (posZ - signZ * halfZ - line.getZ1()) * scaleZ;
+        float farTimeX = (posX + signX * halfX - line.getX1()) * scaleX;
+        float farTimeY = (posY + signY * halfY - line.getY1()) * scaleY;
+        float farTimeZ = (posZ + signZ * halfZ - line.getZ1()) * scaleZ;
+
+        if (nearTimeX > farTimeY || nearTimeY > farTimeX || nearTimeZ > farTimeZ) {
+            return false;
+        }
+
+        float nearTime = Math.max(Math.max(nearTimeX, nearTimeY), nearTimeZ);
+        float farTime = Math.min(Math.min(farTimeX, farTimeY), farTimeZ);
+
+        if (nearTime >= 1 || farTime <= 0) {
+            return false;
+        }
+
+        return true;
+    }
 }

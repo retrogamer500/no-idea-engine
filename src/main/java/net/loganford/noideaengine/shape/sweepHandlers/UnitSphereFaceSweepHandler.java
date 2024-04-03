@@ -93,6 +93,7 @@ public class UnitSphereFaceSweepHandler implements SweepHandler<UnitSphere, Face
             Shape shape = shapes[i];
             SweepHandler handler = handlers[i];
 
+            //noinspection unchecked
             handler.sweep(SWEEP_RESULT, POINT, velocity, shape);
 
             if(SWEEP_RESULT.getDistance() < result.getDistance()) {

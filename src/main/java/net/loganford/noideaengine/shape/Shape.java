@@ -9,7 +9,7 @@ import org.joml.Vector3fc;
 public abstract class Shape {
     private static SweepResult SWEEP_RESULT = new SweepResult();
     private static Vector3f V3F = new Vector3f();
-    private static Cuboid CUBE = new Cuboid(0, 0, 0, 1, 1, 1);
+    private Cuboid boundingBox;
     @Getter @Setter private Entity owningEntity;
 
     @Getter private int registration;
@@ -48,8 +48,11 @@ public abstract class Shape {
      * @return the bounding box
      */
     public Cuboid getBoundingBox() {
-        getBoundingBox(CUBE);
-        return CUBE;
+        if(boundingBox == null) {
+            boundingBox = new Cuboid(0, 0, 0, 1, 1, 1);
+        }
+        getBoundingBox(boundingBox);
+        return boundingBox;
     }
 
     public boolean collidesWith(Shape other) {

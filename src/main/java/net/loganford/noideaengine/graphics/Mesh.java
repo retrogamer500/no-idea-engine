@@ -5,14 +5,12 @@ import lombok.Setter;
 import net.loganford.noideaengine.graphics.shader.ShaderProgram;
 import net.loganford.noideaengine.graphics.shader.ShaderUniform;
 import net.loganford.noideaengine.shape.AbstractCompoundShape;
+import net.loganford.noideaengine.shape.Cuboid;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.state.AbstractViewProjection;
 import net.loganford.noideaengine.utils.memory.UnsafeMemory;
 import net.loganford.noideaengine.utils.memory.UnsafeMemoryTracker;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import org.joml.*;
 import org.lwjgl.opengl.GL33;
 
 import java.util.ArrayList;
@@ -32,6 +30,11 @@ public class Mesh implements UnsafeMemory {
 	@Getter @Setter private List<Vector2f> uvCoordinates;
 
 	private Matrix4f modelMatrix;
+
+	@Getter @Setter private Cuboid boundingBox;
+	@Getter @Setter private Cuboid positionalBoundingBox;
+	private static Vector3f V3F = new Vector3f();
+	private static Vector4f V4F = new Vector4f();
 
 	public Mesh() {
 		faces = new ArrayList<>();
@@ -71,6 +74,12 @@ public class Mesh implements UnsafeMemory {
 
 		vao.flipAndBuffer();
 
+
+        boundingBox = new Cuboid(new Vector3f(), new Vector3f());
+        boundingBox.set(getShape().getBoundingBox());
+        positionalBoundingBox = new Cuboid(new Vector3f(), new Vector3f());
+        positionalBoundingBox.set(boundingBox);
+
 		// Since the data has been transferred to the GPU, remove from RAM if requested
 		if (freeMemory) {
 			faces = null;
@@ -95,6 +104,13 @@ public class Mesh implements UnsafeMemory {
 	}
 
 	public void render(Renderer renderer, Matrix4fc matrix) {
+        V4F.set(0).mul(matrix);
+        V3F.set(V4F.x, V4F.y, V4F.z);
+        positionalBoundingBox.setPosition(V3F.add(boundingBox.getPosition()));
+        /*if(!renderer.getCamera().testBoundingBox(positionalBoundingBox)) {
+            return;
+        }*/
+
 		modelMatrix.set(matrix);
 		GL33.glEnable(GL33.GL_DEPTH_TEST);
 		render(renderer, renderer.getCamera(), modelMatrix);
@@ -120,9 +136,7 @@ public class Mesh implements UnsafeMemory {
 			shader.setUniform(ShaderUniform.TEX_DIFFUSE, material.getDiffuse());
 		}
 
-        shader.setUniform(ShaderUniform.LIGHT_COLOR, renderer.getLightColor());
-        shader.setUniform(ShaderUniform.LIGHT_DIRECTION, renderer.getLightDirection());
-        shader.setUniform(ShaderUniform.AMBIENT_LIGHT_COLOR, renderer.getAmbientLightColor());
+        shader.setUniform(ShaderUniform.LIGHTING_UBO, renderer.getLightingUbo());
 
 		//Bind vertex array
 		GL33.glBindVertexArray(getVao().getId());

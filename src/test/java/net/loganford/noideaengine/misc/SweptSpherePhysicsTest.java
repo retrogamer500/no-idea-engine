@@ -3,6 +3,7 @@ package net.loganford.noideaengine.misc;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.Input;
 import net.loganford.noideaengine.components.CharacterControllerComponent;
+import net.loganford.noideaengine.components.LightingComponent;
 import net.loganford.noideaengine.components.camera.FirstPersonCameraComponent;
 import net.loganford.noideaengine.components.physics.CharacterPhysicsComponent;
 import net.loganford.noideaengine.components.physics.PhysicsComponent;
@@ -13,9 +14,11 @@ import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.shape.Ellipsoid;
 import net.loganford.noideaengine.shape.UnitSphere;
 import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.state.lighting.PointLight;
 import net.loganford.noideaengine.systems.CharacterControllerSystem;
 import net.loganford.noideaengine.systems.FreeMovementSystem;
 import net.loganford.noideaengine.systems.camera.FirstPersonCameraSystem;
+import net.loganford.noideaengine.systems.collision.OctreeCollisionSystem;
 import net.loganford.noideaengine.systems.collision.SpacialPartitionCollisionSystem;
 import net.loganford.noideaengine.systems.physics.CharacterPhysicsSystem;
 import net.loganford.noideaengine.systems.physics.PhysicsSystem;
@@ -29,10 +32,7 @@ public class SweptSpherePhysicsTest {
     private static Vector3f V3F = new Vector3f();
 
     @UnregisterSystem(SpacialPartitionCollisionSystem.class)
-    @RegisterSystem(value = SpacialPartitionCollisionSystem.class, arguments = {
-            @Argument(name = "cellSize", intValue = 4),
-            @Argument(name = "bucketCount", intValue = 1024)
-    })
+    @RegisterSystem(OctreeCollisionSystem.class)
     @RegisterSystem(FirstPersonCameraSystem.class)
     @RegisterSystem(FreeMovementSystem.class)
     @RegisterSystem(PhysicsSystem.class)
@@ -41,6 +41,7 @@ public class SweptSpherePhysicsTest {
     public class TestScene extends Scene {
 
         private CubeMap cubeMap;
+        private PointLight light1 = new PointLight();
 
         @Override
         public void beginState(Game game) {
@@ -48,6 +49,16 @@ public class SweptSpherePhysicsTest {
             add(new Level());
             add(new Player(), 6.47f, 0f, 86.34f);
             cubeMap = game.getCubeMapManager().get("plains");
+
+            light1.setRadius(50f);
+            light1.setColor(new Vector3f(1f, 0f, 0f));
+            light1.setPosition(new Vector3f(6.47f, 0f, 86.34f));
+        }
+
+        @Override
+        public void step(Game game, float delta) {
+            super.step(game, delta);
+            getLightingSystem().processLight(light1);
         }
 
         @Override
@@ -71,19 +82,29 @@ public class SweptSpherePhysicsTest {
             @Argument(name = "acceleration", floatValue = 40f),
             @Argument(name = "jumpSpeed", floatValue = 50f)
     })
+    @RegisterComponent(LightingComponent.class)
     public class Player extends Entity {
         private Model model;
+        private PointLight light;
 
         @Override
         public void onCreate(Game game, Scene scene) {
             super.onCreate(game, scene);
             model = game.getModelManager().get("unitSphere");
             setShape(new Ellipsoid(new Vector3f(0, 0, 0), new Vector3f(.8f, 2.5f, .8f)));
+
+            light = new PointLight();
+            light.setRadius(20f);
+            light.setColor(new Vector3f(1f, 1f, 0f));
+            light.setPosition(new Vector3f(6.47f, 0f, 86.34f));
+            getComponent(LightingComponent.class).setLight(light);
         }
 
         @Override
         public void step(Game game, Scene scene, float delta) {
             super.step(game, scene, delta);
+            light.setRadius(light.getRadius() + 10 * delta/1000f);
+            light.getPosition().set(getPos());
 
             if(game.getInput().mousePressed(Input.MOUSE_1)) {
                 setPos(6.47f, 0f, 86.34f);
@@ -112,6 +133,7 @@ public class SweptSpherePhysicsTest {
 
         @Override
         public void render(Game game, Scene scene, Renderer renderer) {
+            //System.out.println(model.getMeshes().get(0).getBoundingBox().getPosition());
             super.render(game, scene, renderer);
             model.render(renderer, getPosMatrix());
         }

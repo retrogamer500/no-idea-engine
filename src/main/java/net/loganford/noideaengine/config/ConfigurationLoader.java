@@ -8,6 +8,7 @@ import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.config.json.GameConfig;
 import net.loganford.noideaengine.config.json.LoadableConfig;
 import net.loganford.noideaengine.utils.file.DataSource;
+import net.loganford.noideaengine.utils.file.JarResourceMapper;
 import net.loganford.noideaengine.utils.file.ResourceMapper;
 import net.loganford.noideaengine.utils.glob.Glob;
 import net.loganford.noideaengine.utils.glob.GlobActionInterface;
@@ -50,7 +51,17 @@ public class ConfigurationLoader {
     public void load(ResourceMapper resourceMapper, DataSource configSource, boolean overwriteConfig) {
         try {
             if(!configSource.exists()) {
-                throw new GameEngineException("No configuration file exists.");
+                //Load default configuration json
+                if(overwriteConfig) {
+                    log.warn("No configuration file exists. Creating one...");
+                    JarResourceMapper jarResourceMapper = new JarResourceMapper(getClass().getClassLoader());
+                    DataSource defaultConfigDataSource = jarResourceMapper.get("default.json");
+                    String defaultConfig = defaultConfigDataSource.load();
+                    configSource.save(defaultConfig);
+                }
+                else {
+                    throw new GameEngineException("No configuration file exists.");
+                }
             }
 
             log.info("Loading configuration file: " + configSource);

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ShaderUniform {
     //Static values used to keep track of shader uniforms
-    private static List<ShaderUniform> CACHED_UNIFORMS = new ArrayList<ShaderUniform>();
+    private static List<ShaderUniform> CACHED_UNIFORMS = new ArrayList<>();
 
     //Predefined list of shader uniforms used with the engine
     public static ShaderUniform TEX_DIFFUSE = new ShaderUniform("texDiffuse");
@@ -26,12 +26,8 @@ public class ShaderUniform {
     public static ShaderUniform TILE_UV_SIZE = new ShaderUniform("tileUvSize");
     public static ShaderUniform TILE_SIZE = new ShaderUniform("tileSize");
 
-    public static ShaderUniform LIGHT_DIRECTION = new ShaderUniform("lightDirection");
-    public static ShaderUniform LIGHT_COLOR = new ShaderUniform("lightColor");
-    public static ShaderUniform AMBIENT_LIGHT_COLOR = new ShaderUniform("ambientLightColor");
-
     //Predefined list of UBOs
-    public static ShaderUniform SCENE_UBO = new ShaderUniform("sceneUbo", true);
+    public static ShaderUniform LIGHTING_UBO = new ShaderUniform("LightingUbo", true);
 
     /**Name of shader uniform in shader files*/
     @Getter private String name;
@@ -47,6 +43,7 @@ public class ShaderUniform {
     public ShaderUniform(String name, boolean uniformBufferObject) {
         this.name = name;
         this.index = CACHED_UNIFORMS.size();
+        this.uniformBufferObject = uniformBufferObject;
         CACHED_UNIFORMS.add(this);
     }
 

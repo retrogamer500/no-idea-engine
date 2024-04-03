@@ -3,6 +3,8 @@ package net.loganford.noideaengine;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.nieEditorImporter.ProjectImporter;
+import net.loganford.nieEditorImporter.json.Project;
 import net.loganford.noideaengine.alarm.AlarmSystem;
 import net.loganford.noideaengine.audio.Audio;
 import net.loganford.noideaengine.audio.AudioSystem;
@@ -19,6 +21,7 @@ import net.loganford.noideaengine.scripting.ScriptedEntity;
 import net.loganford.noideaengine.scripting.engine.javascript.JsScriptEngine;
 import net.loganford.noideaengine.state.GameState;
 import net.loganford.noideaengine.entity.Entity;
+import net.loganford.noideaengine.state.RoomEditorScene;
 import net.loganford.noideaengine.state.loading.BasicLoadingScreen;
 import net.loganford.noideaengine.state.loading.LoadingScreen;
 import net.loganford.noideaengine.state.transition.InstantTransition;
@@ -55,6 +58,7 @@ public class Game {
 
     @Getter private GameState gameState;
     private GameState nextGameState;
+    @Getter @Setter private Project editorProject;
     /**The transition which will be used between states*/
     @Getter @Setter private Transition transition = new InstantTransition();
     /**The loading screen which will be used between states and at the beginning of the game*/
@@ -133,6 +137,10 @@ public class Game {
         else {
             this.gameState = gameState;
         }
+    }
+
+    public Game(String roomName) {
+        this(new RoomEditorScene(roomName));
     }
 
     /**
@@ -330,6 +338,7 @@ public class Game {
         resourceLoaders.add(new AudioLoader(this));
         resourceLoaders.add(new ScriptLoader(this));
         resourceLoaders.add(new EntityLoader(this));
+        resourceLoaders.add(new ProjectLoader(this));
         return resourceLoaders;
     }
 
@@ -356,6 +365,10 @@ public class Game {
                 nextGameState = requestedNextState;
             }
         }
+    }
+
+    public void setState(String roomName) {
+        setState(new RoomEditorScene(roomName));
     }
 
     /**

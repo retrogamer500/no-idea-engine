@@ -5,9 +5,7 @@ import lombok.Setter;
 import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.GameEngineException;
 import net.loganford.noideaengine.alarm.AlarmSystem;
-import net.loganford.noideaengine.components.AbstractPositionComponent;
-import net.loganford.noideaengine.components.BasicPositionComponent;
-import net.loganford.noideaengine.components.Component;
+import net.loganford.noideaengine.components.*;
 import net.loganford.noideaengine.components.collision.AbstractCollisionComponent;
 import net.loganford.noideaengine.components.collision.BasicCollisionComponent;
 import net.loganford.noideaengine.components.physics.AbstractPhysicsComponent;
@@ -36,6 +34,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+@RegisterComponent(StepComponent.class)
+@RegisterComponent(RenderComponent.class)
 @RegisterComponent(BasicPositionComponent.class)
 @RegisterComponent(BasicCollisionComponent.class)
 public class Entity {
@@ -57,7 +57,7 @@ public class Entity {
     private Map<Class, Component> unmodifiableComponents;
     @Getter private Set<EntitySystem> systems;
 
-    //Entity'Scene sprite, when set gets drawn in the render method
+    //Entity's sprite, when set gets drawn in the render method
     @Getter(onMethod = @__({@Scriptable})) @Setter(onMethod = @__({@Scriptable})) private Sprite sprite;
 
     //Signals
@@ -829,7 +829,7 @@ public class Entity {
             for(Annotation annotation : clazz.getAnnotationsByType(RegisterComponent.class)) {
                 Class<? extends Component> componentClazz = ((RegisterComponent)annotation).value();
                 Argument[] arguments = ((RegisterComponent)annotation).arguments();
-                componentClazzList.add(new MutablePair<Class<? extends Component>, Argument[]>(componentClazz, arguments));
+                componentClazzList.add(new MutablePair<>(componentClazz, arguments));
             }
         }
         return componentClazzList;
