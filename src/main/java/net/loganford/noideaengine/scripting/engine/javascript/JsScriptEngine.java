@@ -24,6 +24,7 @@ public class JsScriptEngine extends ScriptEngine {
 
 
         Context context = Context.newBuilder()
+                .option("engine.WarnInterpreterOnly", "false")
                 .allowHostAccess(hostAccess)
                 .build();
 
