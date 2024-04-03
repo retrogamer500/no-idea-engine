@@ -4,8 +4,6 @@ import net.loganford.nieEditorImporter.ProjectImporter;
 import net.loganford.noideaengine.Game;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-
 public class ProjectLoader extends ResourceLoader {
     private boolean done = false;
 
@@ -23,8 +21,7 @@ public class ProjectLoader extends ResourceLoader {
         ProjectImporter importer = new ProjectImporter();
 
         if(StringUtils.isNoneEmpty(game.getConfig().getResources().getProject())) {
-            //Todo: be able to load resource from non-files
-            importer.load(new File(game.getConfig().getResources().getProject()));
+            importer.load(game.getResourceMapper().get(game.getConfig().getResources().getProject()).load());
             game.setEditorProject(importer.getProject());
         }
 

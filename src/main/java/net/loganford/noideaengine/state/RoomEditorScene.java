@@ -18,8 +18,18 @@ public class RoomEditorScene extends Scene {
 
     @Override
     public void beginState(Game game) {
+        if("true".equals(game.getEditorProject().getProperties().get("stretch"))) {
+            setStretch(true);
+        }
+
         super.beginState(game);
 
+        if(game.getEditorProject().getProperties().get("width") != null) {
+            getView().setWidth(Integer.parseInt(game.getEditorProject().getProperties().get("width")));
+        }
+        if(game.getEditorProject().getProperties().get("height") != null) {
+            getView().setHeight(Integer.parseInt(game.getEditorProject().getProperties().get("height")));
+        }
 
 
         Room room = game.getEditorProject().getRoom(levelName);
@@ -49,7 +59,7 @@ public class RoomEditorScene extends Scene {
                 add(e);
             }
             catch(Exception e) {
-                throw new GameEngineException(e);
+                //throw new GameEngineException(e);
             }
         });
     }
