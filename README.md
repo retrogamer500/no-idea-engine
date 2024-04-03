@@ -37,19 +37,15 @@ To create a game using this engine, add the following to your POM.xml:
 ```xml
 <repositories>
     <repository>
-        <id>noideaengine-mvn-repo</id>
-        <url>https://github.com/retrogamer500/no-idea-engine/raw/mvn-repo</url>
-        <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-        </snapshots>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
     </repository>
 </repositories>
 
 <dependencies>
     <dependency>
-        <groupId>net.loganford.noideaengine</groupId>
-        <artifactId>noideaengine</artifactId>
+        <groupId>com.github.retrogamer500</groupId>
+        <artifactId>no-idea-engine</artifactId>
         <version>0.5.0</version>
     </dependency>
 </dependencies>
