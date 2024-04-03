@@ -20,13 +20,6 @@ public class RoomEditorScene extends Scene {
     public void beginState(Game game) {
         if("true".equals(game.getEditorProject().getProperties().get("stretch"))) {
             setStretch(true);
-
-            if(game.getEditorProject().getProperties().get("width") != null) {
-                getView().setWidth(Integer.parseInt(game.getEditorProject().getProperties().get("width")));
-            }
-            if(game.getEditorProject().getProperties().get("height") != null) {
-                getView().setHeight(Integer.parseInt(game.getEditorProject().getProperties().get("height")));
-            }
         }
         else {
             if(game.getEditorProject().getProperties().get("scale") != null) {
@@ -35,6 +28,16 @@ public class RoomEditorScene extends Scene {
         }
 
         super.beginState(game);
+
+        if(isStretch()) {
+            if (game.getEditorProject().getProperties().get("width") != null) {
+                getView().setWidth(Integer.parseInt(game.getEditorProject().getProperties().get("width")));
+            }
+            if (game.getEditorProject().getProperties().get("height") != null) {
+                getView().setHeight(Integer.parseInt(game.getEditorProject().getProperties().get("height")));
+            }
+        }
+
 
         Room room = game.getEditorProject().getRoom(levelName);
 
