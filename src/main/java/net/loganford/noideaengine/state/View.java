@@ -25,6 +25,8 @@ public class View extends AbstractViewProjection {
     @Getter @Setter private float zoom = 1f;
     /**The angle of the camera, in radians.*/
     @Getter @Setter private float angle = 0f;
+    /**Whether to maintain aspect ratio when game state is set to stretch**/
+    @Getter @Setter private boolean maintainAspectRatio = true;
 
     /**
      * Creates a view
