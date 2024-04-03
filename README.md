@@ -36,7 +36,7 @@ To create a game using this engine, add the following to your POM.xml:
     <dependency>
         <groupId>com.github.retrogamer500</groupId>
         <artifactId>no-idea-engine</artifactId>
-        <version>0.5.0</version>
+        <version>0.5.1</version>
     </dependency>
 </dependencies>
 ```
