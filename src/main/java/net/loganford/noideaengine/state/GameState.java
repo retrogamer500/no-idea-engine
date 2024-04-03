@@ -152,7 +152,15 @@ public abstract class GameState implements UnsafeMemory {
         getView().getViewMatrix().popMatrix();
 
         //Render FBO
-        GL33.glViewport(0, 0, game.getWindow().getWidth(), game.getWindow().getHeight());
+        if(isStretch()) {
+            float ratio = Math.min( ((float) game.getWindow().getWidth() / getView().getWidth()), ((float) game.getWindow().getHeight()) / getView().getHeight());
+            int offsetX = (int)((game.getWindow().getWidth() - (getView().getWidth() * ratio)) / 2f);
+            int offsetY = (int)((game.getWindow().getHeight() - (getView().getHeight() * ratio)) / 2f);
+            GL33.glViewport(offsetX, offsetY, (int) (getView().getWidth() * ratio), (int) (getView().getHeight() * ratio));
+        }
+        else {
+            GL33.glViewport(0, 0, game.getWindow().getWidth(), game.getWindow().getHeight());
+        }
         FrameBufferObject.useDefault();
     }
 
