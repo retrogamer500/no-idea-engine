@@ -41,6 +41,8 @@ public class ShapeIntersectionEngine {
         addIntersectionHandler(Rect.class, Rect.class, new RectRectIntersectionHandler());
         addIntersectionHandler(Cuboid.class, Cuboid.class, new CuboidCuboidIntersectionHandler());
         addIntersectionHandler(Cuboid.class, Line.class, new CuboidLineIntersectionHandler());
+        addIntersectionHandler(Rect.class, Bitmap.class, new RectBitmapIntersectionHandler());
+        addIntersectionHandler(Bitmap.class, Bitmap.class, new BitmapBitmapIntersectionHandler());
 
         //Set up initial sweep handlers
         addSweepHandler(Point.class, Rect.class, new PointRectSweepHandler());
