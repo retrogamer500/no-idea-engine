@@ -7,7 +7,6 @@ import org.junit.Test;
 public class LevelEditorTest {
     @Test
     public void testLevelEditor() {
-        Game game = new Game(new RoomEditorScene("upstairs_hallway_1"));
-        game.run();
+        new Game("upstairs_hallway_1").run();
     }
 }
