@@ -18,6 +18,7 @@ import net.loganford.noideaengine.shape.Rect;
 import net.loganford.noideaengine.shape.Shape;
 import net.loganford.noideaengine.shape.SweepResult;
 import net.loganford.noideaengine.state.Scene;
+import net.loganford.noideaengine.state.UILayer;
 import net.loganford.noideaengine.systems.EntitySystem;
 import net.loganford.noideaengine.utils.annotations.Argument;
 import net.loganford.noideaengine.utils.annotations.InheritComponents;
@@ -145,6 +146,17 @@ public class Entity {
         if(sprite != null) {
             sprite.render(renderer, getX(), getY());
         }
+    }
+
+    /**
+     * Override to render on top of the default UI Layer
+     * @param game the current game
+     * @param scene the current scene
+     * @param uiLayer the default UI layer being used
+     * @param renderer reference to the renderer for primate rendering and more advanced drawing functionality
+     */
+    public void renderUI(Game game, Scene scene, UILayer uiLayer, Renderer renderer) {
+
     }
 
     /**
