@@ -22,23 +22,23 @@ public class RoomEditorScene extends Scene {
 
     @Override
     public void beginState(Game game) {
-        if("true".equals(game.getEditorProject().getProperties().get("stretch"))) {
+        if("true".equals(game.getEditorProject().getProperties().get("view_stretch"))) {
             setStretch(true);
         }
         else {
-            if(game.getEditorProject().getProperties().get("scale") != null) {
-                setScale(Float.parseFloat(game.getEditorProject().getProperties().get("scale")));
+            if(game.getEditorProject().getProperties().get("view_scale") != null) {
+                setScale(Float.parseFloat(game.getEditorProject().getProperties().get("view_scale")));
             }
         }
 
         super.beginState(game);
 
         if(isStretch()) {
-            if (game.getEditorProject().getProperties().get("width") != null) {
-                getView().setWidth(Integer.parseInt(game.getEditorProject().getProperties().get("width")));
+            if (game.getEditorProject().getProperties().get("view_width") != null) {
+                getView().setWidth(Integer.parseInt(game.getEditorProject().getProperties().get("view_width")));
             }
-            if (game.getEditorProject().getProperties().get("height") != null) {
-                getView().setHeight(Integer.parseInt(game.getEditorProject().getProperties().get("height")));
+            if (game.getEditorProject().getProperties().get("view_height") != null) {
+                getView().setHeight(Integer.parseInt(game.getEditorProject().getProperties().get("view_height")));
             }
         }
 
