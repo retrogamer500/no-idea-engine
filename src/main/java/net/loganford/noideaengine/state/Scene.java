@@ -36,6 +36,7 @@ import java.util.List;
 @RegisterSystem(LightingSystem.class)
 public class Scene extends GameState {
     private Game game;
+    private DefaultUILayer defaultUILayer;
     private int currentEntity = 0;
 
     @Getter private boolean sceneBegun = false;
@@ -120,6 +121,8 @@ public class Scene extends GameState {
     public void beginState(Game game) {
         super.beginState(game);
         this.game = game;
+        defaultUILayer = new DefaultUILayer(this);
+        addUILayer(defaultUILayer);
         entities = new SimpleEntityStore();
         entitySystemEngine = new EntitySystemEngine(game, this);
         loadSystems();
