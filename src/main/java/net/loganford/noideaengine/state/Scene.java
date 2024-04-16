@@ -204,6 +204,19 @@ public class Scene extends GameState {
         return layer;
     }
 
+    @Override
+    public void prepareForTransition(Game game) {
+        super.prepareForTransition(game);
+
+        for(Entity entity : entities) {
+            entity.endScene(game, this);
+
+            if(entity.isPersistent()) {
+                game.getPersistentEntities().add(entity);
+            }
+        }
+    }
+
     /**
      * Called by the engine when the scene is ended. You may override, but be sure to call super. You may wish to call
      * super as the last line of the overridden method, otherwise all of the entities will have been destroyed.
@@ -217,13 +230,8 @@ public class Scene extends GameState {
         for(Entity entity : entities) {
             entity.endScene(game, this);
 
-            if(entity.isPersistent()) {
-                game.getPersistentEntities().add(entity);
-            }
-            else {
-                if(entity instanceof UnsafeMemory) {
-                    ((UnsafeMemory)entity).freeMemory();
-                }
+            if(entity instanceof UnsafeMemory && !entity.isPersistent()) {
+                ((UnsafeMemory)entity).freeMemory();
             }
         }
 
