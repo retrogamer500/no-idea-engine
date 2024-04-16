@@ -18,6 +18,7 @@ public abstract class Transition extends GameState{
     public final void beginTransition(Game game, GameState previousState, GameState nextState) {
         this.previousState = previousState;
         this.nextState = nextState;
+        this.previousState.prepareForTransition(game);
         this.nextState.beginState(game);
         this.nextState.postBeginState(game);
     }

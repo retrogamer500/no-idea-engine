@@ -188,6 +188,14 @@ public abstract class GameState implements UnsafeMemory {
     }
 
     /**
+     * Called before the next scene's begin state
+     * @param game
+     */
+    public void prepareForTransition(Game game) {
+
+    }
+
+    /**
      * Called when the state is ended. Override to add custom logic. Failure to call super will result in framebuffer
      * memory being leaked!
      * @param game the game
