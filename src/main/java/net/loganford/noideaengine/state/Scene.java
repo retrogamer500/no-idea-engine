@@ -137,16 +137,6 @@ public class Scene extends GameState {
     public void postBeginState(Game game) {
         super.postBeginState(game);
 
-        //Create any new entities added prior to the state beginning
-        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
-            Entity entity = entities.get(currentEntity);
-            entity.onCreate(game, this);
-            entity.beginScene(game, this);
-        }
-
-        //Officially mark the scene as started
-        sceneBegun = true;
-
         //Handle persistent entities
         Iterator<Entity> it = game.getPersistentEntities().iterator();
         while(it.hasNext()) {
@@ -156,6 +146,16 @@ public class Scene extends GameState {
             entity.beginScene(game, this);
             it.remove();
         }
+
+        //Create any new entities added prior to the state beginning
+        for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
+            Entity entity = entities.get(currentEntity);
+            entity.onCreate(game, this);
+            entity.beginScene(game, this);
+        }
+
+        //Officially mark the scene as started
+        sceneBegun = true;
     }
 
     /**
