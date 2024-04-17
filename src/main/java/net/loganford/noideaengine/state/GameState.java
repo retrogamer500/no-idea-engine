@@ -54,12 +54,6 @@ public abstract class GameState implements UnsafeMemory {
         width = view.getWidth();
         height = view.getHeight();
         camera = new Camera(game, this);
-        if(isStretch()) {
-            frameBufferObject = new FrameBufferObject(game, (int) (game.getWindow().getWidth() / scale), (int) (game.getWindow().getHeight() / scale), 1, true);
-        }
-        else {
-            frameBufferObject = new FrameBufferObject(game, view.getWidth(), view.getHeight(), 1, true);
-        }
         backgroundColor = new Vector4f(0f, 0f, 0f, 1f);
         alarms = new AlarmSystem();
         uiLayers = new ArrayList<>();
@@ -69,7 +63,14 @@ public abstract class GameState implements UnsafeMemory {
      * Called after beginState has been called.
      * @param game the game
      */
-    public void postBeginState(Game game) {}
+    public void postBeginState(Game game) {
+        if(isStretch()) {
+            frameBufferObject = new FrameBufferObject(game, view.getWidth(), view.getHeight(), 1, true);
+        }
+        else {
+            frameBufferObject = new FrameBufferObject(game, (int) (game.getWindow().getWidth() / scale), (int) (game.getWindow().getHeight() / scale), 1, true);
+        }
+    }
 
     /**
      * Steps the state. This method handles stepping any UI layers and typically should only be called by the engine.
@@ -135,6 +136,10 @@ public abstract class GameState implements UnsafeMemory {
         else {
             GL33.glViewport(0, 0, view.getWidth(), view.getHeight());
         }
+
+        //Clear screen background to black
+        GL33.glClearColor(0f, 0f, 0f, 1f);
+        GL33.glClear(GL33.GL_COLOR_BUFFER_BIT | GL33.GL_DEPTH_BUFFER_BIT);
 
         //Use FBO
         frameBufferObject.use();

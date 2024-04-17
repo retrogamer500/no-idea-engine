@@ -15,7 +15,14 @@ public class FadeTransition<G extends Game> extends Transition {
     @Override
     public void beginState(Game game) {
         super.beginState(game);
+
+        //Copy view settings from previous view
         getPreviousState().renderState(game, game.getRenderer());
+        setStretch(getPreviousState().isStretch());
+        setScale(getPreviousState().getScale());
+        getView().setWidth(getPreviousState().getView().getWidth());
+        getView().setHeight(getPreviousState().getView().getHeight());
+
         getNextState().renderState(game, game.getRenderer());
         timer = 0;
     }
