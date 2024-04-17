@@ -54,7 +54,12 @@ public abstract class GameState implements UnsafeMemory {
         width = view.getWidth();
         height = view.getHeight();
         camera = new Camera(game, this);
-        frameBufferObject = new FrameBufferObject(game, (int)(game.getWindow().getWidth() / scale), (int)(game.getWindow().getHeight() / scale), 1, true);
+        if(isStretch()) {
+            frameBufferObject = new FrameBufferObject(game, (int) (game.getWindow().getWidth() / scale), (int) (game.getWindow().getHeight() / scale), 1, true);
+        }
+        else {
+            frameBufferObject = new FrameBufferObject(game, view.getWidth(), view.getHeight(), 1, true);
+        }
         backgroundColor = new Vector4f(0f, 0f, 0f, 1f);
         alarms = new AlarmSystem();
         uiLayers = new ArrayList<>();

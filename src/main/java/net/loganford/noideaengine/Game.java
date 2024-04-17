@@ -263,7 +263,6 @@ public class Game {
      * Called before the game terminates.
      */
     protected void terminate() {
-        transition.endState(this);
         gameState.endState(this);
         audioSystem.freeMemory();
         GLFW.glfwTerminate();
