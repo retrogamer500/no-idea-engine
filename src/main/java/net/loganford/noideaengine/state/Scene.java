@@ -154,6 +154,7 @@ public class Scene extends GameState {
         //Create any new entities added prior to the state beginning
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
             Entity entity = entities.get(currentEntity);
+            entity.processComponents(game, this);
             if(!entity.isCreated()) {
                 entity.onCreate(game, this);
                 entity.beginScene(game, this);

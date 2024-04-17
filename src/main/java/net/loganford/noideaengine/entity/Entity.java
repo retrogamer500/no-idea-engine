@@ -86,13 +86,17 @@ public class Entity {
         loadAndInitializeComponents();
     }
 
+    public void processComponents(Game game, Scene scene) {
+        scene.getEntitySystemEngine().processNewEntityComponents(this);
+    }
+
     /**
      * This method is called at the beginning of the step, after the entity has been placed in the scene.
      * @param game the current game
      * @param scene the current scene
      */
     public void onCreate(Game game, Scene scene) {
-        scene.getEntitySystemEngine().processNewEntityComponents(this);
+
     }
 
     /**
