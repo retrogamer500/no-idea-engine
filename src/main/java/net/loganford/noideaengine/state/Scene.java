@@ -76,6 +76,7 @@ public class Scene extends GameState {
         }
 
         if(sceneBegun && callCreate) {
+            entity.processComponents(game, this);
             entity.onCreate(game, this);
         }
     }
