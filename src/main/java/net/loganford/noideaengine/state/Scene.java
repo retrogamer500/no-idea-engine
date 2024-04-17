@@ -57,6 +57,10 @@ public class Scene extends GameState {
      */
     @Scriptable
     public void add(Entity entity) {
+        add(entity, true);
+    }
+
+    private void add(Entity entity, boolean callCreate) {
         log.debug("Adding entity: " + entity.getClass().getName() + " Entity count: " + entities.size());
         entity.setScene(this);
         entity.setGame(game);
@@ -71,7 +75,7 @@ public class Scene extends GameState {
             currentEntity++;
         }
 
-        if(sceneBegun) {
+        if(sceneBegun && callCreate) {
             entity.onCreate(game, this);
         }
     }
@@ -142,7 +146,7 @@ public class Scene extends GameState {
         while(it.hasNext()) {
             Entity entity = it.next();
             entity.getSystems().clear(); //Clear cache of systems from last scene
-            add(entity);
+            add(entity, false);
             entity.beginScene(game, this);
             it.remove();
         }
@@ -150,8 +154,11 @@ public class Scene extends GameState {
         //Create any new entities added prior to the state beginning
         for(currentEntity = 0; currentEntity < entities.size(); currentEntity++) {
             Entity entity = entities.get(currentEntity);
-            entity.onCreate(game, this);
-            entity.beginScene(game, this);
+            if(!entity.isCreated()) {
+                entity.onCreate(game, this);
+                entity.beginScene(game, this);
+                entity.setCreated(true);
+            }
         }
 
         //Officially mark the scene as started
