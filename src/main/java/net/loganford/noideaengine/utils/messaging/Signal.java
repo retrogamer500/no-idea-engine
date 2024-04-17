@@ -36,7 +36,7 @@ public class Signal<T> {
 
     @SuppressWarnings({"ConstantConditions", "ForLoopReplaceableByForEach"})
     public void dispatch(T object) {
-        for(int i = 0; i < listeners.size(); i++) {
+        for(int i = listeners.size() - 1; i <= 0; i--) {
             WeakReference<Listener<T>> reference = listeners.get(i);
             if(reference.get() != null) {
                 reference.get().receive(this, object);
