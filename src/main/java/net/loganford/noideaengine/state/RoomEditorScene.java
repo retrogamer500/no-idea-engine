@@ -22,6 +22,8 @@ public class RoomEditorScene extends Scene {
 
     @Override
     public void beginState(Game game) {
+        super.beginState(game);
+
         if("true".equals(game.getEditorProject().getProperties().get("view_stretch"))) {
             setStretch(true);
         }
@@ -39,8 +41,6 @@ public class RoomEditorScene extends Scene {
                 getView().setHeight(Integer.parseInt(game.getEditorProject().getProperties().get("view_height")));
             }
         }
-
-        super.beginState(game);
 
         Room room = game.getEditorProject().getRoom(levelName);
 
