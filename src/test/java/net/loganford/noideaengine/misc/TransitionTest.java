@@ -4,6 +4,7 @@ import net.loganford.noideaengine.Game;
 import net.loganford.noideaengine.graphics.Renderer;
 import net.loganford.noideaengine.state.GameState;
 import net.loganford.noideaengine.state.transition.FadeTransition;
+import net.loganford.noideaengine.state.transition.InstantTransition;
 import org.junit.Test;
 
 public class TransitionTest {
