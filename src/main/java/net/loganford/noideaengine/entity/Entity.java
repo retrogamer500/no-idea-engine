@@ -52,6 +52,7 @@ public class Entity {
     @Getter private boolean destroyed = false;
     @Scriptable @Getter private float depth = 0;
     @Getter @Setter boolean depthChanged = false;
+    @Getter @Setter boolean created = false;
 
     @Getter private AlarmSystem alarms;
     private Map<Class, Component> components;
