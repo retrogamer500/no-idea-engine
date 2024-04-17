@@ -31,8 +31,6 @@ public class RoomEditorScene extends Scene {
             }
         }
 
-        super.beginState(game);
-
         if(isStretch()) {
             if (game.getEditorProject().getProperties().get("view_width") != null) {
                 getView().setWidth(Integer.parseInt(game.getEditorProject().getProperties().get("view_width")));
@@ -42,6 +40,7 @@ public class RoomEditorScene extends Scene {
             }
         }
 
+        super.beginState(game);
 
         Room room = game.getEditorProject().getRoom(levelName);
 
