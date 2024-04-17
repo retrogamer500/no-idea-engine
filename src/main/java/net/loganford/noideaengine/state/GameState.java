@@ -64,12 +64,12 @@ public abstract class GameState implements UnsafeMemory {
      * @param game the game
      */
     public void postBeginState(Game game) {
-        if(isStretch()) {
-            frameBufferObject = new FrameBufferObject(game, view.getWidth(), view.getHeight(), 1, true);
+        if(!isStretch()) {
+            view.setWidth((int)(game.getWindow().getWidth() / scale));
+            view.setHeight((int)(game.getWindow().getHeight() / scale));
         }
-        else {
-            frameBufferObject = new FrameBufferObject(game, (int) (game.getWindow().getWidth() / scale), (int) (game.getWindow().getHeight() / scale), 1, true);
-        }
+
+        frameBufferObject = new FrameBufferObject(game, view.getWidth(), view.getHeight(), 1, true);
     }
 
     /**
@@ -130,12 +130,7 @@ public abstract class GameState implements UnsafeMemory {
         view.beforeRender(this);
         camera.beforeRender(this);
 
-        if(stretch) {
-            GL33.glViewport(0, 0, (int)(640 / scale), (int)(480 / scale));
-        }
-        else {
-            GL33.glViewport(0, 0, view.getWidth(), view.getHeight());
-        }
+        GL33.glViewport(0, 0, view.getWidth(), view.getHeight());
 
         //Clear screen background to black
         GL33.glClearColor(0f, 0f, 0f, 1f);
