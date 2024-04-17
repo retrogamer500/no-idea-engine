@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Signal<T> {
+    private WeakReference<Listener<T>> NULL_REFERENCE = new WeakReference<>(null);
     public static final int CLEANUP_PERIOD = 64;
 
     private List<WeakReference<Listener<T>>> listeners;
@@ -29,14 +30,14 @@ public class Signal<T> {
         for(int i = listeners.size() - 1; i >= 0; i--) {
             WeakReference<Listener<T>> reference = listeners.get(i);
             if(Objects.equals(reference.get(), listener)) {
-                listeners.remove(i);
+                listeners.set(i, NULL_REFERENCE);
             }
         }
     }
 
     @SuppressWarnings({"ConstantConditions", "ForLoopReplaceableByForEach"})
     public void dispatch(T object) {
-        for(int i = listeners.size() - 1; i >= 0; i--) {
+        for(int i = 0; i < listeners.size(); i++) {
             WeakReference<Listener<T>> reference = listeners.get(i);
             if(reference.get() != null) {
                 reference.get().receive(this, object);
