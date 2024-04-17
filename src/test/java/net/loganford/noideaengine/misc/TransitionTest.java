@@ -16,11 +16,12 @@ public class TransitionTest {
         scene1 = new GameState() {
             @Override
             public void beginState(Game game) {
-                setStretch(true);
-                setScale(2f);
+                //setStretch(true);
                 super.beginState(game);
                 getView().setWidth(320);
                 getView().setHeight(240);
+                getView().setZoom(2f);
+                setScale(2f);
 
                 getAlarms().add(2000, () -> game.setState(scene2));
                 setBackgroundColor(0f, 1f, 1f, 1f);
@@ -29,11 +30,11 @@ public class TransitionTest {
         scene2 = new GameState() {
             @Override
             public void beginState(Game game) {
-                setStretch(true);
-                setScale(2f);
+                //setStretch(true);
                 super.beginState(game);
                 getView().setWidth(320);
                 getView().setHeight(240);
+                setScale(2f);
 
                 getAlarms().add(2000, () -> game.setState(scene1));
                 setBackgroundColor(1f, 0f, 1f, 1f);
