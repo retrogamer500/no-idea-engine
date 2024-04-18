@@ -119,6 +119,8 @@ public class TileLayer extends Entity implements UnsafeMemory {
      */
     @Override
     public void render(Game game, Scene scene, Renderer renderer) {
+        renderer.getRenderBatcher().flush(renderer);
+
         if(dirty) {
             tileLookupBuffer.clear();
             GL33.glBindTexture(GL33.GL_TEXTURE_2D, tileLookupTexture.getTextureId());
